@@ -3,12 +3,12 @@
 import { FC } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { PAPER_SIZES, usePreviewStore } from "@/store/previewStore";
-import { SizeItem } from "./types";
+import { PhotoItem } from "./types";
 import PreviewItem from "./PreviewItem";
 
 interface PaperPreviewProps {
   id: string;
-  items: SizeItem[];
+  items: PhotoItem[];
 }
 
 const PaperPreview: FC<PaperPreviewProps> = ({ id, items }) => {
@@ -27,21 +27,21 @@ const PaperPreview: FC<PaperPreviewProps> = ({ id, items }) => {
     padding: `${padding}mm`,
   };
 
+  const contentClass = paperSize == "六寸" ? "content-center" : "content-start";
+  const itemsClass = paperSize == "六寸" ? "items-center" : "items-start";
+  const justifyClass = paperSize == "六寸" ? "justify-center" : "justify-start";
+
   return (
-    <>
-      <div className="p-4 flex items-center justify-center">
-        <div
-          ref={setNodeRef}
-          style={style}
-          id="preview"
-          className="bg-gray-100 rounded-lg relative flex flex-wrap content-start items-center justify-center"
-        >
-          {items.map((item) => (
-            <PreviewItem key={item.id} item={item} />
-          ))}
-        </div>
-      </div>
-    </>
+    <div
+      ref={setNodeRef}
+      style={style}
+      id={id}
+      className={`relative bg-white border border-gray-100 flex flex-wrap ${contentClass} ${itemsClass} ${justifyClass}`}
+    >
+      {items.map((item) => (
+        <PreviewItem key={item.id} item={item} />
+      ))}
+    </div>
   );
 };
 

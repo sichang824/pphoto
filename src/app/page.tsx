@@ -29,6 +29,7 @@ import PhotoSize from "@/components/PhotoSize";
 import { SizeItem } from "@/components/types";
 import Preview from "@/components/Preview";
 import { PRESET_SIZES } from "@/store/previewStore";
+import StatsPanel from "@/components/StatsPanel";
 
 export default function Home() {
   const sensors = useSensors(
@@ -53,7 +54,9 @@ export default function Home() {
       <DndContext sensors={sensors} onDragEnd={handleDragEnd} modifiers={[]}>
         {/* 左侧照片尺寸列表 */}
         <div className="w-64">
-          <PhotoSizeList items={PRESET_SIZES} />
+          <div className="space-y-4 sticky top-4 z-50">
+            <PhotoSizeList items={PRESET_SIZES} />
+          </div>
         </div>
 
         {/* 中间预览区域 */}
@@ -64,7 +67,10 @@ export default function Home() {
 
       {/* 右侧设置面板 */}
       <div className="w-64">
-        <SettingsPanel />
+        <div className="space-y-4 sticky top-4 z-50">
+          <StatsPanel />
+          <SettingsPanel />
+        </div>
       </div>
     </main>
   );

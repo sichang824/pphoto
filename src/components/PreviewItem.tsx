@@ -1,45 +1,52 @@
 import { FC, useState, useRef } from "react";
-import { usePreviewStore } from "@/store/previewStore";
-import { SizeItem } from "./types";
+import { PRESET_SIZES, usePreviewStore } from "@/store/previewStore";
+import { PhotoItem, SizeItem } from "./types";
 import { Settings, Trash, ZoomIn, ZoomOut, Image } from "lucide-react";
 
 interface PreviewItemProps {
-  item: SizeItem;
+  item: PhotoItem;
 }
 
 const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
-  const removeItem = usePreviewStore((state) => state.removeItem);
-  const toggleOrientation = usePreviewStore((state) => state.toggleOrientation);
+  const {
+    removeItem,
+    toggleOrientation,
+    updateItem,
+    paperLandscape,
+    ratioToSizeMap,
+  } = usePreviewStore();
 
-  const [imageUrl, setImageUrl] = useState<string | null>(item.imageUrl || null);
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [fitMode, setFitMode] = useState<'width' | 'height'>('width');
-  
+  const [fitMode, setFitMode] = useState<"width" | "height">("width");
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 根据方向计算实际宽高
-  const width = item.isVertical ? item.height : item.width;
-  const height = item.isVertical ? item.width : item.height;
+  const size =
+    ratioToSizeMap[item.imageRatio] ||
+    PRESET_SIZES.find((size) => size.name === item.name);
+
+  const photoWidth = paperLandscape ? size.height : size.width;
+  const photoHeight = paperLandscape ? size.width : size.height;
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const url = URL.createObjectURL(file);
-      setImageUrl(url);
+      updateItem({ ...item, imageUrl: url });
     }
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
-    
-    if (imageUrl) {
+
+    if (item.imageUrl) {
       setIsDragging(true);
       setDragStart({
         x: e.clientX - position.x,
-        y: e.clientY - position.y
+        y: e.clientY - position.y,
       });
     }
   };
@@ -48,7 +55,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     if (isDragging) {
       setPosition({
         x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y
+        y: e.clientY - dragStart.y,
       });
     }
   };
@@ -63,11 +70,11 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
   const MIN_ZOOM = 0.5;
 
   const handleZoomIn = () => {
-    setScale(prev => Math.min(prev + ZOOM_STEP, MAX_ZOOM));
+    setScale((prev) => Math.min(prev + ZOOM_STEP, MAX_ZOOM));
   };
 
   const handleZoomOut = () => {
-    setScale(prev => Math.max(prev - ZOOM_STEP, MIN_ZOOM));
+    setScale((prev) => Math.max(prev - ZOOM_STEP, MIN_ZOOM));
   };
 
   // 添加 onDragStart 处理函数
@@ -84,17 +91,20 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
   // 修改 fitMode 的切换处理函数
   const handleFitModeChange = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setFitMode(prev => prev === 'width' ? 'height' : 'width');
-    resetPositionAndScale(); // 切换时重置位置和缩放
+    const newFitMode = fitMode === "width" ? "height" : "width";
+    setFitMode(newFitMode);
+    // 重置位置和缩放
+    setPosition({ x: 0, y: 0 });
+    setScale(1);
+    console.log("Fit mode changed to:", newFitMode); // 添加日志以便调试
   };
 
   return (
     <div
-      className={`bg-white border rounded flex items-center justify-center group box-border relative cursor-pointer select-none border-gray-300`}
+      className={`group relative border border-white`}
       style={{
-        width: `${width}mm`,
-        height: `${height}mm`,
-        transition: "all 0.2s ease-in-out",
+        width: `calc(${photoWidth}mm - 2px)`,
+        height: `calc(${photoHeight}mm - 2px)`,
       }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -111,22 +121,24 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
       />
 
       {/* 图片容器 */}
-      <div className="overflow-hidden w-full h-full flex items-center justify-center">
-        {imageUrl ? (
-          <div
-            className={`transition-all ${
-              fitMode === 'width' ? 'w-full h-full' : 'w-full h-full'
-            }`}
+      <div className="w-full h-full flex overflow-hidden items-center justify-center">
+        {item.imageUrl ? (
+          <img
+            src={item.imageUrl}
+            alt="预览图片"
             style={{
-              backgroundImage: `url(${imageUrl})`,
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              backgroundSize: fitMode === 'width' ? '100% auto' : 'auto 100%',
-              transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
-              transition: isDragging ? 'none' : 'all 0.2s ease-in-out',
-              width: '100%',
-              height: '100%',
+              maxWidth: fitMode === "width" ? "100%" : "none",
+              maxHeight: fitMode === "height" ? "100%" : "none",
+              transform: `rotate(${
+                item.isVertical ? -90 : 0
+              }deg) scale(${scale}) translate(${position.x}px, ${
+                position.y
+              }px)`,
+              transition: isDragging ? "none" : "all 0.2s ease-in-out",
+              userSelect: "none",
+              pointerEvents: "none",
             }}
+            draggable={false}
           />
         ) : (
           <div
@@ -143,12 +155,12 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
 
       {/* 控制按钮组 */}
       <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        {imageUrl && (
+        {item.imageUrl && (
           <>
             <button
               onClick={handleFitModeChange}
               className="bg-white p-1 rounded-full shadow hover:bg-gray-100"
-              title={fitMode === 'width' ? "切换为高度铺满" : "切换为宽度铺满"}
+              title={fitMode === "width" ? "切换为高度铺满" : "切换为宽度铺满"}
             >
               <svg
                 className="w-3.5 h-3.5"
@@ -159,18 +171,18 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 style={{
-                  transform: fitMode === 'width' ? 'rotate(90deg)' : 'none',
-                  transition: 'transform 0.2s ease-in-out',
+                  transform: fitMode === "width" ? "rotate(90deg)" : "none",
+                  transition: "transform 0.2s ease-in-out",
                 }}
               >
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <line x1="12" y1="3" x2="12" y2="21"/>
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <line x1="12" y1="3" x2="12" y2="21" />
               </svg>
             </button>
             <button
-              onClick={(e) => { 
-                e.stopPropagation(); 
-                fileInputRef.current?.click(); 
+              onClick={(e) => {
+                e.stopPropagation();
+                fileInputRef.current?.click();
               }}
               className="bg-white p-1 rounded-full shadow hover:bg-gray-100"
               title="更换图片"
@@ -178,7 +190,10 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
               <Image className="w-3.5 h-3.5" />
             </button>
             <button
-              onClick={(e) => { e.stopPropagation(); handleZoomIn(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleZoomIn();
+              }}
               className="bg-white p-1 rounded-full shadow hover:bg-gray-100 disabled:opacity-50"
               title={`放大 (${Math.round(scale * 100)}%)`}
               disabled={scale >= MAX_ZOOM}
@@ -186,7 +201,10 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
               <ZoomIn className="w-3.5 h-3.5" />
             </button>
             <button
-              onClick={(e) => { e.stopPropagation(); handleZoomOut(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleZoomOut();
+              }}
               className="bg-white p-1 rounded-full shadow hover:bg-gray-100 disabled:opacity-50"
               title={`缩小 (${Math.round(scale * 100)}%)`}
               disabled={scale <= MIN_ZOOM}
@@ -195,9 +213,12 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
             </button>
           </>
         )}
-        
+
         <button
-          onClick={(e) => { e.stopPropagation(); toggleOrientation(item.id); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleOrientation(item.id);
+          }}
           className="bg-white p-1 rounded-full shadow hover:bg-gray-100"
           title={item.isVertical ? "切换为横向" : "切换为竖向"}
         >
@@ -211,7 +232,10 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
         </button>
 
         <button
-          onClick={(e) => { e.stopPropagation(); removeItem(item.id); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            removeItem(item.id);
+          }}
           className="bg-white p-1 rounded-full shadow hover:bg-red-100"
           title="移除"
         >
