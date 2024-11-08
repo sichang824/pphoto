@@ -38,9 +38,15 @@ const PaperPreview: FC<PaperPreviewProps> = ({ id, items }) => {
       id={id}
       className={`relative bg-white border border-gray-100 flex flex-wrap ${contentClass} ${itemsClass} ${justifyClass}`}
     >
-      {items.map((item) => (
-        <PreviewItem key={item.id} item={item} />
-      ))}
+      {items.length > 0 ? (
+        items.map((item) => (
+          <PreviewItem key={item.id} item={item} />
+        ))
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center text-4xl text-gray-300 font-bold">
+          {paperSize}
+        </div>
+      )}
     </div>
   );
 };

@@ -17,8 +17,8 @@ interface PreviewStore {
   setPageMargin: (margin: number) => void;
   autoLayout: boolean;
   setAutoLayout: (auto: boolean) => void;
-  scale: number;
-  setScale: (scale: number) => void;
+  pixelRatio: number;
+  setPixelRatio: (ratio: number) => void;
   imageQuality: number;
   setImageQuality: (quality: number) => void;
   ratioToSizeMap: Record<string, SizeItem>;
@@ -155,8 +155,8 @@ export const usePreviewStore = create<PreviewStore>((set) => ({
   setPageMargin: (margin) => set({ pageMargin: margin }),
   autoLayout: false,
   setAutoLayout: (auto) => set({ autoLayout: auto }),
-  scale: 4,
-  setScale: (scale) => set({ scale }),
+  pixelRatio: 3,
+  setPixelRatio: (ratio) => set({ pixelRatio: ratio }),
   imageQuality: 0.8,
   setImageQuality: (quality) => set({ imageQuality: quality }),
   ratioToSizeMap: RATIO_TO_SIZE_MAP,

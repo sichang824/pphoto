@@ -5,8 +5,8 @@ import { PAPER_SIZES, usePreviewStore } from "@/store/previewStore";
 import PaperPreview from "./PaperPreview";
 import { PhotoItem, SizeItem } from "./types";
 import jsPDF from "jspdf";
-import domtoimage from "dom-to-image-more";
 import { Progress } from "@/components/ui/progress";
+import { toPng } from "html-to-image";
 
 interface PreviewProps {
   id: string;
@@ -34,7 +34,7 @@ const handlePrint = () => {
 
 const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
   try {
-    const { paperSize, paperLandscape, pageMargin, scale, imageQuality } =
+    const { paperSize, paperLandscape, pixelRatio, imageQuality } =
       usePreviewStore.getState();
     const ps = PAPER_SIZES[paperSize];
 
@@ -44,7 +44,7 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
     const pdf = new jsPDF({
       orientation: paperLandscape ? "landscape" : "portrait",
       unit: "mm",
-      format: [ps.width, ps.height],
+      format: [photoWidth, photoHeight],
     });
 
     const pageElements: HTMLElement[] = Array.from(
@@ -60,14 +60,8 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
       }
 
       try {
-        const dataUrl = await domtoimage.toPng(element, {
-          copyDefaultStyles: false,
-          width: element.clientWidth * scale,
-          height: element.clientHeight * scale,
-          style: {
-            transform: `scale(${scale})`,
-            transformOrigin: "center",
-          },
+        const dataUrl = await toPng(element, {
+          pixelRatio,
           quality: imageQuality,
         });
 
@@ -79,7 +73,7 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
           photoWidth,
           photoHeight,
           undefined,
-          "FAST"
+          "SLOW"
         );
 
         onProgress?.(((i + 1) / totalPages) * 100);
@@ -264,7 +258,10 @@ const Preview: FC<PreviewProps> = ({ id }) => {
           className="flex flex-wrap items-center justify-center gap-8"
         >
           {pages.map((page) => (
-            <PaperPreview key={page.id} id={page.id} items={page.items} />
+            <div key={page.id}>
+              <PaperPreview id={page.id} items={page.items} />
+              {page.id}
+            </div>
           ))}
         </div>
       </div>

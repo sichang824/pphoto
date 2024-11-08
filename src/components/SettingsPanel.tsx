@@ -22,8 +22,8 @@ const SettingsPanel: FC = () => {
     setPageMargin,
     autoLayout,
     setAutoLayout,
-    scale,
-    setScale,
+    pixelRatio,
+    setPixelRatio,
     imageQuality,
     setImageQuality,
     ratioToSizeMap,
@@ -92,11 +92,11 @@ const SettingsPanel: FC = () => {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">
-              导出缩放比例 ({scale}x)
+              像素比 ({pixelRatio}x)
             </label>
             <Slider
-              value={[scale]}
-              onValueChange={([value]) => setScale(value)}
+              value={[pixelRatio]}
+              onValueChange={([value]) => setPixelRatio(value)}
               max={4}
               min={1}
               step={0.5}
