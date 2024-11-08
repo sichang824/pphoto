@@ -3,7 +3,7 @@
 import { FC, useMemo, useState } from "react";
 import { PAPER_SIZES, usePreviewStore } from "@/store/previewStore";
 import PaperPreview from "./PaperPreview";
-import { PhotoItem, SizeItem } from "./types";
+import { PhotoItem } from "./types";
 import jsPDF from "jspdf";
 import { Progress } from "@/components/ui/progress";
 import { toPng } from "html-to-image";
@@ -14,7 +14,7 @@ interface PreviewProps {
 
 interface Page {
   id: string;
-  items: any[];
+  items: PhotoItem[];
 }
 
 const printStyles = `
@@ -212,7 +212,7 @@ const Preview: FC<PreviewProps> = ({ id }) => {
     }
 
     return pages;
-  }, [previewItems, paperLandscape, paperSize, autoLayout]);
+  }, [previewItems, paperLandscape, paperSize, autoLayout, pageMargin, ratioToSizeMap]);
 
   return (
     <>

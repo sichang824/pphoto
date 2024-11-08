@@ -4,7 +4,6 @@ import { FC } from "react";
 import PhotoSize from "./PhotoSize";
 import { usePreviewStore } from "@/store/previewStore";
 import { SizeItem, PhotoItem } from "./types";
-import { calcRatio } from "@/lib/utils";
 
 interface PhotoSizeListProps {
   items: SizeItem[];

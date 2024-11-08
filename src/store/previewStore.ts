@@ -59,7 +59,7 @@ export const usePreviewStore = create<PreviewStore>((set) => ({
       ),
     })),
   setPaperSize: (size) =>
-    set((state) => ({
+    set(() => ({
       paperSize: size,
     })),
   addItem: (item) =>
@@ -86,7 +86,7 @@ export const usePreviewStore = create<PreviewStore>((set) => ({
       ),
     })),
   setPaperLandscape: (isLandscape) =>
-    set((state) => ({
+    set(() => ({
       paperLandscape: isLandscape,
     })),
 

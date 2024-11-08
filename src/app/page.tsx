@@ -2,34 +2,23 @@
 
 import {
   DndContext,
-  closestCenter,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
+  DragEndEvent,
 } from "@dnd-kit/core";
 
 import {
-  arrayMove,
-  SortableContext,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
-import {
-  restrictToVerticalAxis,
-  restrictToParentElement,
-} from "@dnd-kit/modifiers";
 
 import PhotoSizeList from "@/components/PhotoSizeList";
-import PaperPreview from "@/components/PaperPreview";
-import SettingsPanel from "@/components/SettingsPanel";
-import { useState } from "react";
-import PhotoSize from "@/components/PhotoSize";
-import { SizeItem } from "@/components/types";
 import Preview from "@/components/Preview";
-import { PRESET_SIZES } from "@/store/previewStore";
+import SettingsPanel from "@/components/SettingsPanel";
 import StatsPanel from "@/components/StatsPanel";
+import { PRESET_SIZES } from "@/store/previewStore";
 
 export default function Home() {
   const sensors = useSensors(
@@ -39,12 +28,7 @@ export default function Home() {
     })
   );
 
-  const findItem = (id: string) => {
-    return PRESET_SIZES.find((item) => item.id === id);
-  };
-
-  function handleDragEnd(event: any) {
-    const { active, over } = event;
+  function handleDragEnd({over}: DragEndEvent) {
     if (over?.id) {
     }
   }

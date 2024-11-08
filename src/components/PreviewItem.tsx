@@ -1,11 +1,43 @@
 import { FC, useState, useRef } from "react";
 import { PRESET_SIZES, usePreviewStore } from "@/store/previewStore";
-import { PhotoItem, SizeItem } from "./types";
-import { Settings, Trash, ZoomIn, ZoomOut, Image } from "lucide-react";
+import { PhotoItem } from "./types";
+import {
+  Trash,
+  ZoomIn,
+  ZoomOut,
+  Image as LucideImage,
+  MoveVertical,
+  RectangleVertical,
+} from "lucide-react";
+import NextImage from "next/image";
 
 interface PreviewItemProps {
   item: PhotoItem;
 }
+
+// 添加样式常量
+const getImageStyles = (
+  scale: number,
+  position: { x: number; y: number },
+  isVertical: boolean,
+  fitMode: "width" | "height",
+  isDragging: boolean
+): React.CSSProperties => ({
+  objectFit: fitMode === "width" ? "contain" : ("cover" as const),
+  maxWidth: fitMode === "width" ? "100%" : "none",
+  maxHeight: fitMode === "height" ? "100%" : "none",
+  transform: `rotate(${isVertical ? -90 : 0}deg) scale(${scale}) translate(${
+    position.x
+  }px, ${position.y}px)`,
+  transition: isDragging ? "none" : "all 0.2s ease-in-out",
+  userSelect: "none" as const,
+  pointerEvents: "none" as const,
+});
+
+const containerStyles = (photoWidth: number, photoHeight: number) => ({
+  width: `calc(${photoWidth}mm - 2px)`,
+  height: `calc(${photoHeight}mm - 2px)`,
+});
 
 const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
   const {
@@ -39,24 +71,31 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     }
   };
 
+  // 添加新的辅助函数来处理坐标计算
+  const calculatePosition = (clientX: number, clientY: number, baseX: number, baseY: number) => {
+    if (item.isVertical) {
+      return {
+        x: -clientY - baseX,
+        y: clientX - baseY,
+      };
+    }
+    return {
+      x: clientX - baseX,
+      y: clientY - baseY,
+    };
+  };
+
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
-
     if (item.imageUrl) {
       setIsDragging(true);
-      setDragStart({
-        x: e.clientX - position.x,
-        y: e.clientY - position.y,
-      });
+      setDragStart(calculatePosition(e.clientX, e.clientY, position.x, position.y));
     }
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (isDragging) {
-      setPosition({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y,
-      });
+      setPosition(calculatePosition(e.clientX, e.clientY, dragStart.x, dragStart.y));
     }
   };
 
@@ -82,12 +121,6 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     e.preventDefault();
   };
 
-  // 添加重置位置和缩放的函数
-  const resetPositionAndScale = () => {
-    setPosition({ x: 0, y: 0 });
-    setScale(1);
-  };
-
   // 修改 fitMode 的切换处理函数
   const handleFitModeChange = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -102,10 +135,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
   return (
     <div
       className={`group relative border border-white`}
-      style={{
-        width: `calc(${photoWidth}mm - 2px)`,
-        height: `calc(${photoHeight}mm - 2px)`,
-      }}
+      style={containerStyles(photoWidth, photoHeight)}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -121,25 +151,24 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
       />
 
       {/* 图片容器 */}
-      <div className="w-full h-full flex overflow-hidden items-center justify-center">
+      <div className="w-full h-full flex items-center justify-center overflow-hidden">
         {item.imageUrl ? (
-          <img
-            src={item.imageUrl}
-            alt="预览图片"
-            style={{
-              maxWidth: fitMode === "width" ? "100%" : "none",
-              maxHeight: fitMode === "height" ? "100%" : "none",
-              transform: `rotate(${
-                item.isVertical ? -90 : 0
-              }deg) scale(${scale}) translate(${position.x}px, ${
-                position.y
-              }px)`,
-              transition: isDragging ? "none" : "all 0.2s ease-in-out",
-              userSelect: "none",
-              pointerEvents: "none",
-            }}
-            draggable={false}
-          />
+          <div className="relative w-full h-full">
+            <NextImage
+              src={item.imageUrl}
+              alt="预览照片"
+              fill
+              style={getImageStyles(
+                scale,
+                position,
+                item.isVertical,
+                fitMode,
+                isDragging
+              )}
+              draggable={false}
+              unoptimized
+            />
+          </div>
         ) : (
           <div
             className="w-full h-full flex items-center justify-center bg-gray-50 cursor-pointer"
@@ -148,7 +177,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
               fileInputRef.current?.click();
             }}
           >
-            <Image className="w-6 h-6 text-gray-400" />
+            <LucideImage className="w-6 h-6 text-gray-400" />
           </div>
         )}
       </div>
@@ -162,22 +191,13 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
               className="bg-white p-1 rounded-full shadow hover:bg-gray-100"
               title={fitMode === "width" ? "切换为高度铺满" : "切换为宽度铺满"}
             >
-              <svg
+              <MoveVertical
                 className="w-3.5 h-3.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
                 style={{
-                  transform: fitMode === "width" ? "rotate(90deg)" : "none",
+                  transform: fitMode === "width" ? "rotate(-90deg)" : "none",
                   transition: "transform 0.2s ease-in-out",
                 }}
-              >
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                <line x1="12" y1="3" x2="12" y2="21" />
-              </svg>
+              />
             </button>
             <button
               onClick={(e) => {
@@ -187,7 +207,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
               className="bg-white p-1 rounded-full shadow hover:bg-gray-100"
               title="更换图片"
             >
-              <Image className="w-3.5 h-3.5" />
+              <LucideImage className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={(e) => {
@@ -222,10 +242,10 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
           className="bg-white p-1 rounded-full shadow hover:bg-gray-100"
           title={item.isVertical ? "切换为横向" : "切换为竖向"}
         >
-          <Settings
+          <RectangleVertical
             className="w-3.5 h-3.5"
             style={{
-              transform: item.isVertical ? "rotate(90deg)" : "none",
+              transform: item.isVertical ? "rotate(-90deg)" : "none",
               transition: "transform 0.2s ease-in-out",
             }}
           />

@@ -1,0 +1,21 @@
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+  default:
+    name: gatewayz
+    external: true
+
+services:
+  next-app:
+    container_name: pphoto
+    env_file:
+      - .env
+    build:
+      args:
+        ENV_VARIABLE: ENV_VARIABLE
+        NEXT_PUBLIC_ENV_VARIABLE: NEXT_PUBLIC_ENV_VARIABLE
+    restart: always
+    ports:
+      - 3000:80
+    expose:
+      - 80
