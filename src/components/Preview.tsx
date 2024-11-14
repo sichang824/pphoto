@@ -168,6 +168,8 @@ const Preview: FC<PreviewProps> = ({ id }) => {
         currentPageId++;
       } else {
         const size = ratioToSizeMap[item.imageRatio];
+        console.log(item);
+        console.log(size);
         const itemWidth = item.isVertical ? size.height : size.width;
         const itemHeight = item.isVertical ? size.width : size.height;
 

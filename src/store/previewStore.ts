@@ -46,6 +46,20 @@ export const PAPER_SIZES: Record<string, { width: number; height: number }> = {
 const RATIO_TO_SIZE_MAP: Record<string, SizeItem> = {
   "1/1": PRESET_SIZES[0],
   "3/4": PRESET_SIZES[4],
+  "5/7": PRESET_SIZES[1],
+  "7/5": PRESET_SIZES[2],
+  "127/89": PRESET_SIZES[3],
+  "89/127": PRESET_SIZES[3],
+  "99/70": PRESET_SIZES[5],
+  "70/99": PRESET_SIZES[5],
+};
+
+const generateId = () => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return Math.random().toString(36).substring(2, 15) + 
+         Math.random().toString(36).substring(2, 15);
 };
 
 export const usePreviewStore = create<PreviewStore>((set) => ({
@@ -68,7 +82,7 @@ export const usePreviewStore = create<PreviewStore>((set) => ({
         ...state.previewItems,
         {
           ...item,
-          id: crypto.randomUUID(),
+          id: generateId(),
           isVertical: false,
           x: 0,
           y: 0,
@@ -127,7 +141,7 @@ export const usePreviewStore = create<PreviewStore>((set) => ({
 
             const newItem: PhotoItem = {
               imageRatio,
-              id: crypto.randomUUID(),
+              id: generateId(),
               name: `${file.name}`,
               imageUrl: e.target?.result as string,
               isVertical: false,
