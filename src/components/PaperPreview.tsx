@@ -13,7 +13,8 @@ interface PaperPreviewProps {
 
 const PaperPreview: FC<PaperPreviewProps> = ({ id, items }) => {
   const { isOver, setNodeRef } = useDroppable({ id });
-  const { paperLandscape, paperSize, pageMargin, pageMarginUnit } = usePreviewStore();
+  const { paperLandscape, paperSize, pageMargin, pageMarginUnit } =
+    usePreviewStore();
 
   const ps = PAPER_SIZES[paperSize];
   const paperWidth = paperLandscape ? ps.height : ps.width;
@@ -23,7 +24,10 @@ const PaperPreview: FC<PaperPreviewProps> = ({ id, items }) => {
     color: isOver ? "green" : undefined,
     width: `${paperWidth}mm`,
     height: `${paperHeight}mm`,
-    padding: `${pageMargin}${pageMarginUnit}`,
+  };
+
+  const paperMarginStyle = {
+    margin: `${pageMargin}${pageMarginUnit}`,
   };
 
   const contentClass = paperSize == "六寸" ? "content-center" : "content-start";
@@ -35,17 +39,20 @@ const PaperPreview: FC<PaperPreviewProps> = ({ id, items }) => {
       ref={setNodeRef}
       style={style}
       id={id}
-      className={`relative bg-white border border-gray-100 flex flex-wrap ${contentClass} ${itemsClass} ${justifyClass}`}
+      className={`relative bg-white border border-gray-100`}
     >
-      {items.length > 0 ? (
-        items.map((item) => (
-          <PreviewItem key={item.id} item={item} />
-        ))
-      ) : (
-        <div className="absolute inset-0 flex items-center justify-center text-4xl text-gray-300 font-bold">
-          {paperSize}
-        </div>
-      )}
+      <div
+        className={`absolute inset-0 border border-dashed border-gray-100 flex flex-wrap ${contentClass} ${itemsClass} ${justifyClass} overflow-hidden`}
+        style={paperMarginStyle}
+      >
+        {items.length > 0 ? (
+          items.map((item) => <PreviewItem key={item.id} item={item} />)
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-4xl text-gray-300 font-bold">
+            {paperSize}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

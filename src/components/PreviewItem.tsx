@@ -134,7 +134,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
 
   return (
     <div
-      className={`group relative border border-white`}
+      className="group relative border border-white"
       style={containerStyles(photoWidth, photoHeight)}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
