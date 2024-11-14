@@ -7,6 +7,7 @@ import { PhotoItem } from "./types";
 import jsPDF from "jspdf";
 import { Progress } from "@/components/ui/progress";
 import { toPng } from "html-to-image";
+import { BacksidePaperPreview } from "./BacksidePaperPreview";
 
 interface PreviewProps {
   id: string;
@@ -58,9 +59,13 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
       if (i > 0) {
         pdf.addPage();
       }
+      const isBackside = element.id.includes("backside");
 
       try {
         const dataUrl = await toPng(element, {
+          style: {
+            transform: isBackside ? `rotate(180deg) scaleX(-1)` : "",
+          },
           pixelRatio,
           quality: imageQuality,
         });
@@ -125,6 +130,7 @@ const Preview: FC<PreviewProps> = ({ id }) => {
     pageMargin,
     autoLayout,
     ratioToSizeMap,
+    doubleSided,
   } = usePreviewStore();
 
   const pages = useMemo(() => {
@@ -212,10 +218,17 @@ const Preview: FC<PreviewProps> = ({ id }) => {
     }
 
     return pages;
-  }, [previewItems, paperLandscape, paperSize, autoLayout, pageMargin, ratioToSizeMap]);
+  }, [
+    previewItems,
+    paperLandscape,
+    paperSize,
+    autoLayout,
+    pageMargin,
+    ratioToSizeMap,
+  ]);
 
   return (
-    <>
+    <div className="flex flex-col">
       <style>{printStyles}</style>
       <div className="flex flex-col">
         <div className="flex items-center justify-between p-4 mb-4 sticky top-4 bg-white rounded-lg shadow z-50">
@@ -260,12 +273,14 @@ const Preview: FC<PreviewProps> = ({ id }) => {
           {pages.map((page) => (
             <div key={page.id}>
               <PaperPreview id={page.id} items={page.items} />
-              {page.id}
+              {doubleSided && (
+                <BacksidePaperPreview id={page.id} items={page.items} />
+              )}
             </div>
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

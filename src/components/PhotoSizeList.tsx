@@ -4,12 +4,9 @@ import { FC } from "react";
 import PhotoSize from "./PhotoSize";
 import { usePreviewStore } from "@/store/previewStore";
 import { SizeItem, PhotoItem } from "./types";
+import { PRESET_SIZES } from "@/store/previewStore";
 
-interface PhotoSizeListProps {
-  items: SizeItem[];
-}
-
-const PhotoSizeList: FC<PhotoSizeListProps> = ({ items }) => {
+const PhotoSizeList: FC = () => {
   const { addItem } = usePreviewStore();
 
   const handleAdd = (item: SizeItem) => {
@@ -23,7 +20,7 @@ const PhotoSizeList: FC<PhotoSizeListProps> = ({ items }) => {
     <>
       <h3 className="text-sm font-medium mb-2">照片尺寸</h3>
       <div className="space-y-2">
-        {items.map((size) => (
+        {PRESET_SIZES.map((size) => (
           <PhotoSize key={size.name} item={size} onAdd={handleAdd} />
         ))}
       </div>

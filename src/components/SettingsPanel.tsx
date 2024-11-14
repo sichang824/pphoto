@@ -31,6 +31,8 @@ const SettingsPanel: FC = () => {
     updateRatioMap,
     pageMarginUnit,
     setPageMarginUnit,
+    doubleSided,
+    setDoubleSided,
   } = usePreviewStore();
 
   return (
@@ -111,6 +113,15 @@ const SettingsPanel: FC = () => {
               <Switch
                 checked={autoLayout}
                 onCheckedChange={(checked) => setAutoLayout(checked)}
+              />
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium">双面打印</label>
+              <Switch
+                checked={doubleSided}
+                onCheckedChange={(checked) => setDoubleSided(checked)}
               />
             </div>
           </div>

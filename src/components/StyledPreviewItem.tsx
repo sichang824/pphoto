@@ -10,10 +10,12 @@ import {
   RectangleVertical,
 } from "lucide-react";
 import NextImage from "next/image";
-import { cn } from "@/lib/utils";
-import TestComponent from "./Test";
+import PostcardStyle1 from "./postcard/style1";
+import PostcardStyle2 from "./postcard/style2";
+import PostcardBorderless from "./postcard/borderless";
+import React from "react";
 
-interface PreviewItemProps {
+interface StyledPreviewItemProps {
   item: PhotoItem;
 }
 
@@ -25,15 +27,15 @@ const getImageStyles = (
   fitMode: "width" | "height",
   isDragging: boolean
 ): React.CSSProperties => ({
-  width: "100%",
-  height: "100%",
   objectFit: fitMode === "width" ? "contain" : ("cover" as const),
-  // maxWidth: fitMode === "width" ? "100%" : "none",
+  maxWidth: fitMode === "width" ? "100%" : "none",
   maxHeight: fitMode === "height" ? "100%" : "none",
-  transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
-  // transition: isDragging ? "none" : "all 0.2s ease-in-out",
-  // userSelect: "none" as const,
-  // pointerEvents: "none" as const,
+  transform: `rotate(${isVertical ? -90 : 0}deg) scale(${scale}) translate(${
+    position.x
+  }px, ${position.y}px)`,
+  transition: isDragging ? "none" : "all 0.2s ease-in-out",
+  userSelect: "none" as const,
+  pointerEvents: "none" as const,
 });
 
 const containerStyles = (photoWidth: number, photoHeight: number) => ({
@@ -41,13 +43,21 @@ const containerStyles = (photoWidth: number, photoHeight: number) => ({
   height: `calc(${photoHeight}mm - 2px)`,
 });
 
-const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
+// 添加样式组件映射
+const POSTCARD_STYLES: { [key: string]: React.ComponentType } = {
+  style1: PostcardStyle1,
+  style2: PostcardStyle2,
+  borderless: PostcardBorderless,
+};
+
+export const StyledPreviewItem: FC<StyledPreviewItemProps> = ({ item }) => {
   const {
     removeItem,
     toggleOrientation,
     updateItem,
     paperLandscape,
     ratioToSizeMap,
+    printStyleId,
   } = usePreviewStore();
 
   const [scale, setScale] = useState(1);
@@ -62,8 +72,8 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     ratioToSizeMap[item.imageRatio] ||
     PRESET_SIZES.find((size) => size.name === item.name);
 
-  const photoWidth = item.isVertical ? size.height : size.width;
-  const photoHeight = item.isVertical ? size.width : size.height;
+  const photoWidth = paperLandscape ? size.height : size.width;
+  const photoHeight = paperLandscape ? size.width : size.height;
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -145,11 +155,13 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
 
   return (
     <div
-      className="group relative "
-      style={{
-        height: item.isVertical ? `${size.width}mm` : `${size.height}mm`,
-        width: item.isVertical ? `${size.height}mm` : `${size.width}mm`,
-      }}
+      className="group relative border border-white"
+      style={containerStyles(photoWidth, photoHeight)}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+      onDragStart={handleDragStart}
     >
       <input
         type="file"
@@ -160,52 +172,49 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
       />
 
       {/* 图片容器 */}
-      {item.imageUrl ? (
-        <div
-          className="relative border border-white box-border overflow-hidden"
-          style={{
-            width: `${size.width}mm`,
-            height: `${size.height}mm`,
-            transform: `rotate(${item.isVertical ? -90 : 0}deg) scaleX(${
-              item.isVertical ? -1 : 1
-            }) `,
-            transformOrigin: "0 0",
-          }}
-        >
-          <img
-            className="relative"
-            src={item.imageUrl}
-            alt="预览照片"
-            style={{
-              width: `${size.width}mm`,
-              height: `${size.height}mm`,
-              objectFit: fitMode === "width" ? "contain" : "cover",
-              transform: ` scaleX(${
-                item.isVertical ? -1 : 1
-              }) scale(${scale}) translate(${position.x}px, ${position.y}px)`,
-              transformOrigin: "center",
+      <div className="w-full h-full flex items-center justify-center overflow-hidden">
+        {item.imageUrl ? (
+          <div className="relative w-full h-full">
+            {/* 添加蒙版层 */}
+            <div className="absolute inset-0 bg-white/60 z-10"></div>
+            <NextImage
+              src={item.imageUrl}
+              alt="预览照片"
+              fill
+              style={getImageStyles(
+                scale,
+                position,
+                item.isVertical,
+                fitMode,
+                isDragging
+              )}
+              draggable={false}
+              unoptimized
+            />
+            {/* 动态渲染明信片样式组件 */}
+            <div className="absolute inset-0 z-20">
+              {printStyleId && POSTCARD_STYLES[printStyleId] ? (
+                React.createElement(POSTCARD_STYLES[printStyleId])
+              ) : (
+                <PostcardBorderless />
+              )}
+            </div>
+          </div>
+        ) : (
+          <div
+            className="w-full h-full flex items-center justify-center bg-gray-50 cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              fileInputRef.current?.click();
             }}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onDragStart={handleDragStart}
-          />
-        </div>
-      ) : (
-        <div
-          className="w-full h-full flex items-center justify-center bg-gray-50 cursor-pointer"
-          onClick={(e) => {
-            e.stopPropagation();
-            fileInputRef.current?.click();
-          }}
-        >
-          <LucideImage className="w-6 h-6 text-gray-400" />
-        </div>
-      )}
+          >
+            <LucideImage className="w-6 h-6 text-gray-400" />
+          </div>
+        )}
+      </div>
 
       {/* 控制按钮组 */}
-      <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-30">
         {item.imageUrl && (
           <>
             <button
@@ -229,13 +238,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
               className="bg-white p-1 rounded-full shadow hover:bg-gray-100"
               title="更换图片"
             >
-              <LucideImage
-                className="w-3.5 h-3.5"
-                style={{
-                  transform: item.isVertical ? "rotate(90deg)" : "none",
-                  transition: "transform 0.2s ease-in-out",
-                }}
-              />
+              <LucideImage className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={(e) => {
@@ -246,13 +249,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
               title={`放大 (${Math.round(scale * 100)}%)`}
               disabled={scale >= MAX_ZOOM}
             >
-              <ZoomIn
-                className="w-3.5 h-3.5"
-                style={{
-                  transform: item.isVertical ? "rotate(90deg)" : "none",
-                  transition: "transform 0.2s ease-in-out",
-                }}
-              />
+              <ZoomIn className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={(e) => {
@@ -263,13 +260,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
               title={`缩小 (${Math.round(scale * 100)}%)`}
               disabled={scale <= MIN_ZOOM}
             >
-              <ZoomOut
-                className="w-3.5 h-3.5"
-                style={{
-                  transform: item.isVertical ? "rotate(90deg)" : "none",
-                  transition: "transform 0.2s ease-in-out",
-                }}
-              />
+              <ZoomOut className="w-3.5 h-3.5" />
             </button>
           </>
         )}
@@ -282,7 +273,13 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
           className="bg-white p-1 rounded-full shadow hover:bg-gray-100"
           title={item.isVertical ? "切换为横向" : "切换为竖向"}
         >
-          <RectangleVertical className="w-3.5 h-3.5" />
+          <RectangleVertical
+            className="w-3.5 h-3.5"
+            style={{
+              transform: item.isVertical ? "rotate(-90deg)" : "none",
+              transition: "transform 0.2s ease-in-out",
+            }}
+          />
         </button>
 
         <button
@@ -293,17 +290,9 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
           className="bg-white p-1 rounded-full shadow hover:bg-red-100"
           title="移除"
         >
-          <Trash
-            className="w-3.5 h-3.5"
-            style={{
-              transform: item.isVertical ? "rotate(90deg)" : "none",
-              transition: "transform 0.2s ease-in-out",
-            }}
-          />
+          <Trash className="w-3.5 h-3.5" />
         </button>
       </div>
     </div>
   );
 };
-
-export default PreviewItem;
