@@ -2,21 +2,20 @@
 
 import {
   DndContext,
+  DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
 } from "@dnd-kit/core";
 
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
+import BacksidePrintStyleList from "@/components/BacksidePrintStyleList";
 import PhotoSizeList from "@/components/PhotoSizeList";
 import Preview from "@/components/Preview";
 import SettingsPanel from "@/components/SettingsPanel";
 import StatsPanel from "@/components/StatsPanel";
-import { PRESET_SIZES } from "@/store/previewStore";
-import BacksidePrintStyleList from "@/components/BacksidePrintStyleList";
 
 export default function Home() {
   const sensors = useSensors(

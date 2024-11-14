@@ -1,54 +1,22 @@
-import { FC, useState, useRef } from "react";
 import { PRESET_SIZES, usePreviewStore } from "@/store/previewStore";
-import { PhotoItem } from "./types";
 import {
-  Trash,
-  ZoomIn,
-  ZoomOut,
   Image as LucideImage,
   MoveVertical,
   RectangleVertical,
+  Trash,
+  ZoomIn,
+  ZoomOut,
 } from "lucide-react";
-import NextImage from "next/image";
-import { cn } from "@/lib/utils";
-import TestComponent from "./Test";
+import { FC, useRef, useState } from "react";
+import { PhotoItem } from "./types";
 
 interface PreviewItemProps {
   item: PhotoItem;
 }
 
-// 添加样式常量
-const getImageStyles = (
-  scale: number,
-  position: { x: number; y: number },
-  isVertical: boolean,
-  fitMode: "width" | "height",
-  isDragging: boolean
-): React.CSSProperties => ({
-  width: "100%",
-  height: "100%",
-  objectFit: fitMode === "width" ? "contain" : ("cover" as const),
-  // maxWidth: fitMode === "width" ? "100%" : "none",
-  maxHeight: fitMode === "height" ? "100%" : "none",
-  transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
-  // transition: isDragging ? "none" : "all 0.2s ease-in-out",
-  // userSelect: "none" as const,
-  // pointerEvents: "none" as const,
-});
-
-const containerStyles = (photoWidth: number, photoHeight: number) => ({
-  width: `calc(${photoWidth}mm - 2px)`,
-  height: `calc(${photoHeight}mm - 2px)`,
-});
-
 const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
-  const {
-    removeItem,
-    toggleOrientation,
-    updateItem,
-    paperLandscape,
-    ratioToSizeMap,
-  } = usePreviewStore();
+  const { removeItem, toggleOrientation, updateItem, ratioToSizeMap } =
+    usePreviewStore();
 
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -61,9 +29,6 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
   const size =
     ratioToSizeMap[item.imageRatio] ||
     PRESET_SIZES.find((size) => size.name === item.name);
-
-  const photoWidth = item.isVertical ? size.height : size.width;
-  const photoHeight = item.isVertical ? size.width : size.height;
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -229,13 +194,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
               className="bg-white p-1 rounded-full shadow hover:bg-gray-100"
               title="更换图片"
             >
-              <LucideImage
-                className="w-3.5 h-3.5"
-                style={{
-                  transform: item.isVertical ? "rotate(90deg)" : "none",
-                  transition: "transform 0.2s ease-in-out",
-                }}
-              />
+              <LucideImage className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={(e) => {
@@ -246,13 +205,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
               title={`放大 (${Math.round(scale * 100)}%)`}
               disabled={scale >= MAX_ZOOM}
             >
-              <ZoomIn
-                className="w-3.5 h-3.5"
-                style={{
-                  transform: item.isVertical ? "rotate(90deg)" : "none",
-                  transition: "transform 0.2s ease-in-out",
-                }}
-              />
+              <ZoomIn className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={(e) => {
@@ -263,13 +216,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
               title={`缩小 (${Math.round(scale * 100)}%)`}
               disabled={scale <= MIN_ZOOM}
             >
-              <ZoomOut
-                className="w-3.5 h-3.5"
-                style={{
-                  transform: item.isVertical ? "rotate(90deg)" : "none",
-                  transition: "transform 0.2s ease-in-out",
-                }}
-              />
+              <ZoomOut className="w-3.5 h-3.5" />
             </button>
           </>
         )}
@@ -282,7 +229,13 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
           className="bg-white p-1 rounded-full shadow hover:bg-gray-100"
           title={item.isVertical ? "切换为横向" : "切换为竖向"}
         >
-          <RectangleVertical className="w-3.5 h-3.5" />
+          <RectangleVertical
+            className="w-3.5 h-3.5"
+            style={{
+              transform: item.isVertical ? "rotate(90deg)" : "none",
+              transition: "transform 0.2s ease-in-out",
+            }}
+          />
         </button>
 
         <button
@@ -293,13 +246,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
           className="bg-white p-1 rounded-full shadow hover:bg-red-100"
           title="移除"
         >
-          <Trash
-            className="w-3.5 h-3.5"
-            style={{
-              transform: item.isVertical ? "rotate(90deg)" : "none",
-              transition: "transform 0.2s ease-in-out",
-            }}
-          />
+          <Trash className="w-3.5 h-3.5" />
         </button>
       </div>
     </div>
