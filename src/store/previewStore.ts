@@ -24,6 +24,8 @@ interface PreviewStore {
   ratioToSizeMap: Record<string, SizeItem>;
   updateRatioMap: (ratio: string, size: SizeItem) => void;
   findBestMatchSize: (imageRatio: number) => SizeItem;
+  pageMarginUnit: 'mm' | 'px';
+  setPageMarginUnit: (unit: 'mm' | 'px') => void;
 }
 
 // 添加预设尺寸列表
@@ -61,6 +63,30 @@ const generateId = () => {
   return Math.random().toString(36).substring(2, 15) + 
          Math.random().toString(36).substring(2, 15);
 };
+
+export const SETTINGS_CONFIG = {
+  pageMargin: {
+    min: 0,
+    max: 20,
+    step: 1,
+    default: 5,
+  },
+  pixelRatio: {
+    min: 1,
+    max: 4,
+    step: 0.5,
+    default: 2,
+  },
+  imageQuality: {
+    min: 0.1,
+    max: 1,
+    step: 0.1,
+    default: 0.8,
+  },
+  pageMarginUnit: {
+    options: ['mm', 'px'] as const
+  },
+} as const;
 
 export const usePreviewStore = create<PreviewStore>((set) => ({
   paperLandscape: false,
@@ -165,13 +191,13 @@ export const usePreviewStore = create<PreviewStore>((set) => ({
       console.error("处理批量图片失败:", error);
     }
   },
-  pageMargin: 0,
+  pageMargin: SETTINGS_CONFIG.pageMargin.default,
   setPageMargin: (margin) => set({ pageMargin: margin }),
   autoLayout: false,
   setAutoLayout: (auto) => set({ autoLayout: auto }),
-  pixelRatio: 3,
+  pixelRatio: SETTINGS_CONFIG.pixelRatio.default,
   setPixelRatio: (ratio) => set({ pixelRatio: ratio }),
-  imageQuality: 0.8,
+  imageQuality: SETTINGS_CONFIG.imageQuality.default,
   setImageQuality: (quality) => set({ imageQuality: quality }),
   ratioToSizeMap: RATIO_TO_SIZE_MAP,
   updateRatioMap: (ratio, size) =>
@@ -181,4 +207,6 @@ export const usePreviewStore = create<PreviewStore>((set) => ({
         [ratio]: size,
       },
     })),
+  pageMarginUnit: 'mm',
+  setPageMarginUnit: (unit) => set({ pageMarginUnit: unit }),
 }));

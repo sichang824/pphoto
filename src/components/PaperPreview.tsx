@@ -13,8 +13,7 @@ interface PaperPreviewProps {
 
 const PaperPreview: FC<PaperPreviewProps> = ({ id, items }) => {
   const { isOver, setNodeRef } = useDroppable({ id });
-  const { paperLandscape, paperSize, pageMargin } = usePreviewStore();
-  const padding = pageMargin * 2;
+  const { paperLandscape, paperSize, pageMargin, pageMarginUnit } = usePreviewStore();
 
   const ps = PAPER_SIZES[paperSize];
   const paperWidth = paperLandscape ? ps.height : ps.width;
@@ -24,7 +23,7 @@ const PaperPreview: FC<PaperPreviewProps> = ({ id, items }) => {
     color: isOver ? "green" : undefined,
     width: `${paperWidth}mm`,
     height: `${paperHeight}mm`,
-    padding: `${padding}mm`,
+    padding: `${pageMargin}${pageMarginUnit}`,
   };
 
   const contentClass = paperSize == "六寸" ? "content-center" : "content-start";

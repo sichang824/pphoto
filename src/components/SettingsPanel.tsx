@@ -10,7 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { PAPER_SIZES, PRESET_SIZES, usePreviewStore } from "@/store/previewStore";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { PAPER_SIZES, PRESET_SIZES, usePreviewStore, SETTINGS_CONFIG } from "@/store/previewStore";
 import { Switch } from "./ui/switch";
 
 const SettingsPanel: FC = () => {
@@ -28,6 +29,8 @@ const SettingsPanel: FC = () => {
     setImageQuality,
     ratioToSizeMap,
     updateRatioMap,
+    pageMarginUnit,
+    setPageMarginUnit,
   } = usePreviewStore();
 
   return (
@@ -71,48 +74,75 @@ const SettingsPanel: FC = () => {
             </Select>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">
-              页边距 ({pageMargin}mm)
-            </label>
-            <Slider
-              value={[pageMargin]}
-              onValueChange={([value]) => setPageMargin(value)}
-              max={10}
-              min={0}
-              step={1}
-              className="w-full"
-            />
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium">页边距</label>
+              <span className="text-sm text-gray-500">
+                {pageMargin}{pageMarginUnit}
+              </span>
+            </div>
+            <div className="flex items-center gap-4">
+              <Slider
+                value={[pageMargin]}
+                onValueChange={([value]) => setPageMargin(value)}
+                max={SETTINGS_CONFIG.pageMargin.max}
+                min={SETTINGS_CONFIG.pageMargin.min}
+                step={SETTINGS_CONFIG.pageMargin.step}
+                className="flex-1"
+              />
+              <RadioGroup
+                value={pageMarginUnit}
+                onValueChange={(value: 'mm' | 'px') => setPageMarginUnit(value)}
+                className="flex gap-2"
+              >
+                {SETTINGS_CONFIG.pageMarginUnit.options.map((unit) => (
+                  <div key={unit} className="flex items-center space-x-1">
+                    <RadioGroupItem value={unit} id={`unit-${unit}`} />
+                    <label htmlFor={`unit-${unit}`} className="text-sm">
+                      {unit}
+                    </label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">自动布局</label>
-            <Switch
-              checked={autoLayout}
-              onCheckedChange={(checked) => setAutoLayout(checked)}
-            />
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium">自动布局</label>
+              <Switch
+                checked={autoLayout}
+                onCheckedChange={(checked) => setAutoLayout(checked)}
+              />
+            </div>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">
-              像素比 ({pixelRatio}x)
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium">像素比</label>
+              <span className="text-sm text-gray-500">
+                {pixelRatio}x
+              </span>
+            </div>
             <Slider
               value={[pixelRatio]}
               onValueChange={([value]) => setPixelRatio(value)}
-              max={4}
-              min={1}
-              step={0.5}
+              max={SETTINGS_CONFIG.pixelRatio.max}
+              min={SETTINGS_CONFIG.pixelRatio.min}
+              step={SETTINGS_CONFIG.pixelRatio.step}
               className="w-full"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">
-              图片质量 ({Math.round(imageQuality * 100)}%)
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium">图片质量</label>
+              <span className="text-sm text-gray-500">
+                {Math.round(imageQuality * 100)}%
+              </span>
+            </div>
             <Slider
               value={[imageQuality]}
               onValueChange={([value]) => setImageQuality(value)}
-              max={1}
-              min={0.1}
-              step={0.1}
+              max={SETTINGS_CONFIG.imageQuality.max}
+              min={SETTINGS_CONFIG.imageQuality.min}
+              step={SETTINGS_CONFIG.imageQuality.step}
               className="w-full"
             />
           </div>
