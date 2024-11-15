@@ -1,14 +1,13 @@
 "use client";
 
-import { FC, useMemo, useState } from "react";
-import { PAPER_SIZES, usePreviewStore } from "@/store/previewStore";
-import PaperPreview from "./PaperPreview";
-import { PhotoItem } from "./types";
-import jsPDF from "jspdf";
 import { Progress } from "@/components/ui/progress";
-import { toPng } from "html-to-image";
-import { BacksidePaperPreview } from "./BacksidePaperPreview";
 import { PageCalculator } from "@/lib/PageCalculator";
+import { PAPER_SIZES, usePreviewStore } from "@/store/previewStore";
+import { toPng } from "html-to-image";
+import jsPDF from "jspdf";
+import { FC, useMemo, useState } from "react";
+import { BacksidePaperPreview } from "./BacksidePaperPreview";
+import PaperPreview from "./PaperPreview";
 
 interface PreviewProps {
   id: string;

@@ -7,7 +7,7 @@ import {
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
-import { FC, useRef, useState, useEffect } from "react";
+import { FC, useRef, useState } from "react";
 import { PhotoItem } from "./types";
 
 interface PreviewItemProps {
@@ -59,8 +59,6 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
-    console.log(111);
-
     if (!item.imageUrl) return;
 
     const startPosition = calculatePosition(
@@ -71,18 +69,23 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     );
 
     const handleMouseMove = (e: MouseEvent) => {
-      setPosition(
-        calculatePosition(
-          e.clientX,
-          e.clientY,
-          startPosition.x,
-          startPosition.y
-        )
+      const newPosition = calculatePosition(
+        e.clientX,
+        e.clientY,
+        startPosition.x,
+        startPosition.y
       );
+      setPosition(newPosition);
     };
 
-    const handleMouseUp = () => {
-      updateItem({ ...item, x: position.x, y: position.y });
+    const handleMouseUp = (e: MouseEvent) => {
+      const finalPosition = calculatePosition(
+        e.clientX,
+        e.clientY,
+        startPosition.x,
+        startPosition.y
+      );
+      updateItem({ ...item, x: finalPosition.x, y: finalPosition.y });
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };

@@ -1,10 +1,9 @@
 "use client";
 
+import { PRESET_SIZES, generateId, usePreviewStore } from "@/store/previewStore";
 import { FC } from "react";
 import PhotoSize from "./PhotoSize";
-import { generateId, usePreviewStore } from "@/store/previewStore";
-import { SizeItem, PhotoItem, defaultPhotoItem } from "./types";
-import { PRESET_SIZES } from "@/store/previewStore";
+import { SizeItem } from "./types";
 
 const PhotoSizeList: FC = () => {
   const { addItem } = usePreviewStore();
