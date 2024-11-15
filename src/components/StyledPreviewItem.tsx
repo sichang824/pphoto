@@ -61,10 +61,10 @@ export const StyledPreviewItem: FC<StyledPreviewItemProps> = ({ item }) => {
   } = usePreviewStore();
 
   const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  // const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [fitMode, setFitMode] = useState<"width" | "height">("width");
+  // const [fitMode, setFitMode] = useState<"width" | "height">("width");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 

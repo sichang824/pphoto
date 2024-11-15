@@ -38,7 +38,7 @@ const PaperPreview: FC<PaperPreviewProps> = ({ id, items }) => {
         className={`relative bg-white border border-gray-100`}
       >
         <div
-          className={`absolute inset-0 border border-dashed border-gray-300 flex flex-wrap ${contentClass} ${itemsClass} ${justifyClass}`}
+          className={`absolute inset-0 border overflow-hidden border-dashed border-gray-300 flex flex-wrap ${contentClass} ${itemsClass} ${justifyClass}`}
           style={{
             margin: `${pageMargin}${pageMarginUnit}`,
           }}

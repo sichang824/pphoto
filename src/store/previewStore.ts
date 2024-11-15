@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import {
   defaultPageMarginUnit,
+  defaultPhotoItem,
   defaultPrintStyleId,
   PageMarginUnit,
   PhotoItem,
@@ -24,11 +25,11 @@ export const PRESET_SIZES: SizeItem[] = [
   { name: "A4", width: 210, height: 297, id: "10", imageRatio: "70/99" },
 ];
 
-export const PAPER_SIZES: Record<string, { width: number; height: number }> = {
-  A3: { width: 297, height: 420 },
-  A4: { width: 210, height: 297 },
-  A5: { width: 148, height: 210 },
-  六寸: { width: 102, height: 152 },
+export const PAPER_SIZES: Record<string, { width: number; height: number; imageRatio: string }> = {
+  A3: { width: 297, height: 420, imageRatio: "70/99" },
+  A4: { width: 210, height: 297, imageRatio: "70/99" },
+  A5: { width: 148, height: 210, imageRatio: "70/99" },
+  六寸: { width: 102, height: 152, imageRatio: "102/152" },
 };
 
 const RATIO_TO_SIZE_MAP: Record<string, SizeItem> = {
@@ -91,7 +92,7 @@ export const SETTINGS_CONFIG = {
   },
 } as const;
 
-const generateId = () => {
+export const generateId = () => {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
     return crypto.randomUUID();
   }
@@ -103,8 +104,8 @@ const generateId = () => {
 
 interface PreviewStore {
   previewItems: PhotoItem[];
-  addItem: (item: PhotoItem) => void;
-  updateItem: (item: PhotoItem) => void;
+  addItem: (item: Partial<PhotoItem>) => void;
+  updateItem: (item: Partial<PhotoItem>) => void;
   removeItem: (id: string) => void;
   toggleOrientation: (id: string) => void;
   paperLandscape: boolean;
@@ -147,16 +148,7 @@ export const usePreviewStore = create<PreviewStore>((set) => ({
     })),
   addItem: (item) =>
     set((state) => ({
-      previewItems: [
-        ...state.previewItems,
-        {
-          ...item,
-          id: generateId(),
-          isVertical: false,
-          x: 0,
-          y: 0,
-        },
-      ],
+      previewItems: [...state.previewItems, { ...defaultPhotoItem, ...item }],
     })),
   removeItem: (id) =>
     set((state) => ({
@@ -191,10 +183,11 @@ export const usePreviewStore = create<PreviewStore>((set) => ({
 
   addBatchImages: async (files: File[]) => {
     const state = usePreviewStore.getState();
-    const { ratioToSizeMap, updateRatioMap, findBestMatchSize } = state;
+    const { ratioToSizeMap, updateRatioMap, findBestMatchSize, addItem } =
+      state;
 
     const processImage = async (file: File) => {
-      return new Promise<PhotoItem>((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (e) => {
           const img = new Image();
@@ -208,16 +201,13 @@ export const usePreviewStore = create<PreviewStore>((set) => ({
               updateRatioMap(imageRatio, size);
             }
 
-            const newItem: PhotoItem = {
+            addItem({
               imageRatio,
               id: generateId(),
               name: `${file.name}`,
               imageUrl: e.target?.result as string,
-              isVertical: false,
-              x: 0,
-              y: 0,
-            };
-            resolve(newItem);
+            });
+            resolve();
           };
           img.onerror = reject;
           img.src = e.target?.result as string;
@@ -228,8 +218,7 @@ export const usePreviewStore = create<PreviewStore>((set) => ({
     };
 
     try {
-      const newItems = await Promise.all(files.map(processImage));
-      set({ previewItems: [...state.previewItems, ...newItems] });
+      await Promise.all(files.map(processImage));
     } catch (error) {
       console.error("处理批量图片失败:", error);
     }

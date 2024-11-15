@@ -2,18 +2,15 @@
 
 import { FC } from "react";
 import PhotoSize from "./PhotoSize";
-import { usePreviewStore } from "@/store/previewStore";
-import { SizeItem, PhotoItem } from "./types";
+import { generateId, usePreviewStore } from "@/store/previewStore";
+import { SizeItem, PhotoItem, defaultPhotoItem } from "./types";
 import { PRESET_SIZES } from "@/store/previewStore";
 
 const PhotoSizeList: FC = () => {
   const { addItem } = usePreviewStore();
 
   const handleAdd = (item: SizeItem) => {
-    addItem({
-      name: item.name,
-      imageRatio: item.imageRatio,
-    } as PhotoItem);
+    addItem({ id: generateId(), name: item.name, imageRatio: item.imageRatio });
   };
 
   return (

@@ -8,14 +8,10 @@ import jsPDF from "jspdf";
 import { Progress } from "@/components/ui/progress";
 import { toPng } from "html-to-image";
 import { BacksidePaperPreview } from "./BacksidePaperPreview";
+import { PageCalculator } from "@/lib/PageCalculator";
 
 interface PreviewProps {
   id: string;
-}
-
-interface Page {
-  id: string;
-  items: PhotoItem[];
 }
 
 const printStyles = `
@@ -134,90 +130,14 @@ const Preview: FC<PreviewProps> = ({ id }) => {
   } = usePreviewStore();
 
   const pages = useMemo(() => {
-    const pages: Page[] = [];
-
-    // 如果没有预览项目，返回一个空白页
-    if (previewItems.length === 0) {
-      return [{ id: "page-1", items: [] }];
-    }
-
-    let currentPage: PhotoItem[] = [];
-    let currentPageId = 1;
-
-    const ps = PAPER_SIZES[paperSize];
-
-    // 计算实际纸张尺寸
-    const paperWidth = paperLandscape ? ps.height : ps.width;
-    const paperHeight = paperLandscape ? ps.width : ps.height;
-
-    // 考虑padding
-    const padding = pageMargin * 2;
-    const availableWidth = paperWidth - padding;
-    const availableHeight = paperHeight - padding;
-
-    let currentY = 0;
-    let currentRowX = 0;
-    let currentRowHeight = 0;
-
-    // 遍历所有项目进行分页
-    previewItems.forEach((item) => {
-      if (!autoLayout) {
-        const itemWithPosition = {
-          ...item,
-          x: currentRowX,
-          y: currentY,
-        };
-        pages.push({
-          id: `page-${currentPageId}`,
-          items: [itemWithPosition],
-        });
-        currentPageId++;
-      } else {
-        const size = ratioToSizeMap[item.imageRatio];
-        const itemWidth = item.isVertical ? size.height : size.width;
-        const itemHeight = item.isVertical ? size.width : size.height;
-
-        // 检查是否需要换行
-        if (currentRowX + itemWidth > availableWidth) {
-          currentY += currentRowHeight;
-          currentRowX = 0;
-          currentRowHeight = 0;
-        }
-
-        // 检查是否需要新页
-        if (currentY + itemHeight > availableHeight) {
-          pages.push({
-            id: `page-${currentPageId}`,
-            items: [...currentPage],
-          });
-          currentPage = [];
-          currentPageId++;
-          currentY = 0;
-          currentRowX = 0;
-          currentRowHeight = 0;
-        }
-
-        // 加项目到当前行
-        const itemWithPosition = {
-          ...item,
-          x: currentRowX,
-          y: currentY,
-        };
-        currentPage.push(itemWithPosition);
-        currentRowX += itemWidth;
-        currentRowHeight = Math.max(currentRowHeight, itemHeight);
-      }
-    });
-
-    // 添加最后一页
-    if (currentPage.length > 0) {
-      pages.push({
-        id: `page-${currentPageId}`,
-        items: currentPage,
-      });
-    }
-
-    return pages;
+    const calculator = new PageCalculator(
+      paperLandscape,
+      paperSize,
+      autoLayout,
+      pageMargin,
+      ratioToSizeMap
+    );
+    return calculator.calculate(previewItems);
   }, [
     previewItems,
     paperLandscape,
