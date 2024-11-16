@@ -15,5 +15,3 @@ services:
         ENV_VARIABLE: ENV_VARIABLE
         NEXT_PUBLIC_ENV_VARIABLE: NEXT_PUBLIC_ENV_VARIABLE
     restart: always
-    expose:
-      - 80
