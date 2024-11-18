@@ -23,6 +23,7 @@ export const PRESET_SIZES: SizeItem[] = [
   { name: "七寸", width: 127, height: 178, id: "8", imageRatio: "127/178" },
   { name: "八寸", width: 152, height: 203, id: "9", imageRatio: "152/203" },
   { name: "A4", width: 210, height: 297, id: "10", imageRatio: "70/99" },
+  { name: "A3", width: 297, height: 420, id: "11", imageRatio: "99/140" },
 ];
 
 export const PAPER_SIZES: Record<string, { width: number; height: number; imageRatio: string }> = {
@@ -43,6 +44,7 @@ const RATIO_TO_SIZE_MAP: Record<string, SizeItem> = {
   "127/178": PRESET_SIZES[7],
   "152/203": PRESET_SIZES[8],
   "70/99": PRESET_SIZES[9],
+  "99/140": PRESET_SIZES[10],
 };
 
 export const BACKSIDE_PRINT_STYLES: PrintStyle[] = [
