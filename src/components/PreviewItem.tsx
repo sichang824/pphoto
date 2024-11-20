@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { FC, useRef, useState } from "react";
 import { PhotoItem } from "./types";
+import { getItemSize } from "@/lib/PageCalculator";
 
 interface PreviewItemProps {
   item: PhotoItem;
@@ -19,16 +20,16 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     removeItem,
     toggleOrientation,
     updateItem,
-    ratioToSizeMap,
     pageMargin,
     pageMarginUnit,
+    ratioToSizeMap,
+    enableRatioMap,
+    customSizes,
   } = usePreviewStore();
   const [position, setPosition] = useState({ x: item.x, y: item.y });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const size =
-    ratioToSizeMap[item.imageRatio] ||
-    PRESET_SIZES.find((size) => size.name === item.name);
+  const size = getItemSize(item, ratioToSizeMap, enableRatioMap, customSizes);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

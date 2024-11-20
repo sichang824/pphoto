@@ -35,6 +35,8 @@ const SettingsPanel: FC = () => {
     setDoubleSided,
     spacing,
     setSpacing,
+    enableRatioMap,
+    setEnableRatioMap,
   } = usePreviewStore();
 
   return (
@@ -176,34 +178,42 @@ const SettingsPanel: FC = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">比例尺寸映射</label>
-            <div className="space-y-2">
-              {Object.entries(ratioToSizeMap).map(([ratio, size]) => (
-                <div key={ratio} className="flex items-center gap-2">
-                  <span className="min-w-[60px]">{ratio}</span>
-                  <Select
-                    value={size.id}
-                    onValueChange={(value) => {
-                      const size = PRESET_SIZES.find((s) => s.id === value);
-                      if (size) {
-                        updateRatioMap(ratio, size);
-                      }
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="选择尺寸" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {PRESET_SIZES.map((size) => (
-                        <SelectItem key={size.id} value={size.id}>
-                          {size.name} ({size.width}×{size.height}mm)
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              ))}
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-medium">比例尺寸映射</label>
+              <Switch
+                checked={enableRatioMap}
+                onCheckedChange={(checked) => setEnableRatioMap(checked)}
+              />
             </div>
+            {enableRatioMap && (
+              <div className="space-y-2">
+                {Object.entries(ratioToSizeMap).map(([ratio, size]) => (
+                  <div key={ratio} className="flex items-center gap-2">
+                    <span className="min-w-[60px]">{ratio}</span>
+                    <Select
+                      value={size.id}
+                      onValueChange={(value) => {
+                        const size = PRESET_SIZES.find((s) => s.id === value);
+                        if (size) {
+                          updateRatioMap(ratio, size);
+                        }
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择尺寸" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PRESET_SIZES.map((size) => (
+                          <SelectItem key={size.id} value={size.id}>
+                            {size.name} ({size.width}×{size.height}mm)
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
         </div>

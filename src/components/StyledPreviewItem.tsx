@@ -5,6 +5,7 @@ import PostcardBorderless from "./postcard/borderless";
 import PostcardStyle1 from "./postcard/style1";
 import PostcardStyle2 from "./postcard/style2";
 import { PhotoItem } from "./types";
+import { getItemSize } from "@/lib/PageCalculator";
 
 interface StyledPreviewItemProps {
   item: PhotoItem;
@@ -18,10 +19,12 @@ const POSTCARD_STYLES: { [key: string]: React.ComponentType } = {
 };
 
 export const StyledPreviewItem: FC<StyledPreviewItemProps> = ({ item }) => {
-  const { ratioToSizeMap, printStyleId } = usePreviewStore();
-  const size =
-    ratioToSizeMap[item.imageRatio] ||
-    PRESET_SIZES.find((size) => size.name === item.name);
+  const { ratioToSizeMap, printStyleId, enableRatioMap, customSizes } =
+    usePreviewStore();
+
+  // 如果启用了比例映射，使用映射的尺寸，否则直接使用照片本身的尺寸
+  const size = getItemSize(item, ratioToSizeMap, enableRatioMap, customSizes);
+
   return (
     <div
       className="group relative "

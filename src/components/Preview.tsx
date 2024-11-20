@@ -125,6 +125,8 @@ const Preview: FC<PreviewProps> = ({ id }) => {
     pageMargin,
     autoLayout,
     ratioToSizeMap,
+    enableRatioMap,
+    customSizes,
     doubleSided,
   } = usePreviewStore();
 
@@ -134,7 +136,9 @@ const Preview: FC<PreviewProps> = ({ id }) => {
       paperSize,
       autoLayout,
       pageMargin,
-      ratioToSizeMap
+      ratioToSizeMap,
+      enableRatioMap,
+      customSizes
     );
     return calculator.calculate(previewItems);
   }, [

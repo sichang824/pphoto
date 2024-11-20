@@ -26,7 +26,10 @@ export const PRESET_SIZES: SizeItem[] = [
   { name: "A3", width: 297, height: 420, id: "11", imageRatio: "99/140" },
 ];
 
-export const PAPER_SIZES: Record<string, { width: number; height: number; imageRatio: string }> = {
+export const PAPER_SIZES: Record<
+  string,
+  { width: number; height: number; imageRatio: string }
+> = {
   A3: { width: 297, height: 420, imageRatio: "70/99" },
   A4: { width: 210, height: 297, imageRatio: "70/99" },
   A5: { width: 148, height: 210, imageRatio: "70/99" },
@@ -140,6 +143,10 @@ interface PreviewStore {
   setPrintStyleId: (style: PrintStyleId) => void;
   spacing: number;
   setSpacing: (spacing: number) => void;
+  enableRatioMap: boolean;
+  setEnableRatioMap: (enable: boolean) => void;
+  customSizes: SizeItem[];
+  addCustomSize: (size: SizeItem) => void;
 }
 
 export const usePreviewStore = create<PreviewStore>((set) => ({
@@ -257,4 +264,11 @@ export const usePreviewStore = create<PreviewStore>((set) => ({
   setPrintStyleId: (style) => set({ printStyleId: style }),
   spacing: SETTINGS_CONFIG.spacing.default,
   setSpacing: (spacing) => set({ spacing: spacing }),
+  enableRatioMap: true,
+  setEnableRatioMap: (enable) => set({ enableRatioMap: enable }),
+  customSizes: [],
+  addCustomSize: (size: SizeItem) =>
+    set((state) => ({
+      customSizes: [...state.customSizes, size],
+    })),
 }));

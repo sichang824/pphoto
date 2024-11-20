@@ -4,12 +4,14 @@ import { Input } from "@/components/ui/input";
 import { SizeItem } from "./types";
 import { calcRatio } from "@/lib/utils";
 import { PlusIcon } from "lucide-react";
+import { usePreviewStore } from "@/store/previewStore";
 
 interface CustomPhotoSizeProps {
   onAdd?: (item: SizeItem) => void;
 }
 
 const CustomPhotoSize: FC<CustomPhotoSizeProps> = ({ onAdd }) => {
+  const { addCustomSize, customSizes } = usePreviewStore();
   const [width, setWidth] = useState<string>("");
   const [height, setHeight] = useState<string>("");
 
@@ -22,13 +24,13 @@ const CustomPhotoSize: FC<CustomPhotoSizeProps> = ({ onAdd }) => {
     if (isNaN(numWidth) || isNaN(numHeight)) return;
 
     const customSize: SizeItem = {
-      name: `${numWidth}×${numHeight}mm`,
+      name: `custom ${customSizes.length + 1}`,
       width: numWidth,
       height: numHeight,
       id: `custom-${Date.now()}`,
       imageRatio: calcRatio(numWidth, numHeight),
     };
-    onAdd?.(customSize);
+    addCustomSize(customSize);
   };
 
   return (

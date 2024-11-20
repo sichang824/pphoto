@@ -1,5 +1,26 @@
-import { Page, PhotoItem } from "@/components/types";
-import { PAPER_SIZES } from "@/store/previewStore";
+import { Page, PhotoItem, SizeItem } from "@/components/types";
+import {
+  PAPER_SIZES,
+  PRESET_SIZES,
+  usePreviewStore,
+} from "@/store/previewStore";
+
+// 获取尺寸信息
+export const getItemSize = (
+  item: PhotoItem,
+  ratioToSizeMap: Record<string, { width: number; height: number }>,
+  enableRatioMap: boolean,
+  customSizes: SizeItem[]
+) => {
+  if (enableRatioMap && ratioToSizeMap[item.imageRatio]) {
+    return ratioToSizeMap[item.imageRatio];
+  }
+  return (
+    customSizes.find((s) => s.name === item.name) ||
+    PRESET_SIZES.find((s) => s.name === item.name) ||
+    PRESET_SIZES[0]
+  );
+};
 
 export class PageCalculator {
   private pages: Page[] = [];
@@ -16,7 +37,9 @@ export class PageCalculator {
     private paperSize: string,
     private autoLayout: boolean,
     private pageMargin: number,
-    private ratioToSizeMap: Record<string, { width: number; height: number }>
+    private ratioToSizeMap: Record<string, { width: number; height: number }>,
+    private enableRatioMap: boolean,
+    private customSizes: SizeItem[]
   ) {
     const ps = PAPER_SIZES[paperSize];
     const paperWidth = paperLandscape ? ps.height : ps.width;
@@ -39,7 +62,12 @@ export class PageCalculator {
   }
 
   private handleAutoLayoutItem(item: PhotoItem): void {
-    const size = this.ratioToSizeMap[item.imageRatio];
+    const size = getItemSize(
+      item,
+      this.ratioToSizeMap,
+      this.enableRatioMap,
+      this.customSizes
+    );
     const itemWidth = item.isVertical ? size.height : size.width;
     const itemHeight = item.isVertical ? size.width : size.height;
 
