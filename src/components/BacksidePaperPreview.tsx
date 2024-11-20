@@ -60,6 +60,7 @@ export function BacksidePaperPreview({
     pageMarginUnit,
     printStyleId,
     doubleSided,
+    spacing,
   } = usePreviewStore();
 
   const ps = PAPER_SIZES[paperSize];
@@ -74,6 +75,7 @@ export function BacksidePaperPreview({
 
   const paperMarginStyle = {
     margin: `${pageMargin}${pageMarginUnit}`,
+    gap: `${spacing}mm`,
   };
   const contentClass = paperSize == "六寸" ? "content-center" : "content-start";
   const itemsClass = paperSize == "六寸" ? "items-center" : "items-start";

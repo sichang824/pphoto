@@ -92,6 +92,12 @@ export const SETTINGS_CONFIG = {
   pageMarginUnit: {
     options: ["mm", "px"] as const,
   },
+  spacing: {
+    min: 0,
+    max: 20,
+    step: 1,
+    default: 5,
+  },
 } as const;
 
 export const generateId = () => {
@@ -132,6 +138,8 @@ interface PreviewStore {
   setDoubleSided: (value: boolean) => void;
   printStyleId: PrintStyleId;
   setPrintStyleId: (style: PrintStyleId) => void;
+  spacing: number;
+  setSpacing: (spacing: number) => void;
 }
 
 export const usePreviewStore = create<PreviewStore>((set) => ({
@@ -247,4 +255,6 @@ export const usePreviewStore = create<PreviewStore>((set) => ({
   setDoubleSided: (value: boolean) => set({ doubleSided: value }),
   printStyleId: defaultPrintStyleId,
   setPrintStyleId: (style) => set({ printStyleId: style }),
+  spacing: SETTINGS_CONFIG.spacing.default,
+  setSpacing: (spacing) => set({ spacing: spacing }),
 }));

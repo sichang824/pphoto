@@ -13,7 +13,7 @@ interface PaperPreviewProps {
 
 const PaperPreview: FC<PaperPreviewProps> = ({ id, items }) => {
   const { isOver, setNodeRef } = useDroppable({ id });
-  const { paperLandscape, paperSize, pageMargin, pageMarginUnit } =
+  const { paperLandscape, paperSize, pageMargin, pageMarginUnit, spacing } =
     usePreviewStore();
 
   const ps = PAPER_SIZES[paperSize];
@@ -41,6 +41,7 @@ const PaperPreview: FC<PaperPreviewProps> = ({ id, items }) => {
           className={`absolute inset-0 border overflow-hidden border-dashed border-gray-300 flex flex-wrap ${contentClass} ${itemsClass} ${justifyClass}`}
           style={{
             margin: `${pageMargin}${pageMarginUnit}`,
+            gap: `${spacing}mm`,
           }}
         >
           {items.length > 0 ? (

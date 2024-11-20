@@ -33,6 +33,8 @@ const SettingsPanel: FC = () => {
     setPageMarginUnit,
     doubleSided,
     setDoubleSided,
+    spacing,
+    setSpacing,
   } = usePreviewStore();
 
   return (
@@ -106,6 +108,22 @@ const SettingsPanel: FC = () => {
                 ))}
               </RadioGroup>
             </div>
+          </div>
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium">照片间隔</label>
+              <span className="text-sm text-gray-500">
+                {spacing}mm
+              </span>
+            </div>
+            <Slider
+              value={[spacing]}
+              onValueChange={([value]) => setSpacing(value)}
+              max={SETTINGS_CONFIG.spacing.max}
+              min={SETTINGS_CONFIG.spacing.min}
+              step={SETTINGS_CONFIG.spacing.step}
+              className="w-full"
+            />
           </div>
           <div>
             <div className="flex items-center justify-between mb-1">
@@ -187,6 +205,7 @@ const SettingsPanel: FC = () => {
               ))}
             </div>
           </div>
+
         </div>
       </Card>
     </>
