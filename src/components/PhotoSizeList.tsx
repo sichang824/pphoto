@@ -1,9 +1,14 @@
 "use client";
 
-import { PRESET_SIZES, generateId, usePreviewStore } from "@/store/previewStore";
+import {
+  PRESET_SIZES,
+  generateId,
+  usePreviewStore,
+} from "@/store/previewStore";
 import { FC } from "react";
 import PhotoSize from "./PhotoSize";
 import { SizeItem } from "./types";
+import CustomPhotoSize from "./CustomPhotoSize";
 
 const PhotoSizeList: FC = () => {
   const { addItem } = usePreviewStore();
@@ -16,6 +21,7 @@ const PhotoSizeList: FC = () => {
     <>
       <h3 className="text-sm font-medium mb-2">照片尺寸</h3>
       <div className="space-y-2">
+        <CustomPhotoSize onAdd={handleAdd} />
         {PRESET_SIZES.map((size) => (
           <PhotoSize key={size.name} item={size} onAdd={handleAdd} />
         ))}

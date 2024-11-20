@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import { Card } from "@/components/ui/card";
 import { useDraggable } from "@dnd-kit/core";
 import { SizeItem } from "./types";
+import { PlusIcon } from "lucide-react";
 
 interface PhotoSizeProps {
   item: SizeItem;
@@ -33,31 +34,22 @@ const PhotoSize: FC<PhotoSizeProps> = ({ item, onAdd }) => {
 
   return (
     <div ref={setNodeRef} style={style} key={uniqueId}>
-      <Card className="p-4 relative flex justify-between gap-5 group">
-        <div>{item.name}</div>
+      <Card className="p-2 relative flex justify-between gap-5 group">
+        <div>
+          {item.name}
+          <span className="pl-1 text-sm text-gray-500">
+            {item.width}mm × {item.height}mm
+          </span>
+        </div>
         <div className="flex justify-center items-center gap-4">
           <button
             onClick={() => onAdd?.(item)}
             className="text-gray-600 hover:text-gray-900"
             title="添加到预览"
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M10 4V16M4 10H16"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <PlusIcon />
           </button>
-          <button
+          {/* <button
             {...attributes}
             {...listeners}
             className={`${isCursorGrabbing ? "cursor-grabbing" : "cursor-grab"}`}
@@ -69,7 +61,7 @@ const PhotoSize: FC<PhotoSizeProps> = ({ item, onAdd }) => {
                 fill="currentColor"
               ></path>
             </svg>
-          </button>
+          </button> */}
         </div>
       </Card>
     </div>
