@@ -2,7 +2,9 @@ import React, { FC } from "react";
 import { Card } from "@/components/ui/card";
 import { useDraggable } from "@dnd-kit/core";
 import { SizeItem } from "./types";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, TrashIcon } from "lucide-react";
+import { usePreviewStore } from "@/store/previewStore";
+import { Button } from "./ui/button";
 
 interface PhotoSizeProps {
   item: SizeItem;
@@ -10,6 +12,7 @@ interface PhotoSizeProps {
 }
 
 const PhotoSize: FC<PhotoSizeProps> = ({ item, onAdd }) => {
+  const { removeCustomSize } = usePreviewStore();
   const uniqueId = item.id;
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
@@ -34,21 +37,36 @@ const PhotoSize: FC<PhotoSizeProps> = ({ item, onAdd }) => {
 
   return (
     <div ref={setNodeRef} style={style} key={uniqueId}>
-      <Card className="p-2 relative flex justify-between gap-5 group">
+      <Card className="p-1 relative flex text-[14px] justify-between group">
         <div>
           {item.name}
-          <span className="pl-1 text-sm text-gray-500">
+          <div className="pl-1 text-[10px] text-gray-500">
             {item.width}mm × {item.height}mm
-          </span>
+          </div>
         </div>
-        <div className="flex justify-center items-center gap-4">
-          <button
+
+        <div className="flex justify-center items-center gap-2">
+          {item.name.startsWith("custom") && (
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => removeCustomSize(item.id)}
+              className="text-gray-600 hover:text-gray-900 w-5 h-5 p-4"
+              title="删除"
+            >
+              <TrashIcon className="text-red-500 hover:text-red-700" />
+            </Button>
+          )}
+          <Button
+            size="icon"
+            variant="ghost"
             onClick={() => onAdd?.(item)}
-            className="text-gray-600 hover:text-gray-900"
+            className="text-gray-600 hover:text-gray-900 w-5 h-5 p-4"
             title="添加到预览"
           >
-            <PlusIcon />
-          </button>
+            <PlusIcon className="text-green-500 hover:text-green-700" />
+          </Button>
+
           {/* <button
             {...attributes}
             {...listeners}

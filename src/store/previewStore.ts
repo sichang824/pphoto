@@ -147,7 +147,14 @@ interface PreviewStore {
   setEnableRatioMap: (enable: boolean) => void;
   customSizes: SizeItem[];
   addCustomSize: (size: SizeItem) => void;
+  removeCustomSize: (id: string) => void;
 }
+
+// 从 localStorage 加载 customSizes
+const loadCustomSizes = (): SizeItem[] => {
+  const savedSizes = localStorage.getItem("customSizes");
+  return savedSizes ? JSON.parse(savedSizes) : [];
+};
 
 export const usePreviewStore = create<PreviewStore>((set) => ({
   paperLandscape: false,
@@ -266,9 +273,17 @@ export const usePreviewStore = create<PreviewStore>((set) => ({
   setSpacing: (spacing) => set({ spacing: spacing }),
   enableRatioMap: true,
   setEnableRatioMap: (enable) => set({ enableRatioMap: enable }),
-  customSizes: [],
+  customSizes: loadCustomSizes(),
   addCustomSize: (size: SizeItem) =>
-    set((state) => ({
-      customSizes: [...state.customSizes, size],
-    })),
+    set((state) => {
+      const updatedSizes = [...state.customSizes, size];
+      localStorage.setItem("customSizes", JSON.stringify(updatedSizes));
+      return { customSizes: updatedSizes };
+    }),
+  removeCustomSize: (id: string) =>
+    set((state) => {
+      const updatedSizes = state.customSizes.filter((size) => size.id !== id);
+      localStorage.setItem("customSizes", JSON.stringify(updatedSizes));
+      return { customSizes: updatedSizes };
+    }),
 }));
