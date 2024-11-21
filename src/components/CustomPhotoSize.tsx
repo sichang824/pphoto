@@ -1,16 +1,12 @@
-import React, { FC, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { SizeItem } from "./types";
 import { calcRatio } from "@/lib/utils";
-import { PlusIcon } from "lucide-react";
 import { usePreviewStore } from "@/store/previewStore";
+import { PlusIcon } from "lucide-react";
+import { FC, useState } from "react";
+import { SizeItem } from "./types";
 
-interface CustomPhotoSizeProps {
-  onAdd?: (item: SizeItem) => void;
-}
-
-const CustomPhotoSize: FC<CustomPhotoSizeProps> = ({ onAdd }) => {
+const CustomPhotoSize: FC = () => {
   const { addCustomSize, customSizes } = usePreviewStore();
   const [width, setWidth] = useState<string>("");
   const [height, setHeight] = useState<string>("");

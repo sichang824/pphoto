@@ -1,11 +1,11 @@
-import { PRESET_SIZES, usePreviewStore } from "@/store/previewStore";
+import { getItemSize } from "@/lib/PageCalculator";
+import { usePreviewStore } from "@/store/previewStore";
 import { Image as LucideImage } from "lucide-react";
 import React, { FC } from "react";
 import PostcardBorderless from "./postcard/borderless";
 import PostcardStyle1 from "./postcard/style1";
 import PostcardStyle2 from "./postcard/style2";
 import { PhotoItem } from "./types";
-import { getItemSize } from "@/lib/PageCalculator";
 
 interface StyledPreviewItemProps {
   item: PhotoItem;

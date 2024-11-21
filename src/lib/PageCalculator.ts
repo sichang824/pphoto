@@ -1,8 +1,7 @@
 import { Page, PhotoItem, SizeItem } from "@/components/types";
 import {
   PAPER_SIZES,
-  PRESET_SIZES,
-  usePreviewStore,
+  PRESET_SIZES
 } from "@/store/previewStore";
 
 // 获取尺寸信息

@@ -21,8 +21,8 @@ const PhotoSizeList: FC = () => {
     <>
       <h3 className="text-sm font-medium mb-2">照片尺寸</h3>
       <div className="space-y-1">
-        <CustomPhotoSize onAdd={handleAdd} />
-        {customSizes.map((size) => (
+        <CustomPhotoSize />
+        {customSizes.length > 0 && customSizes.map((size) => (
           <PhotoSize key={size.name} item={size} onAdd={handleAdd} />
         ))}
         {PRESET_SIZES.map((size) => (

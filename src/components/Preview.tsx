@@ -8,6 +8,7 @@ import jsPDF from "jspdf";
 import { FC, useMemo, useState } from "react";
 import { BacksidePaperPreview } from "./BacksidePaperPreview";
 import PaperPreview from "./PaperPreview";
+import TemplateManager from "./templates/Manager";
 
 interface PreviewProps {
   id: string;
@@ -155,7 +156,10 @@ const Preview: FC<PreviewProps> = ({ id }) => {
       <style>{printStyles}</style>
       <div className="flex flex-col">
         <div className="flex items-center justify-between p-4 mb-4 sticky top-4 bg-white rounded-lg shadow z-50">
-          <h2 className="text-lg font-semibold">打印预览</h2>
+          <div className="flex items-center gap-4">
+            <h2 className="text-lg font-semibold">打印预览</h2>
+            <TemplateManager />
+          </div>
           <div className="flex gap-2">
             <button
               onClick={handleBatchSelect}

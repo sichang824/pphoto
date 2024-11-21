@@ -31,10 +31,6 @@ export const metadata: Metadata = {
     icon: '/favicon.png',
     shortcut: '/favicon.png',
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-  },
   robots: {
     index: true,
     follow: true,

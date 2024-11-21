@@ -1,4 +1,5 @@
-import { PRESET_SIZES, usePreviewStore } from "@/store/previewStore";
+import { getItemSize } from "@/lib/PageCalculator";
+import { usePreviewStore } from "@/store/previewStore";
 import {
   Image as LucideImage,
   MoveVertical,
@@ -9,7 +10,6 @@ import {
 } from "lucide-react";
 import { FC, useRef, useState } from "react";
 import { PhotoItem } from "./types";
-import { getItemSize } from "@/lib/PageCalculator";
 
 interface PreviewItemProps {
   item: PhotoItem;

@@ -14,10 +14,14 @@ interface PhotoSizeProps {
 const PhotoSize: FC<PhotoSizeProps> = ({ item, onAdd }) => {
   const { removeCustomSize } = usePreviewStore();
   const uniqueId = item.id;
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id: uniqueId,
-    });
+  const { setNodeRef, transform, isDragging } = useDraggable({
+    id: uniqueId,
+  });
+
+  // const { attributes, listeners, setNodeRef, transform, isDragging } =
+  //   useDraggable({
+  //     id: uniqueId,
+  //   });
 
   const style = transform
     ? {
@@ -33,7 +37,7 @@ const PhotoSize: FC<PhotoSizeProps> = ({ item, onAdd }) => {
       }
     : undefined;
 
-  const isCursorGrabbing = attributes["aria-pressed"];
+  // const isCursorGrabbing = attributes["aria-pressed"];
 
   return (
     <div ref={setNodeRef} style={style} key={uniqueId}>

@@ -1,4 +1,3 @@
-import { create } from "zustand";
 import {
   defaultPageMarginUnit,
   defaultPhotoItem,
@@ -10,6 +9,9 @@ import {
   SizeItem,
 } from "@/components/types";
 import { calcRatio } from "@/lib/utils";
+import { Template, TemplateConfig } from "@/types/template";
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 // 添加预设尺寸列表
 export const PRESET_SIZES: SizeItem[] = [
@@ -148,142 +150,233 @@ interface PreviewStore {
   customSizes: SizeItem[];
   addCustomSize: (size: SizeItem) => void;
   removeCustomSize: (id: string) => void;
+  exportTemplate: () => Partial<Template>;
+  importTemplate: (template: Template) => void;
+  templates: Template[];
+  saveTemplate: (name: string, image: string) => void;
+  loadTemplate: (id: string) => void;
+  removeTemplate: (id: string) => void;
+  addTemplate: (template: Template) => void;
 }
 
-// 从 localStorage 加载 customSizes
-const loadCustomSizes = (): SizeItem[] => {
-  const savedSizes = localStorage.getItem("customSizes");
-  return savedSizes ? JSON.parse(savedSizes) : [];
-};
+export const usePreviewStore = create<PreviewStore>()(
+  persist(
+    (set, get) => ({
+      paperLandscape: false,
+      previewItems: [],
+      paperSize: "A4",
+      updateItem: (item) =>
+        set((state) => ({
+          previewItems: state.previewItems.map((i) =>
+            i.id === item.id ? { ...i, ...item } : i
+          ),
+        })),
+      setPaperSize: (size) =>
+        set(() => ({
+          paperSize: size,
+        })),
+      addItem: (item) =>
+        set((state) => ({
+          previewItems: [
+            ...state.previewItems,
+            { ...defaultPhotoItem, ...item },
+          ],
+        })),
+      removeItem: (id) =>
+        set((state) => ({
+          previewItems: state.previewItems.filter((item) => item.id !== id),
+        })),
+      toggleOrientation: (id) =>
+        set((state) => ({
+          previewItems: state.previewItems.map((item) =>
+            item.id === id ? { ...item, isVertical: !item.isVertical } : item
+          ),
+        })),
+      setPaperLandscape: (isLandscape) =>
+        set(() => ({
+          paperLandscape: isLandscape,
+        })),
 
-export const usePreviewStore = create<PreviewStore>((set) => ({
-  paperLandscape: false,
-  previewItems: [],
-  paperSize: "A4",
-  updateItem: (item) =>
-    set((state) => ({
-      previewItems: state.previewItems.map((i) =>
-        i.id === item.id ? { ...i, ...item } : i
-      ),
-    })),
-  setPaperSize: (size) =>
-    set(() => ({
-      paperSize: size,
-    })),
-  addItem: (item) =>
-    set((state) => ({
-      previewItems: [...state.previewItems, { ...defaultPhotoItem, ...item }],
-    })),
-  removeItem: (id) =>
-    set((state) => ({
-      previewItems: state.previewItems.filter((item) => item.id !== id),
-    })),
-  toggleOrientation: (id) =>
-    set((state) => ({
-      previewItems: state.previewItems.map((item) =>
-        item.id === id ? { ...item, isVertical: !item.isVertical } : item
-      ),
-    })),
-  setPaperLandscape: (isLandscape) =>
-    set(() => ({
-      paperLandscape: isLandscape,
-    })),
+      findBestMatchSize: (imageRatio: number): SizeItem => {
+        let bestMatch = PRESET_SIZES[0];
+        let minDifference = Infinity;
+        PRESET_SIZES.forEach((size) => {
+          const sizeRatio = size.width / size.height;
+          const difference = Math.abs(sizeRatio - imageRatio);
 
-  findBestMatchSize: (imageRatio: number): SizeItem => {
-    let bestMatch = PRESET_SIZES[0];
-    let minDifference = Infinity;
-    PRESET_SIZES.forEach((size) => {
-      const sizeRatio = size.width / size.height;
-      const difference = Math.abs(sizeRatio - imageRatio);
+          if (difference < minDifference) {
+            minDifference = difference;
+            bestMatch = size;
+          }
+        });
 
-      if (difference < minDifference) {
-        minDifference = difference;
-        bestMatch = size;
-      }
-    });
-
-    return bestMatch;
-  },
-
-  addBatchImages: async (files: File[]) => {
-    const state = usePreviewStore.getState();
-    const { ratioToSizeMap, updateRatioMap, findBestMatchSize, addItem } =
-      state;
-
-    const processImage = async (file: File) => {
-      return new Promise<void>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            const w = img.width;
-            const h = img.height;
-            const imageRatio = calcRatio(w, h);
-
-            if (!ratioToSizeMap[imageRatio]) {
-              const size = findBestMatchSize(w / h);
-              updateRatioMap(imageRatio, size);
-            }
-
-            addItem({
-              imageRatio,
-              id: generateId(),
-              name: `${file.name}`,
-              imageUrl: e.target?.result as string,
-            });
-            resolve();
-          };
-          img.onerror = reject;
-          img.src = e.target?.result as string;
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    };
-
-    try {
-      await Promise.all(files.map(processImage));
-    } catch (error) {
-      console.error("处理批量图片失败:", error);
-    }
-  },
-  pageMargin: SETTINGS_CONFIG.pageMargin.default,
-  setPageMargin: (margin) => set({ pageMargin: margin }),
-  autoLayout: true,
-  setAutoLayout: (auto) => set({ autoLayout: auto }),
-  pixelRatio: SETTINGS_CONFIG.pixelRatio.default,
-  setPixelRatio: (ratio) => set({ pixelRatio: ratio }),
-  imageQuality: SETTINGS_CONFIG.imageQuality.default,
-  setImageQuality: (quality) => set({ imageQuality: quality }),
-  ratioToSizeMap: RATIO_TO_SIZE_MAP,
-  updateRatioMap: (ratio, size) =>
-    set((state) => ({
-      ratioToSizeMap: {
-        ...state.ratioToSizeMap,
-        [ratio]: size,
+        return bestMatch;
       },
-    })),
-  pageMarginUnit: defaultPageMarginUnit,
-  setPageMarginUnit: (unit) => set({ pageMarginUnit: unit }),
-  doubleSided: false,
-  setDoubleSided: (value: boolean) => set({ doubleSided: value }),
-  printStyleId: defaultPrintStyleId,
-  setPrintStyleId: (style) => set({ printStyleId: style }),
-  spacing: SETTINGS_CONFIG.spacing.default,
-  setSpacing: (spacing) => set({ spacing: spacing }),
-  enableRatioMap: true,
-  setEnableRatioMap: (enable) => set({ enableRatioMap: enable }),
-  customSizes: loadCustomSizes(),
-  addCustomSize: (size: SizeItem) =>
-    set((state) => {
-      const updatedSizes = [...state.customSizes, size];
-      localStorage.setItem("customSizes", JSON.stringify(updatedSizes));
-      return { customSizes: updatedSizes };
+
+      addBatchImages: async (files: File[]) => {
+        const state = usePreviewStore.getState();
+        const { ratioToSizeMap, updateRatioMap, findBestMatchSize, addItem } =
+          state;
+
+        const processImage = async (file: File) => {
+          return new Promise<void>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const img = new Image();
+              img.onload = () => {
+                const w = img.width;
+                const h = img.height;
+                const imageRatio = calcRatio(w, h);
+
+                if (!ratioToSizeMap[imageRatio]) {
+                  const size = findBestMatchSize(w / h);
+                  updateRatioMap(imageRatio, size);
+                }
+
+                addItem({
+                  imageRatio,
+                  id: generateId(),
+                  name: `${file.name}`,
+                  imageUrl: e.target?.result as string,
+                });
+                resolve();
+              };
+              img.onerror = reject;
+              img.src = e.target?.result as string;
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+        };
+
+        try {
+          await Promise.all(files.map(processImage));
+        } catch (error) {
+          console.error("处理批量图片失败:", error);
+        }
+      },
+      pageMargin: SETTINGS_CONFIG.pageMargin.default,
+      setPageMargin: (margin) => set({ pageMargin: margin }),
+      autoLayout: true,
+      setAutoLayout: (auto) => set({ autoLayout: auto }),
+      pixelRatio: SETTINGS_CONFIG.pixelRatio.default,
+      setPixelRatio: (ratio) => set({ pixelRatio: ratio }),
+      imageQuality: SETTINGS_CONFIG.imageQuality.default,
+      setImageQuality: (quality) => set({ imageQuality: quality }),
+      ratioToSizeMap: RATIO_TO_SIZE_MAP,
+      updateRatioMap: (ratio, size) =>
+        set((state) => ({
+          ratioToSizeMap: {
+            ...state.ratioToSizeMap,
+            [ratio]: size,
+          },
+        })),
+      pageMarginUnit: defaultPageMarginUnit,
+      setPageMarginUnit: (unit) => set({ pageMarginUnit: unit }),
+      doubleSided: false,
+      setDoubleSided: (value: boolean) => set({ doubleSided: value }),
+      printStyleId: defaultPrintStyleId,
+      setPrintStyleId: (style) => set({ printStyleId: style }),
+      spacing: SETTINGS_CONFIG.spacing.default,
+      setSpacing: (spacing) => set({ spacing: spacing }),
+      enableRatioMap: true,
+      setEnableRatioMap: (enable) => set({ enableRatioMap: enable }),
+      customSizes: [],
+      addCustomSize: (size: SizeItem) =>
+        set((state) => ({
+          customSizes: [...state.customSizes, size],
+        })),
+      removeCustomSize: (id: string) =>
+        set((state) => ({
+          customSizes: state.customSizes.filter((size) => size.id !== id),
+        })),
+      templates: [],
+
+      exportTemplate: () => {
+        const state = get();
+        const config: TemplateConfig = {
+          paperSize: state.paperSize,
+          paperLandscape: state.paperLandscape,
+          pageMargin: state.pageMargin,
+          pageMarginUnit: state.pageMarginUnit,
+          spacing: state.spacing,
+          doubleSided: state.doubleSided,
+          printStyleId: state.printStyleId,
+          pixelRatio: state.pixelRatio,
+          imageQuality: state.imageQuality,
+          enableRatioMap: state.enableRatioMap,
+        };
+
+        // 创建一个深拷贝，并移除 imageUrl
+        const items = state.previewItems.map((item) => {
+          const itemCopy = { ...item };
+          delete itemCopy.imageUrl;
+          return itemCopy as PhotoItem;
+        });
+
+        return {
+          id: generateId(),
+          createdAt: new Date().toISOString(),
+          configs: config,
+          items: items,
+          customSizes: state.customSizes,
+        };
+      },
+
+      addTemplate: (template: Template) =>
+        set((state) => ({
+          templates: [...state.templates, template],
+        })),
+
+      importTemplate: (template: Template) => {
+        set({
+          previewItems: template.items,
+          customSizes: template.customSizes,
+
+          pixelRatio: template.configs.pixelRatio,
+          imageQuality: template.configs.imageQuality,
+          paperSize: template.configs.paperSize,
+          paperLandscape: template.configs.paperLandscape,
+          pageMargin: template.configs.pageMargin,
+          pageMarginUnit: template.configs.pageMarginUnit,
+          spacing: template.configs.spacing,
+          doubleSided: template.configs.doubleSided,
+          printStyleId: template.configs.printStyleId,
+          enableRatioMap: template.configs.enableRatioMap,
+        });
+        return template;
+      },
+
+      saveTemplate: (name: string, image: string) => {
+        const state = get();
+        const template = { ...state.exportTemplate(), name, image } as Template;
+        set((state) => ({
+          templates: [...state.templates, template],
+        }));
+      },
+
+      loadTemplate: (id: string) => {
+        const state = get();
+        const template = state.templates.find((t) => t.id === id);
+        if (template) {
+          state.importTemplate(template);
+        }
+      },
+
+      removeTemplate: (id: string) =>
+        set((state) => ({
+          templates: state.templates.filter((t) => t.id !== id),
+        })),
     }),
-  removeCustomSize: (id: string) =>
-    set((state) => {
-      const updatedSizes = state.customSizes.filter((size) => size.id !== id);
-      localStorage.setItem("customSizes", JSON.stringify(updatedSizes));
-      return { customSizes: updatedSizes };
-    }),
-}));
+    {
+      name: "print-store",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => {
+        return {
+          customSizes: state.customSizes,
+          templates: state.templates,
+        };
+      },
+    }
+  )
+);
