@@ -103,6 +103,9 @@ export const SETTINGS_CONFIG = {
     step: 1,
     default: 5,
   },
+  themeColor: {
+    default: '#3b82f6', // 默认蓝色
+  }
 } as const;
 
 export const generateId = () => {
@@ -157,6 +160,8 @@ interface PreviewStore {
   loadTemplate: (id: string) => void;
   removeTemplate: (id: string) => void;
   addTemplate: (template: Template) => void;
+  themeColor: string;
+  setThemeColor: (color: string) => void;
 }
 
 export const usePreviewStore = create<PreviewStore>()(
@@ -367,6 +372,8 @@ export const usePreviewStore = create<PreviewStore>()(
         set((state) => ({
           templates: state.templates.filter((t) => t.id !== id),
         })),
+      themeColor: SETTINGS_CONFIG.themeColor.default,
+      setThemeColor: (color) => set({ themeColor: color }),
     }),
     {
       name: "print-store",

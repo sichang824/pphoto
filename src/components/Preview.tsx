@@ -1,6 +1,7 @@
 "use client";
 
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import { PageCalculator } from "@/lib/PageCalculator";
 import { PAPER_SIZES, usePreviewStore } from "@/store/previewStore";
 import { toPng } from "html-to-image";
@@ -149,6 +150,8 @@ const Preview: FC<PreviewProps> = ({ id }) => {
     autoLayout,
     pageMargin,
     ratioToSizeMap,
+    enableRatioMap,
+    customSizes,
   ]);
 
   return (
@@ -161,26 +164,29 @@ const Preview: FC<PreviewProps> = ({ id }) => {
             <TemplateManager />
           </div>
           <div className="flex gap-2">
-            <button
+            <Button 
               onClick={handleBatchSelect}
-              className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+              variant="secondary"
+              className="bg-green-500 text-white hover:bg-green-600"
             >
               批量选择
-            </button>
-            <button
+            </Button>
+            <Button 
               onClick={handlePrint}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+              variant="secondary"
+              className="bg-blue-500 text-white hover:bg-blue-600"
             >
               打印
-            </button>
-            <button
+            </Button>
+            <Button 
               onClick={() =>
                 handlePrintPdf((progress = 0) => setPdfProgress(progress))
               }
-              className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+              variant="secondary"
+              className="bg-red-500 text-white hover:bg-red-600"
             >
               导出PDF
-            </button>
+            </Button>
           </div>
         </div>
 

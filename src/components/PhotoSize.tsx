@@ -55,7 +55,7 @@ const PhotoSize: FC<PhotoSizeProps> = ({ item, onAdd }) => {
               size="icon"
               variant="ghost"
               onClick={() => removeCustomSize(item.id)}
-              className="text-gray-600 hover:text-gray-900 w-5 h-5 p-4"
+              className="w-5 h-5 p-4"
               title="删除"
             >
               <TrashIcon className="text-red-500 hover:text-red-700" />
@@ -65,10 +65,10 @@ const PhotoSize: FC<PhotoSizeProps> = ({ item, onAdd }) => {
             size="icon"
             variant="ghost"
             onClick={() => onAdd?.(item)}
-            className="text-gray-600 hover:text-gray-900 w-5 h-5 p-4"
+            className="w-5 h-5 p-4"
             title="添加到预览"
           >
-            <PlusIcon className="text-green-500 hover:text-green-700" />
+            <PlusIcon className="text-primary hover:text-primary/80" />
           </Button>
 
           {/* <button

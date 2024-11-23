@@ -16,8 +16,12 @@ import PhotoSizeList from "@/components/PhotoSizeList";
 import Preview from "@/components/Preview";
 import SettingsPanel from "@/components/SettingsPanel";
 import StatsPanel from "@/components/StatsPanel";
+import ThemePanel from "@/components/ThemePanel";
+import { useThemeColor } from '@/lib/useThemeColor';
 
 export default function Home() {
+  useThemeColor();
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -51,8 +55,9 @@ export default function Home() {
 
       {/* 右侧设置面板 */}
       <div className="w-64 border-l border-gray-200 overflow-y-auto">
-        <div className="p-4">
+        <div className="p-4 space-y-2">
           <StatsPanel />
+          <ThemePanel />
           <SettingsPanel />
         </div>
       </div>

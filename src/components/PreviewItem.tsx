@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { FC, useRef, useState } from "react";
 import { PhotoItem } from "./types";
+import { Button } from "./ui/button";
+import Image from "next/image";
 
 interface PreviewItemProps {
   item: PhotoItem;
@@ -151,13 +153,13 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
             transformOrigin: "0 0",
           }}
         >
-          <img
+          <Image
             className="relative"
             src={item.imageUrl}
             alt="预览照片"
+            fill
+            sizes="100vw"
             style={{
-              width: `${size.width}mm`,
-              height: `${size.height}mm`,
               objectFit: item.fitMode === "width" ? "contain" : "cover",
               transform: ` scaleX(${item.isVertical ? -1 : 1}) scale(${
                 item.scale
@@ -200,9 +202,10 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
       >
         {item.imageUrl && (
           <>
-            <button
+            <Button
+              size="icon"
               onClick={handleFitModeChange}
-              className="bg-white p-1 rounded-full shadow hover:bg-gray-100"
+              className="w-8 h-8 rounded-full shadow"
               title={
                 item.fitMode === "width" ? "切换为高度铺满" : "切换为宽度铺满"
               }
@@ -215,45 +218,49 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
                   transition: "transform 0.2s ease-in-out",
                 }}
               />
-            </button>
-            <button
+            </Button>
+            <Button
+              size="icon"
               onClick={(e) => {
                 e.stopPropagation();
                 fileInputRef.current?.click();
               }}
-              className="bg-white p-1 rounded-full shadow hover:bg-gray-100"
+              className="w-8 h-8 rounded-full shadow"
               title="更换图片"
             >
               <LucideImage className="w-3.5 h-3.5" />
-            </button>
-            <button
+            </Button>
+            <Button
+              size="icon"
               onClick={(e) => {
                 e.stopPropagation();
                 handleZoomIn();
               }}
-              className="bg-white p-1 rounded-full shadow hover:bg-gray-100 disabled:opacity-50"
+              className="w-8 h-8 rounded-full shadow"
               title={`放大 (${Math.round(item.scale * 100)}%)`}
               disabled={item.scale >= MAX_ZOOM}
             >
               <ZoomIn className="w-3.5 h-3.5" />
-            </button>
-            <button
+            </Button>
+            <Button
+              size="icon"
               onClick={(e) => {
                 e.stopPropagation();
                 handleZoomOut();
               }}
-              className="bg-white p-1 rounded-full shadow hover:bg-gray-100 disabled:opacity-50"
+              className="w-8 h-8 rounded-full shadow"
               title={`缩小 (${Math.round(item.scale * 100)}%)`}
               disabled={item.scale <= MIN_ZOOM}
             >
               <ZoomOut className="w-3.5 h-3.5" />
-            </button>
+            </Button>
           </>
         )}
 
-        <button
+        <Button
+          size="icon"
           onClick={handleOrientationChange}
-          className="bg-white p-1 rounded-full shadow hover:bg-gray-100"
+          className="w-8 h-8 rounded-full shadow"
           title={item.isVertical ? "切换为横向" : "切换为竖向"}
         >
           <RectangleVertical
@@ -263,18 +270,19 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
               transition: "transform 0.2s ease-in-out",
             }}
           />
-        </button>
+        </Button>
 
-        <button
+        <Button
+          size="icon"
           onClick={(e) => {
             e.stopPropagation();
             removeItem(item.id);
           }}
-          className="bg-white p-1 rounded-full shadow hover:bg-red-100"
+          className="w-8 h-8 rounded-full shadow bg-red-500 hover:bg-red-600"
           title="移除"
         >
-          <Trash className="w-3.5 h-3.5" />
-        </button>
+          <Trash />
+        </Button>
       </div>
     </div>
   );

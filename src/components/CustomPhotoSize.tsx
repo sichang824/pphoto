@@ -5,6 +5,7 @@ import { usePreviewStore } from "@/store/previewStore";
 import { PlusIcon } from "lucide-react";
 import { FC, useState } from "react";
 import { SizeItem } from "./types";
+import { Button } from "./ui/button";
 
 const CustomPhotoSize: FC = () => {
   const { addCustomSize, customSizes } = usePreviewStore();
@@ -51,14 +52,14 @@ const CustomPhotoSize: FC = () => {
             value={height}
             onChange={(e) => setHeight(e.target.value)}
           />
-          <button
+          <Button
             onClick={handleAdd}
             disabled={!width || !height}
-            className="text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-8 h-8 disabled:opacity-50 disabled:cursor-not-allowed"
             title="添加到预览"
           >
             <PlusIcon />
-          </button>
+          </Button>
         </div>
       </div>
     </Card>

@@ -6,6 +6,7 @@ import PostcardBorderless from "./postcard/borderless";
 import PostcardStyle1 from "./postcard/style1";
 import PostcardStyle2 from "./postcard/style2";
 import { PhotoItem } from "./types";
+import Image from "next/image";
 
 interface StyledPreviewItemProps {
   item: PhotoItem;
@@ -48,13 +49,13 @@ export const StyledPreviewItem: FC<StyledPreviewItemProps> = ({ item }) => {
         >
           <div className="absolute inset-0 bg-white/60 z-10"></div>
 
-          <img
+          <Image
             className="relative"
             src={item.imageUrl}
             alt="预览照片"
+            fill
+            sizes="100vw"
             style={{
-              width: `${size.width}mm`,
-              height: `${size.height}mm`,
               objectFit: item.fitMode === "width" ? "contain" : "cover",
               transform: ` scaleX(${item.isVertical ? -1 : 1}) scale(${
                 item.scale
