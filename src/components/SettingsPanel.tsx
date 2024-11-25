@@ -37,6 +37,8 @@ const SettingsPanel: FC = () => {
     setSpacing,
     enableRatioMap,
     setEnableRatioMap,
+    paperScale,
+    setPaperScale,
   } = usePreviewStore();
 
   return (
@@ -61,6 +63,22 @@ const SettingsPanel: FC = () => {
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium">纸张缩放</label>
+              <span className="text-sm text-gray-500">
+                {Math.round(paperScale * 100)}%
+              </span>
+            </div>
+            <Slider
+              value={[paperScale]}
+              onValueChange={([value]) => setPaperScale(value)}
+              max={SETTINGS_CONFIG.paperScale.max}
+              min={SETTINGS_CONFIG.paperScale.min}
+              step={SETTINGS_CONFIG.paperScale.step}
+              className="w-full"
+            />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">打印方向</label>
@@ -215,7 +233,6 @@ const SettingsPanel: FC = () => {
               </div>
             )}
           </div>
-
         </div>
       </Card>
     </>

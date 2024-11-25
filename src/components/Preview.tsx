@@ -1,7 +1,7 @@
 "use client";
 
-import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { PageCalculator } from "@/lib/PageCalculator";
 import { PAPER_SIZES, usePreviewStore } from "@/store/previewStore";
 import { toPng } from "html-to-image";
@@ -10,6 +10,7 @@ import { FC, useMemo, useState } from "react";
 import { BacksidePaperPreview } from "./BacksidePaperPreview";
 import PaperPreview from "./PaperPreview";
 import TemplateManager from "./templates/Manager";
+import { cn } from "@/lib/utils";
 
 interface PreviewProps {
   id: string;
@@ -31,7 +32,11 @@ const handlePrint = () => {
 };
 
 const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
+  const { setIsPrinting } = usePreviewStore.getState();
+
   try {
+    setIsPrinting(true);
+
     const { paperSize, paperLandscape, pixelRatio, imageQuality } =
       usePreviewStore.getState();
     const ps = PAPER_SIZES[paperSize];
@@ -85,10 +90,14 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
     }
 
     pdf.save("照片打印.pdf");
-    setTimeout(() => onProgress?.(0), 1000);
+    setTimeout(() => {
+      onProgress?.(0);
+      setIsPrinting(false);
+    }, 1000);
   } catch (error) {
     console.error("生成 PDF 失败:", error);
     onProgress?.(0);
+    setIsPrinting(false);
   }
 };
 
@@ -130,6 +139,7 @@ const Preview: FC<PreviewProps> = ({ id }) => {
     enableRatioMap,
     customSizes,
     doubleSided,
+    paperScale,
   } = usePreviewStore();
 
   const pages = useMemo(() => {
@@ -164,21 +174,21 @@ const Preview: FC<PreviewProps> = ({ id }) => {
             <TemplateManager />
           </div>
           <div className="flex gap-2">
-            <Button 
+            <Button
               onClick={handleBatchSelect}
               variant="secondary"
               className="bg-green-500 text-white hover:bg-green-600"
             >
               批量选择
             </Button>
-            <Button 
+            <Button
               onClick={handlePrint}
               variant="secondary"
               className="bg-blue-500 text-white hover:bg-blue-600"
             >
               打印
             </Button>
-            <Button 
+            <Button
               onClick={() =>
                 handlePrintPdf((progress = 0) => setPdfProgress(progress))
               }
@@ -201,7 +211,12 @@ const Preview: FC<PreviewProps> = ({ id }) => {
 
         <div
           id={id}
-          className="flex flex-wrap items-center justify-center gap-8"
+          className={cn(
+            "flex flex-wrap items-center justify-center gap-8 scale-[0.7] origin-top"
+          )}
+          style={{
+            transform: `scale(${paperScale})`,
+          }}
         >
           {pages.map((page) => (
             <div key={page.id}>

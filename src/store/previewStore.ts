@@ -17,11 +17,11 @@ import { persist, createJSONStorage } from "zustand/middleware";
 export const PRESET_SIZES: SizeItem[] = [
   { name: "1:1", width: 102, height: 102, id: "1", imageRatio: "1/1" },
   { name: "一寸", width: 25, height: 35, id: "2", imageRatio: "5/7" },
-  { name: "二寸", width: 33, height: 48, id: "3", imageRatio: "33/48" },
+  { name: "二寸", width: 33, height: 48, id: "3", imageRatio: "11/16" },
   { name: "三寸", width: 62, height: 85, id: "4", imageRatio: "62/85" },
   { name: "五寸", width: 89, height: 127, id: "5", imageRatio: "89/127" },
-  { name: "六寸", width: 102, height: 152, id: "6", imageRatio: "102/152" },
-  { name: "大六寸", width: 114, height: 152, id: "7", imageRatio: "114/152" },
+  { name: "六寸", width: 102, height: 152, id: "6", imageRatio: "51/76" },
+  { name: "大六寸", width: 114, height: 152, id: "7", imageRatio: "3/4" },
   { name: "七寸", width: 127, height: 178, id: "8", imageRatio: "127/178" },
   { name: "八寸", width: 152, height: 203, id: "9", imageRatio: "152/203" },
   { name: "A4", width: 210, height: 297, id: "10", imageRatio: "70/99" },
@@ -32,24 +32,17 @@ export const PAPER_SIZES: Record<
   string,
   { width: number; height: number; imageRatio: string }
 > = {
-  A3: { width: 297, height: 420, imageRatio: "70/99" },
+  A3: { width: 297, height: 420, imageRatio: "99/140" },
   A4: { width: 210, height: 297, imageRatio: "70/99" },
-  A5: { width: 148, height: 210, imageRatio: "70/99" },
-  六寸: { width: 102, height: 152, imageRatio: "102/152" },
+  A5: { width: 148, height: 210, imageRatio: "74/105" },
+  六寸: { width: 102, height: 152, imageRatio: "51/76" },
 };
 
 const RATIO_TO_SIZE_MAP: Record<string, SizeItem> = {
-  "1/1": PRESET_SIZES[0],
-  "5/7": PRESET_SIZES[1],
-  "33/48": PRESET_SIZES[2],
-  "62/85": PRESET_SIZES[3],
-  "89/127": PRESET_SIZES[4],
-  "102/152": PRESET_SIZES[5],
-  "114/152": PRESET_SIZES[6],
-  "127/178": PRESET_SIZES[7],
-  "152/203": PRESET_SIZES[8],
-  "70/99": PRESET_SIZES[9],
-  "99/140": PRESET_SIZES[10],
+  ...PRESET_SIZES.reduce<Record<string, SizeItem>>((acc, size) => {
+    acc[size.imageRatio] = size;
+    return acc;
+  }, {}),
 };
 
 export const BACKSIDE_PRINT_STYLES: PrintStyle[] = [
@@ -104,8 +97,14 @@ export const SETTINGS_CONFIG = {
     default: 5,
   },
   themeColor: {
-    default: '#3b82f6', // 默认蓝色
-  }
+    default: "#3b82f6", // 默认蓝色
+  },
+  paperScale: {
+    min: 0.5,
+    max: 1,
+    step: 0.1,
+    default: 1,
+  },
 } as const;
 
 export const generateId = () => {
@@ -162,6 +161,10 @@ interface PreviewStore {
   addTemplate: (template: Template) => void;
   themeColor: string;
   setThemeColor: (color: string) => void;
+  isPrinting: boolean;
+  setIsPrinting: (value: boolean) => void;
+  paperScale: number;
+  setPaperScale: (scale: number) => void;
 }
 
 export const usePreviewStore = create<PreviewStore>()(
@@ -232,9 +235,9 @@ export const usePreviewStore = create<PreviewStore>()(
                 const w = img.width;
                 const h = img.height;
                 const imageRatio = calcRatio(w, h);
-
+                
                 if (!ratioToSizeMap[imageRatio]) {
-                  const size = findBestMatchSize(w / h);
+                const size = findBestMatchSize(w / h);
                   updateRatioMap(imageRatio, size);
                 }
 
@@ -374,14 +377,22 @@ export const usePreviewStore = create<PreviewStore>()(
         })),
       themeColor: SETTINGS_CONFIG.themeColor.default,
       setThemeColor: (color) => set({ themeColor: color }),
+      isPrinting: false,
+      setIsPrinting: (value) => set({ isPrinting: value }),
+      paperScale: SETTINGS_CONFIG.paperScale.default,
+      setPaperScale: (scale) => set({ paperScale: scale }),
     }),
     {
       name: "print-store",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => {
         return {
+          pixelRatio: state.pixelRatio,
+          imageQuality: state.imageQuality,
+          themeColor: state.themeColor,
           customSizes: state.customSizes,
           templates: state.templates,
+          paperScale: state.paperScale,
         };
       },
     }

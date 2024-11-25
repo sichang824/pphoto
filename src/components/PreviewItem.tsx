@@ -1,4 +1,5 @@
 import { getItemSize } from "@/lib/PageCalculator";
+import { isMobileDevice } from "@/lib/utils";
 import { usePreviewStore } from "@/store/previewStore";
 import {
   Image as LucideImage,
@@ -8,10 +9,10 @@ import {
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
+import Image from "next/image";
 import { FC, useRef, useState } from "react";
 import { PhotoItem } from "./types";
 import { Button } from "./ui/button";
-import Image from "next/image";
 
 interface PreviewItemProps {
   item: PhotoItem;
@@ -27,6 +28,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     ratioToSizeMap,
     enableRatioMap,
     customSizes,
+    isPrinting,
   } = usePreviewStore();
   const [position, setPosition] = useState({ x: item.x, y: item.y });
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -60,41 +62,59 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     };
   };
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleMove = (e: React.MouseEvent | React.TouchEvent) => {
     if (!item.imageUrl) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    // 获取初始坐标，兼容鼠标和触摸事件
+    const clientX = "clientX" in e ? e.clientX : e.touches[0].clientX;
+    const clientY = "clientY" in e ? e.clientY : e.touches[0].clientY;
 
     const startPosition = calculatePosition(
-      e.clientX,
-      e.clientY,
+      clientX,
+      clientY,
       position.x,
       position.y
     );
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMove = (e: MouseEvent | TouchEvent) => {
+      const moveClientX = "clientX" in e ? e.clientX : e.touches[0].clientX;
+      const moveClientY = "clientY" in e ? e.clientY : e.touches[0].clientY;
+
       const newPosition = calculatePosition(
-        e.clientX,
-        e.clientY,
+        moveClientX,
+        moveClientY,
         startPosition.x,
         startPosition.y
       );
       setPosition(newPosition);
     };
 
-    const handleMouseUp = (e: MouseEvent) => {
+    const handleEnd = (e: MouseEvent | TouchEvent) => {
+      const endClientX =
+        "clientX" in e ? e.clientX : e.changedTouches[0].clientX;
+      const endClientY =
+        "clientY" in e ? e.clientY : e.changedTouches[0].clientY;
+
       const finalPosition = calculatePosition(
-        e.clientX,
-        e.clientY,
+        endClientX,
+        endClientY,
         startPosition.x,
         startPosition.y
       );
       updateItem({ ...item, x: finalPosition.x, y: finalPosition.y });
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+
+      window.removeEventListener("mousemove", handleMove as EventListener);
+      window.removeEventListener("mouseup", handleEnd as EventListener);
+      window.removeEventListener("touchmove", handleMove as EventListener);
+      window.removeEventListener("touchend", handleEnd as EventListener);
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("mousemove", handleMove as EventListener);
+    window.addEventListener("mouseup", handleEnd as EventListener);
+    window.addEventListener("touchmove", handleMove as EventListener);
+    window.addEventListener("touchend", handleEnd as EventListener);
   };
 
   // 添加缩放步长常量
@@ -126,7 +146,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
 
   return (
     <div
-      className="group relative "
+      className="group relative"
       style={{
         height: item.isVertical ? `${size.width}mm` : `${size.height}mm`,
         width: item.isVertical ? `${size.height}mm` : `${size.width}mm`,
@@ -166,7 +186,8 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
               }) translate(${position.x}px, ${position.y}px)`,
               transformOrigin: "center",
             }}
-            onMouseDown={handleMouseDown}
+            onMouseDown={handleMove}
+            onTouchStart={handleMove}
           />
         </div>
       ) : (
@@ -177,113 +198,122 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
             fileInputRef.current?.click();
           }}
         >
-          <LucideImage className="w-6 h-6 text-gray-400" />
+          <div className="flex flex-col items-center justify-center text-gray-400">
+            <LucideImage className="w-6 h-6" />
+            <div className="text-[10px]">点击添加图片</div>
+          </div>
         </div>
       )}
 
       {/* 控制按钮组 */}
-      <div
-        className="absolute z-30 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
-        style={
-          item.isVertical
-            ? {
-                flexDirection: "row",
-                top: `${pageMargin + 1}${pageMarginUnit}`,
-                left: "50%",
-                transform: "translateX(-50%)",
-              }
-            : {
-                flexDirection: "column",
-                top: "50%",
-                right: `${pageMargin + 1}${pageMarginUnit}`,
-                transform: "translateY(-50%)",
-              }
-        }
-      >
-        {item.imageUrl && (
-          <>
-            <Button
-              size="icon"
-              onClick={handleFitModeChange}
-              className="w-8 h-8 rounded-full shadow"
-              title={
-                item.fitMode === "width" ? "切换为高度铺满" : "切换为宽度铺满"
-              }
-            >
-              <MoveVertical
-                className="w-3.5 h-3.5"
-                style={{
-                  transform:
-                    item.fitMode === "width" ? "rotate(-90deg)" : "none",
-                  transition: "transform 0.2s ease-in-out",
+      {!isPrinting && (
+        <div
+          className={`absolute z-30 flex gap-1 ${
+            isMobileDevice()
+              ? "opacity-100"
+              : "opacity-0 group-hover:opacity-100"
+          } transition-opacity`}
+          style={
+            item.isVertical
+              ? {
+                  flexDirection: "row",
+                  top: `${pageMargin + 1}${pageMarginUnit}`,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                }
+              : {
+                  flexDirection: "column",
+                  top: "50%",
+                  left: `${pageMargin + 1}${pageMarginUnit}`,
+                  transform: "translateY(-50%)",
+                }
+          }
+        >
+          {item.imageUrl && (
+            <>
+              <Button
+                size="icon"
+                onClick={handleFitModeChange}
+                className="w-8 h-8 rounded-full shadow"
+                title={
+                  item.fitMode === "width" ? "切换为高度铺满" : "切换为宽度铺满"
+                }
+              >
+                <MoveVertical
+                  className="w-3.5 h-3.5"
+                  style={{
+                    transform:
+                      item.fitMode === "width" ? "rotate(-90deg)" : "none",
+                    transition: "transform 0.2s ease-in-out",
+                  }}
+                />
+              </Button>
+              <Button
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  fileInputRef.current?.click();
                 }}
-              />
-            </Button>
-            <Button
-              size="icon"
-              onClick={(e) => {
-                e.stopPropagation();
-                fileInputRef.current?.click();
-              }}
-              className="w-8 h-8 rounded-full shadow"
-              title="更换图片"
-            >
-              <LucideImage className="w-3.5 h-3.5" />
-            </Button>
-            <Button
-              size="icon"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleZoomIn();
-              }}
-              className="w-8 h-8 rounded-full shadow"
-              title={`放大 (${Math.round(item.scale * 100)}%)`}
-              disabled={item.scale >= MAX_ZOOM}
-            >
-              <ZoomIn className="w-3.5 h-3.5" />
-            </Button>
-            <Button
-              size="icon"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleZoomOut();
-              }}
-              className="w-8 h-8 rounded-full shadow"
-              title={`缩小 (${Math.round(item.scale * 100)}%)`}
-              disabled={item.scale <= MIN_ZOOM}
-            >
-              <ZoomOut className="w-3.5 h-3.5" />
-            </Button>
-          </>
-        )}
+                className="w-8 h-8 rounded-full shadow"
+                title="更换图片"
+              >
+                <LucideImage className="w-3.5 h-3.5" />
+              </Button>
+              <Button
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleZoomIn();
+                }}
+                className="w-8 h-8 rounded-full shadow"
+                title={`放大 (${Math.round(item.scale * 100)}%)`}
+                disabled={item.scale >= MAX_ZOOM}
+              >
+                <ZoomIn className="w-3.5 h-3.5" />
+              </Button>
+              <Button
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleZoomOut();
+                }}
+                className="w-8 h-8 rounded-full shadow"
+                title={`缩小 (${Math.round(item.scale * 100)}%)`}
+                disabled={item.scale <= MIN_ZOOM}
+              >
+                <ZoomOut className="w-3.5 h-3.5" />
+              </Button>
+            </>
+          )}
 
-        <Button
-          size="icon"
-          onClick={handleOrientationChange}
-          className="w-8 h-8 rounded-full shadow"
-          title={item.isVertical ? "切换为横向" : "切换为竖向"}
-        >
-          <RectangleVertical
-            className="w-3.5 h-3.5"
-            style={{
-              transform: item.isVertical ? "rotate(90deg)" : "none",
-              transition: "transform 0.2s ease-in-out",
+          <Button
+            size="icon"
+            onClick={handleOrientationChange}
+            className="w-8 h-8 rounded-full shadow"
+            title={item.isVertical ? "切换为横向" : "切换为竖向"}
+          >
+            <RectangleVertical
+              className="w-3.5 h-3.5"
+              style={{
+                transform: item.isVertical ? "rotate(90deg)" : "none",
+                transition: "transform 0.2s ease-in-out",
+              }}
+            />
+          </Button>
+
+          <Button
+            size="icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              removeItem(item.id);
             }}
-          />
-        </Button>
-
-        <Button
-          size="icon"
-          onClick={(e) => {
-            e.stopPropagation();
-            removeItem(item.id);
-          }}
-          className="w-8 h-8 rounded-full shadow bg-red-500 hover:bg-red-600"
-          title="移除"
-        >
-          <Trash />
-        </Button>
-      </div>
+            className="w-8 h-8 rounded-full shadow bg-red-500 hover:bg-red-600"
+            title="移除"
+          >
+            <Trash />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
