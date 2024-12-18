@@ -165,6 +165,10 @@ interface PreviewStore {
   setIsPrinting: (value: boolean) => void;
   paperScale: number;
   setPaperScale: (scale: number) => void;
+  backsideFlip: boolean;
+  setBacksideFlip: (value: boolean) => void;
+  showGuides: boolean;
+  setShowGuides: (value: boolean) => void;
 }
 
 export const usePreviewStore = create<PreviewStore>()(
@@ -381,6 +385,10 @@ export const usePreviewStore = create<PreviewStore>()(
       setIsPrinting: (value) => set({ isPrinting: value }),
       paperScale: SETTINGS_CONFIG.paperScale.default,
       setPaperScale: (scale) => set({ paperScale: scale }),
+      backsideFlip: false,
+      setBacksideFlip: (value) => set({ backsideFlip: value }),
+      showGuides: true,
+      setShowGuides: (value) => set({ showGuides: value }),
     }),
     {
       name: "print-store",
@@ -393,6 +401,8 @@ export const usePreviewStore = create<PreviewStore>()(
           customSizes: state.customSizes,
           templates: state.templates,
           paperScale: state.paperScale,
+          backsideFlip: state.backsideFlip,
+          showGuides: state.showGuides,
         };
       },
     }

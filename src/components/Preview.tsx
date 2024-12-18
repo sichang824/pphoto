@@ -37,8 +37,13 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
   try {
     setIsPrinting(true);
 
-    const { paperSize, paperLandscape, pixelRatio, imageQuality } =
-      usePreviewStore.getState();
+    const { 
+      paperSize, 
+      paperLandscape, 
+      pixelRatio, 
+      imageQuality,
+      backsideFlip,
+    } = usePreviewStore.getState();
     const ps = PAPER_SIZES[paperSize];
 
     const photoWidth = paperLandscape ? ps.height : ps.width;
@@ -66,7 +71,7 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
       try {
         const dataUrl = await toPng(element, {
           style: {
-            transform: isBackside ? `rotate(180deg) scaleX(-1)` : "",
+            transform: isBackside && backsideFlip ? `rotate(180deg) scaleX(-1)` : "",
           },
           pixelRatio,
           quality: imageQuality,

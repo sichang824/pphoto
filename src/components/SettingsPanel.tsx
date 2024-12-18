@@ -39,6 +39,10 @@ const SettingsPanel: FC = () => {
     setEnableRatioMap,
     paperScale,
     setPaperScale,
+    backsideFlip,
+    setBacksideFlip,
+    showGuides,
+    setShowGuides,
   } = usePreviewStore();
 
   return (
@@ -131,6 +135,18 @@ const SettingsPanel: FC = () => {
           </div>
           <div>
             <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium">显示参考线</label>
+              <Switch
+                checked={showGuides}
+                onCheckedChange={(checked) => setShowGuides(checked)}
+              />
+            </div>
+            <p className="text-sm text-gray-500">
+              显示或隐藏页边距的参考虚线
+            </p>
+          </div>
+          <div>
+            <div className="flex items-center justify-between mb-1">
               <label className="text-sm font-medium">照片间隔</label>
               <span className="text-sm text-gray-500">
                 {spacing}mm
@@ -162,6 +178,18 @@ const SettingsPanel: FC = () => {
                 onCheckedChange={(checked) => setDoubleSided(checked)}
               />
             </div>
+          </div>
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium">背面翻转</label>
+              <Switch
+                checked={backsideFlip}
+                onCheckedChange={(checked) => setBacksideFlip(checked)}
+              />
+            </div>
+            <p className="text-sm text-gray-500">
+              双面打印时背面是否需要翻转
+            </p>
           </div>
           <div>
             <div className="flex items-center justify-between mb-1">
@@ -233,6 +261,7 @@ const SettingsPanel: FC = () => {
               </div>
             )}
           </div>
+   
         </div>
       </Card>
     </>

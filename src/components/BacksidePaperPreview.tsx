@@ -22,6 +22,8 @@ const StyledBacksidePaperPreview = ({
   justifyClass: string;
   paperSize: string;
 }) => {
+  const { showGuides } = usePreviewStore();
+  
   return (
     <div
       style={style}
@@ -29,7 +31,7 @@ const StyledBacksidePaperPreview = ({
       className={`relative bg-white border border-gray-100`}
     >
       <div
-        className={`absolute inset-0 border border-dashed border-gray-100 flex flex-wrap ${contentClass} ${itemsClass} ${justifyClass} overflow-hidden`}
+        className={`absolute inset-0 ${showGuides ? 'border border-dashed border-gray-100' : ''} flex flex-wrap ${contentClass} ${itemsClass} ${justifyClass} overflow-hidden`}
         style={paperMarginStyle}
       >
         {items.length > 0 ? (
