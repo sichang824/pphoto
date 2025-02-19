@@ -1,14 +1,4 @@
 {
-  "name": "pphoto",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "check": "next lint --fix"
-  },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
     "@dnd-kit/modifiers": "^7.0.0",
@@ -40,13 +30,23 @@
     "zustand": "^5.0.1"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "15.0.2",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "15.0.2"
-  }
+    "typescript": "^5"
+  },
+  "name": "pphoto",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "check": "next lint --fix",
+    "dev": "next dev --turbopack",
+    "lint": "next lint",
+    "start": "next start"
+  },
+  "version": "0.1.1"
 }
