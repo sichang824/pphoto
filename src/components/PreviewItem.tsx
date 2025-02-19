@@ -208,7 +208,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
       {/* 控制按钮组 */}
       {!isPrinting && (
         <div
-          className={`absolute z-30 flex gap-1 ${
+          className={`absolute z-30 flex flex-wrap gap-1 ${
             isMobileDevice()
               ? "opacity-100"
               : "opacity-0 group-hover:opacity-100"
@@ -216,16 +216,16 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
           style={
             item.isVertical
               ? {
-                  flexDirection: "row",
-                  top: `${pageMargin + 1}${pageMarginUnit}`,
-                  left: "50%",
-                  transform: "translateX(-50%)",
+                  flexDirection: size.width < 100 ? "column" : "row",
+                  top: `${pageMargin + 0.2}${pageMarginUnit}`,
+                  left: size.width < 100 ? `${pageMargin + 0.2}${pageMarginUnit}` : "50%",
+                  transform: size.width < 100 ? "none" : "translateX(-50%)",
                 }
               : {
-                  flexDirection: "column",
-                  top: "50%",
-                  left: `${pageMargin + 1}${pageMarginUnit}`,
-                  transform: "translateY(-50%)",
+                  flexDirection: size.height < 100 ? "row" : "column",
+                  top: size.height < 100 ? `${pageMargin + 0.2}${pageMarginUnit}` : "50%",
+                  left: `${pageMargin + 0.2}${pageMarginUnit}`,
+                  transform: size.height < 100 ? "none" : "translateY(-50%)",
                 }
           }
         >

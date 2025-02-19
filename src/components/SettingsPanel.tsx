@@ -233,6 +233,30 @@ const SettingsPanel: FC = () => {
             </div>
             {enableRatioMap && (
               <div className="space-y-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <Select
+                    onValueChange={(value) => {
+                      const size = PRESET_SIZES.find((s) => s.id === value);
+                      if (size) {
+                        Object.keys(ratioToSizeMap).forEach((ratio) => {
+                          updateRatioMap(ratio, size);
+                        });
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="选择统一尺寸" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PRESET_SIZES.map((size) => (
+                        <SelectItem key={size.id} value={size.id}>
+                          {size.name} ({size.width}×{size.height}mm)
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 {Object.entries(ratioToSizeMap).map(([ratio, size]) => (
                   <div key={ratio} className="flex items-center gap-2">
                     <span className="min-w-[60px]">{ratio}</span>
