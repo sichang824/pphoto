@@ -9,7 +9,10 @@ DOCKERFILE_TARGET = $(DOCKER_BUILD_DOCKERFILE_TARGET)
 IMAGE = $(DOCKER_BUILD_DOCKER_IMAGE):$(DOCKER_BUILD_DOCKER_IMAGE_TAG)
 
 # Phony targets
-.PHONY: all build docker-build docker-push clean
+.PHONY: all build docker-build docker-push clean dev
+
+dev:
+	bun run dev
 
 # Default target
 all: 

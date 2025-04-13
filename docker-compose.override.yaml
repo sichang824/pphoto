@@ -1,0 +1,16 @@
+services:
+  app:
+    build:
+      context: .
+      target: builder
+    command: bun run dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NODE_ENV=development
+      - NEXT_TELEMETRY_DISABLED=1
+    ports:
+      - 3000:3000
+    restart: unless-stopped 

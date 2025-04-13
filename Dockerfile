@@ -1,4 +1,4 @@
-FROM node:22-alpine AS base
+FROM oven/bun:alpine AS base
 
 
 # Install dependencies only when needed
@@ -8,8 +8,8 @@ FROM base AS deps
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* ./
-RUN yarn
+COPY package.json bun.lockb* package-lock.json* ./
+RUN bun install
 
 
 # Rebuild the source code only when needed
@@ -23,7 +23,7 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN yarn run build; 
+RUN bun run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -57,4 +57,4 @@ ENV PORT=1025
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
 ENV HOSTNAME="0.0.0.0"
-CMD ["node", "server.js"]
+CMD ["bun", "server.js"]
