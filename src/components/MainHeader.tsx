@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { VT323 } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
 const pixelFont = VT323({
@@ -15,6 +16,7 @@ const pixelFont = VT323({
 
 export default function MainHeader() {
   const { t } = useTranslation("common");
+  const pathname = usePathname();
 
   const navItems = [
     { label: t("nav.home"), href: "/" },
@@ -40,7 +42,11 @@ export default function MainHeader() {
           <Link
             key={item.label}
             href={item.href}
-            className="hover:text-indigo-600 transition duration-200"
+            className={`transition duration-200 ${
+              pathname === item.href
+                ? "text-indigo-600 font-bold border-b-2 border-indigo-600"
+                : "hover:text-indigo-600"
+            }`}
           >
             {item.label}
           </Link>
