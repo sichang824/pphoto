@@ -18,6 +18,8 @@
   },
   "features": {
     "title": "Feature Highlights",
+    "pageTitle": "Powerful Features",
+    "pageDescription": "Our photo printing layout tool offers a rich set of features to meet all your printing needs. From simple ID photos to complex album layouts, we've got you covered.",
     "multipleFormats": {
       "title": "Multiple Photo Formats",
       "description": "Supports layouts for 1-inch, 2-inch, 5-inch, 6-inch, A4 and more"
@@ -33,7 +35,142 @@
     "easyToUse": {
       "title": "Minimal Learning Curve",
       "description": "Drag, preview, and adjust seamlessly with zero learning cost"
+    },
+    "templates": {
+      "title": "Template Library",
+      "description": "Various common layout templates that can be applied with one click for quick formatting"
+    },
+    "customization": {
+      "title": "Custom Settings",
+      "description": "Adjust photo margins, spacing, rotation and other parameters for complete control over layout"
+    },
+    "optimization": {
+      "title": "Smart Optimization",
+      "description": "Automatically calculates the best arrangement to reduce paper waste"
+    },
+    "batchPrinting": {
+      "title": "Batch Printing",
+      "description": "Support multiple groups of photos for simultaneous layout and printing, improving work efficiency"
+    },
+    "preview": {
+      "title": "Real-time Preview",
+      "description": "WYSIWYG editing mode, check the final print effect at any time"
+    },
+    "crop": {
+      "title": "Smart Cropping",
+      "description": "Automatically crop photos according to selected dimensions to ensure correct proportions"
+    },
+    "finetuning": {
+      "title": "Fine Tuning",
+      "description": "Fine-tune photo position and size for perfect layout"
+    },
+    "save": {
+      "title": "Save Projects",
+      "description": "Save editing projects to continue perfecting or reuse at any time"
+    },
+    "readyToTry": "Ready to experience these powerful features?",
+    "startNow": "Start Now"
+  },
+  "about": {
+    "pageTitle": "About This Project",
+    "pageDescription": "A free photo printing layout tool designed for photography enthusiasts and ordinary users, helping you easily solve photo printing problems.",
+    "developerStory": {
+      "title": "Developer's Words",
+      "paragraph1": "Photo Printing Layout Tool (PPhoto) is a personal project I developed, stemming from my own frustrations when frequently needing to print photos. I found the market lacked a simple, free, and efficient tool to help ordinary people solve photo layout and printing problems.",
+      "paragraph2": "This project is built using Next.js and modern frontend technologies, runs entirely in the browser, and requires no software installation. All photo processing is done locally without uploading to any servers, ensuring your privacy.",
+      "paragraph3": "As an individual developer, I am committed to continuously improving this tool. If you have any suggestions or feedback, please feel free to contact me!"
+    },
+    "developerQuote": "As a photography enthusiast and developer, I created this tool to solve practical problems I encountered. I hope it helps you too!",
+    "mission": {
+      "title": "Project Philosophy",
+      "description": "I believe good tools should be simple, practical, and free. The core philosophy of PPhoto is to help users save time and paper, making photo printing simple and enjoyable. Whether printing ID photos, memorial photos, or artwork, it can be easily accomplished."
+    },
+    "keyFeatures": {
+      "title": "Core Features",
+      "feature1": {
+        "title": "Simple to Use",
+        "description": "Intuitive interface design, no professional knowledge required, layout completed in minutes."
+      },
+      "feature2": {
+        "title": "Flexible Layout",
+        "description": "Support for various paper and photo sizes, automatically calculating the best arrangement."
+      },
+      "feature3": {
+        "title": "Completely Free",
+        "description": "All features completely free to use, no watermarks, no hidden charges."
+      }
+    },
+    "contact": {
+      "title": "Contact & Follow",
+      "email": "Email",
+      "github": "GitHub",
+      "xiaohongshu": "Xiaohongshu",
+      "scanToFollow": "Scan to follow"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": "Is this tool free to use?",
+      "a1": "Yes, completely free. This is my personal project, aimed at helping people with photo printing needs.",
+      "q2": "Do I need to install any software?",
+      "a2": "No, use it directly in your browser without downloading or installing any software. Supports computers, tablets, and phones.",
+      "q3": "Will my photos be uploaded to servers?",
+      "a3": "No. All photo processing is done locally in your browser and will not be uploaded to any servers, ensuring your privacy.",
+      "q4": "How can I support this project?",
+      "a4": "You can support this project by sharing it with more people who need it, providing usage feedback, or following me on Xiaohongshu. If you're a developer, you're also welcome to contribute code on GitHub."
     }
+  },
+  "tutorials": {
+    "pageTitle": "Tutorials",
+    "pageDescription": "Master all photo printing layout techniques from scratch through our step-by-step tutorials. Whether you're a beginner or a professional user, you'll find content suited for you.",
+    "searchPlaceholder": "Search tutorials...",
+    "level": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "filter": {
+      "all": "All",
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "gettingStarted": {
+      "title": "Getting Started",
+      "description": "Learn how to use the basic functions of the photo printing layout tool from scratch"
+    },
+    "photoPreparation": {
+      "title": "Photo Preparation",
+      "description": "Learn how to prepare photos in the best format and size for printing"
+    },
+    "basicLayout": {
+      "title": "Basic Layout",
+      "description": "Learn how to arrange and organize photos for optimal printing results"
+    },
+    "idPhotos": {
+      "title": "ID Photo Creation",
+      "description": "Master how to quickly generate and print ID photos of various specifications"
+    },
+    "groupPhotos": {
+      "title": "Batch Photo Processing",
+      "description": "How to process and print multiple photos of different sizes at once"
+    },
+    "templates": {
+      "title": "Using Templates",
+      "description": "Use preset templates to quickly complete common photo layout tasks"
+    },
+    "advancedLayout": {
+      "title": "Advanced Layout Techniques",
+      "description": "Explore more complex layout strategies to maximize paper utilization"
+    },
+    "customSettings": {
+      "title": "Custom Settings",
+      "description": "Dive deep into all customization options for professional-level printing effects"
+    },
+    "viewTutorial": "View Tutorial",
+    "noResults": "No matching tutorials found",
+    "requestTitle": "Didn't find the tutorial you need?",
+    "requestDescription": "We're constantly adding new tutorial content. If you have specific needs, please let us know, and we'll consider adding them to our tutorial library.",
+    "requestButton": "Request New Tutorial"
   },
   "footer": {
     "copyright": "© 2025 PPhoto | Independent Developer Open Source Project | GitHub | Contact"
@@ -42,4 +179,4 @@
     "en": "English",
     "zh": "中文"
   }
-} 
+}

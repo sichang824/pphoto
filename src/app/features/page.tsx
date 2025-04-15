@@ -49,74 +49,50 @@ export default function FeaturesPage() {
     },
     {
       icon: <FileIcon className="h-8 w-8" />,
-      title: t("features.templates.title", "模板库"),
-      description: t(
-        "features.templates.description",
-        "提供多种常用排版模板，一键应用，快速完成排版"
-      ),
+      title: t("features.templates.title"),
+      description: t("features.templates.description"),
       color: "bg-blue-100 text-blue-700",
     },
     {
       icon: <PencilIcon className="h-8 w-8" />,
-      title: t("features.customization.title", "自定义设置"),
-      description: t(
-        "features.customization.description",
-        "调整照片边距、间距、旋转等参数，完全掌控排版效果"
-      ),
+      title: t("features.customization.title"),
+      description: t("features.customization.description"),
       color: "bg-purple-100 text-purple-700",
     },
     {
       icon: <SlidersIcon className="h-8 w-8" />,
-      title: t("features.optimization.title", "智能优化"),
-      description: t(
-        "features.optimization.description",
-        "自动计算最佳排列方式，减少纸张浪费"
-      ),
+      title: t("features.optimization.title"),
+      description: t("features.optimization.description"),
       color: "bg-green-100 text-green-700",
     },
     {
       icon: <PrinterIcon className="h-8 w-8" />,
-      title: t("features.batchPrinting.title", "批量打印"),
-      description: t(
-        "features.batchPrinting.description",
-        "支持多组照片同时编排打印，提高工作效率"
-      ),
+      title: t("features.batchPrinting.title"),
+      description: t("features.batchPrinting.description"),
       color: "bg-red-100 text-red-700",
     },
     {
       icon: <SearchIcon className="h-8 w-8" />,
-      title: t("features.preview.title", "实时预览"),
-      description: t(
-        "features.preview.description",
-        "所见即所得的编辑模式，随时查看最终打印效果"
-      ),
+      title: t("features.preview.title"),
+      description: t("features.preview.description"),
       color: "bg-yellow-100 text-yellow-700",
     },
     {
       icon: <ScissorsIcon className="h-8 w-8" />,
-      title: t("features.crop.title", "智能裁剪"),
-      description: t(
-        "features.crop.description",
-        "根据选定尺寸自动裁剪照片，确保比例正确"
-      ),
+      title: t("features.crop.title"),
+      description: t("features.crop.description"),
       color: "bg-cyan-100 text-cyan-700",
     },
     {
       icon: <ZoomInIcon className="h-8 w-8" />,
-      title: t("features.finetuning.title", "精细调整"),
-      description: t(
-        "features.finetuning.description",
-        "微调照片位置和大小，实现完美排版"
-      ),
+      title: t("features.finetuning.title"),
+      description: t("features.finetuning.description"),
       color: "bg-rose-100 text-rose-700",
     },
     {
       icon: <SaveIcon className="h-8 w-8" />,
-      title: t("features.save.title", "保存项目"),
-      description: t(
-        "features.save.description",
-        "保存编辑项目，随时继续完善或重复使用"
-      ),
+      title: t("features.save.title"),
+      description: t("features.save.description"),
       color: "bg-teal-100 text-teal-700",
     },
   ];
@@ -125,13 +101,10 @@ export default function FeaturesPage() {
     <div className="max-w-7xl mx-auto px-4 py-12">
       <div className="text-center mb-16">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          {t("features.pageTitle", "强大的功能")}
+          {t("features.pageTitle")}
         </h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          {t(
-            "features.pageDescription",
-            "我们的照片打印排版工具提供了丰富的功能，满足您各种打印需求。从简单的ID照片到复杂的相册排版，一应俱全。"
-          )}
+          {t("features.pageDescription")}
         </p>
       </div>
 
@@ -160,14 +133,14 @@ export default function FeaturesPage() {
       {/* CTA Section */}
       <div className="mt-20 text-center">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          {t("features.readyToTry", "准备好体验这些强大功能了吗？")}
+          {t("features.readyToTry")}
         </h2>
         <Link href="/editor">
           <Button
             size="lg"
             className="bg-indigo-600 text-white hover:bg-indigo-500 px-8"
           >
-            {t("features.startNow", "立即开始")}
+            {t("features.startNow")}
           </Button>
         </Link>
       </div>

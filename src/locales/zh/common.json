@@ -18,6 +18,8 @@
   },
   "features": {
     "title": "功能亮点",
+    "pageTitle": "强大的功能",
+    "pageDescription": "我们的照片打印排版工具提供了丰富的功能，满足您各种打印需求。从简单的ID照片到复杂的相册排版，一应俱全。",
     "multipleFormats": {
       "title": "多种照片格式",
       "description": "支持1寸、2寸、5寸、6寸、A4等多种照片排版"
@@ -33,7 +35,142 @@
     "easyToUse": {
       "title": "零学习成本",
       "description": "拖拽、预览、调整，无缝操作，零学习成本"
+    },
+    "templates": {
+      "title": "模板库",
+      "description": "提供多种常用排版模板，一键应用，快速完成排版"
+    },
+    "customization": {
+      "title": "自定义设置",
+      "description": "调整照片边距、间距、旋转等参数，完全掌控排版效果"
+    },
+    "optimization": {
+      "title": "智能优化",
+      "description": "自动计算最佳排列方式，减少纸张浪费"
+    },
+    "batchPrinting": {
+      "title": "批量打印",
+      "description": "支持多组照片同时编排打印，提高工作效率"
+    },
+    "preview": {
+      "title": "实时预览",
+      "description": "所见即所得的编辑模式，随时查看最终打印效果"
+    },
+    "crop": {
+      "title": "智能裁剪",
+      "description": "根据选定尺寸自动裁剪照片，确保比例正确"
+    },
+    "finetuning": {
+      "title": "精细调整",
+      "description": "微调照片位置和大小，实现完美排版"
+    },
+    "save": {
+      "title": "保存项目",
+      "description": "保存编辑项目，随时继续完善或重复使用"
+    },
+    "readyToTry": "准备好体验这些强大功能了吗？",
+    "startNow": "立即开始"
+  },
+  "about": {
+    "pageTitle": "关于这个项目",
+    "pageDescription": "一个为摄影爱好者和普通用户设计的免费照片打印排版工具，帮助您轻松解决照片打印问题。",
+    "developerStory": {
+      "title": "开发者的话",
+      "paragraph1": "照片打印排版工具（PPhoto）是我个人开发的项目，源于我自己经常需要打印照片时遇到的困扰。我发现市场上缺乏一款简单、免费且高效的工具来帮助普通人解决照片排版打印问题。",
+      "paragraph2": "这个项目使用 Next.js 和现代前端技术构建，完全在浏览器中运行，无需安装任何软件。所有照片处理都在本地完成，不会上传到任何服务器，保证您的隐私安全。",
+      "paragraph3": "作为个人开发者，我致力于不断改进这个工具。如果您有任何建议或反馈，欢迎随时联系我！"
+    },
+    "developerQuote": "作为一名摄影爱好者和开发者，我创建这个工具是为了解决自己遇到的实际问题。希望它也能帮到你！",
+    "mission": {
+      "title": "项目理念",
+      "description": "我相信好的工具应该是简单、实用且免费的。PPhoto 的核心理念是帮助用户节省时间和纸张，让照片打印变得简单愉快。无论是打印证件照、纪念照还是艺术作品，都能轻松完成。"
+    },
+    "keyFeatures": {
+      "title": "核心功能",
+      "feature1": {
+        "title": "简单易用",
+        "description": "直观的界面设计，无需专业知识，几分钟即可完成照片排版。"
+      },
+      "feature2": {
+        "title": "灵活排版",
+        "description": "支持多种纸张和照片尺寸，自动计算最佳排列方式。"
+      },
+      "feature3": {
+        "title": "完全免费",
+        "description": "所有功能完全免费使用，没有水印，没有隐藏收费。"
+      }
+    },
+    "contact": {
+      "title": "联系与关注",
+      "email": "电子邮件",
+      "github": "GitHub",
+      "xiaohongshu": "小红书",
+      "scanToFollow": "扫码关注"
+    },
+    "faq": {
+      "title": "常见问题",
+      "q1": "这个工具是免费使用的吗？",
+      "a1": "是的，完全免费。这是我的个人项目，旨在帮助有照片打印需求的人。",
+      "q2": "我需要安装什么软件吗？",
+      "a2": "不需要，直接在浏览器中使用即可，无需下载或安装任何软件。支持电脑、平板和手机。",
+      "q3": "我的照片会上传到服务器吗？",
+      "a3": "不会。所有照片处理都在您的浏览器本地完成，不会上传到任何服务器，确保您的隐私安全。",
+      "q4": "如何支持这个项目？",
+      "a4": "您可以通过分享给更多需要的人、提供使用反馈或在小红书关注我来支持这个项目。如果您是开发者，也欢迎在GitHub上贡献代码。"
     }
+  },
+  "tutorials": {
+    "pageTitle": "使用教程",
+    "pageDescription": "通过我们的分步教程，从零开始掌握照片打印排版的所有技巧。无论您是初学者还是专业用户，都能找到适合您的内容。",
+    "searchPlaceholder": "搜索教程...",
+    "level": {
+      "beginner": "初级",
+      "intermediate": "中级",
+      "advanced": "高级"
+    },
+    "filter": {
+      "all": "全部",
+      "beginner": "初级",
+      "intermediate": "中级",
+      "advanced": "高级"
+    },
+    "gettingStarted": {
+      "title": "入门指南",
+      "description": "从零开始学习如何使用照片打印排版工具的基本功能"
+    },
+    "photoPreparation": {
+      "title": "照片准备",
+      "description": "了解如何准备最适合打印的照片格式和尺寸"
+    },
+    "basicLayout": {
+      "title": "基础排版",
+      "description": "学习如何排列和组织照片以达到最佳打印效果"
+    },
+    "idPhotos": {
+      "title": "证件照制作",
+      "description": "掌握如何快速生成各种规格的证件照并打印"
+    },
+    "groupPhotos": {
+      "title": "批量照片处理",
+      "description": "如何一次性处理和打印多张不同尺寸的照片"
+    },
+    "templates": {
+      "title": "使用模板",
+      "description": "利用预设模板快速完成常见的照片排版任务"
+    },
+    "advancedLayout": {
+      "title": "高级排版技巧",
+      "description": "探索更复杂的排版策略，最大化纸张利用率"
+    },
+    "customSettings": {
+      "title": "自定义设置",
+      "description": "深入了解所有自定义选项，打造专业级打印效果"
+    },
+    "viewTutorial": "查看教程",
+    "noResults": "没有找到匹配的教程",
+    "requestTitle": "没有找到您需要的教程？",
+    "requestDescription": "我们不断添加新的教程内容。如果您有特定需求，请告诉我们，我们会考虑添加到我们的教程库中。",
+    "requestButton": "请求新教程"
   },
   "footer": {
     "copyright": "© 2025 PPhoto | 独立开发者开源项目 | GitHub | 联系我们"
@@ -42,4 +179,4 @@
     "en": "English",
     "zh": "中文"
   }
-} 
+}
