@@ -19,16 +19,18 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "html-to-image": "^1.11.11",
+    "i18next": "^25.0.0",
     "jspdf": "^2.5.2",
     "lucide-react": "^0.454.0",
     "motion": "^12.6.5",
     "next": "15.0.2",
     "react": "19.0.0-rc-02c0e824-20241028",
     "react-dom": "19.0.0-rc-02c0e824-20241028",
+    "react-i18next": "^15.4.1",
     "styled-components": "^6.1.13",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
-    "zustand": "^5.0.1"
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -46,6 +48,7 @@
     "build": "next build",
     "check": "next lint --fix",
     "dev": "next dev --turbopack",
+    "dev:stable": "next dev",
     "lint": "next lint",
     "start": "next start"
   },

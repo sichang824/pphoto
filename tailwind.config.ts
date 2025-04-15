@@ -21,6 +21,9 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
+        mono: ["var(--font-mono)", ...fontFamily.mono],
+        pixel: ["var(--font-pixel)", "monospace"],
+        inter: ["var(--font-inter)", ...fontFamily.sans],
       },
       keyframes: {
         "accordion-down": {

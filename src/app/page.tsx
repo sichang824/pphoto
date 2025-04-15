@@ -1,5 +1,6 @@
 "use client";
 
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ImageIcon, LayoutIcon, RocketIcon, SmileIcon } from "lucide-react";
@@ -7,16 +8,28 @@ import { motion } from "motion/react";
 import { Inter, VT323 } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
-const pixelFont = VT323({ subsets: ["latin"], weight: "400" });
-const inter = Inter({ subsets: ["latin"] });
+const pixelFont = VT323({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const inter = Inter({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export default function Home() {
+  const { t } = useTranslation("common");
+
   const navItems = [
-    { label: "Home", href: "/" },
-    { label: "Features", href: "/features" },
-    { label: "Tutorials", href: "/tutorials" },
-    { label: "About", href: "/about" },
+    { label: t("nav.home"), href: "/" },
+    { label: t("nav.features"), href: "/features" },
+    { label: t("nav.tutorials"), href: "/tutorials" },
+    { label: t("nav.about"), href: "/about" },
   ];
 
   return (
@@ -28,7 +41,7 @@ export default function Home() {
         <div className="text-2xl font-bold text-indigo-600 animate-pulse flex items-center gap-2">
           <Image src="/logo.png" alt="PPhoto Logo" width={40} height={40} />
           <span className={`${pixelFont.className} text-4xl font-bold`}>
-            PPhoto
+            {t("app.title")}
           </span>
         </div>
         <nav className="hidden md:flex space-x-6 text-sm font-medium">
@@ -42,9 +55,10 @@ export default function Home() {
             </Link>
           ))}
         </nav>
-        <div className="space-x-4">
+        <div className="space-x-4 flex items-center">
+          <LanguageSwitcher />
           <Button className="bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg">
-            Get Started
+            {t("nav.getStarted")}
           </Button>
         </div>
       </header>
@@ -59,30 +73,26 @@ export default function Home() {
           <h1
             className={`${pixelFont.className} text-6xl md:text-8xl text-indigo-700 mb-4`}
           >
-            PPhoto
+            {t("app.title")}
           </h1>
           <h2
             className={`${pixelFont.className} text-2xl md:text-3xl text-pink-500 mb-4`}
           >
-            ✨ Photo Printing Layout Tool
+            ✨ {t("app.subtitle")}
           </h2>
           <p
             className={`${inter.className} text-lg md:text-xl text-gray-600 mb-6`}
           >
-            🚀 Smart · Efficient · Zero Waste —— Redefining your photo printing
-            experience!
+            🚀 {t("app.slogan")}
           </p>
           <p
             className={`${inter.className} max-w-xl mx-auto text-gray-500 mb-8`}
           >
-            PPhoto is a simple and efficient photo printing layout tool that
-            helps you quickly organize photos, create smart layouts, and print
-            in multiple formats. No login required, completely free, can be used
-            online or deployed locally.
+            {t("app.description")}
           </p>
           <motion.div whileHover={{ scale: 1.05 }}>
             <Button className="bg-pink-500 text-white text-lg px-6 py-3 hover:bg-pink-400 shadow-xl">
-              <Link href="/editor">Start Layout Now</Link>
+              <Link href="/editor">{t("hero.startLayoutNow")}</Link>
             </Button>
           </motion.div>
         </motion.div>
@@ -105,29 +115,29 @@ export default function Home() {
       {/* Features Section */}
       <section className="py-20 px-6 bg-gradient-to-b from-white via-gray-50 to-white">
         <h2 className="text-3xl font-extrabold text-center mb-12">
-          ✨ Feature Highlights
+          ✨ {t("features.title")}
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             {
               icon: <ImageIcon className="w-8 h-8" />,
-              title: "Multiple Photo Formats",
-              desc: "Supports layouts for 1-inch, 2-inch, 5-inch, 6-inch, A4 and more",
+              title: t("features.multipleFormats.title"),
+              desc: t("features.multipleFormats.description"),
             },
             {
               icon: <LayoutIcon className="w-8 h-8" />,
-              title: "Variety of Paper Sizes",
-              desc: "Supports 6-inch, A4, A5 and other common paper sizes with smart arrangement",
+              title: t("features.paperSizes.title"),
+              desc: t("features.paperSizes.description"),
             },
             {
               icon: <RocketIcon className="w-8 h-8" />,
-              title: "Instant PDF Export",
-              desc: "One-click export of high-quality PDF files, ready for printing",
+              title: t("features.pdfExport.title"),
+              desc: t("features.pdfExport.description"),
             },
             {
               icon: <SmileIcon className="w-8 h-8" />,
-              title: "Minimal Learning Curve",
-              desc: "Drag, preview, and adjust seamlessly with zero learning cost",
+              title: t("features.easyToUse.title"),
+              desc: t("features.easyToUse.description"),
             },
           ].map((f, idx) => (
             <motion.div
@@ -149,10 +159,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="bg-gray-100 py-10 px-6 text-sm text-center text-gray-500 mt-20">
-        <div>
-          © 2025 PPhoto | Independent Developer Open Source Project | GitHub |
-          Contact
-        </div>
+        <div>{t("footer.copyright")}</div>
       </footer>
     </main>
   );

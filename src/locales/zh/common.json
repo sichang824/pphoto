@@ -1,0 +1,44 @@
+{
+  "app": {
+    "title": "PPhoto",
+    "subtitle": "照片打印排版工具",
+    "slogan": "智能 · 高效 · 零浪费 —— 重新定义您的照片打印体验！",
+    "description": "PPhoto是一个简单高效的照片打印排版工具，帮助您快速整理照片、智能排版、多格式打印。无需登录，完全免费，可在线使用或本地部署。"
+  },
+  "nav": {
+    "home": "首页",
+    "features": "功能",
+    "tutorials": "教程",
+    "about": "关于",
+    "getStarted": "开始使用"
+  },
+  "hero": {
+    "startLayoutNow": "立即开始排版"
+  },
+  "features": {
+    "title": "功能亮点",
+    "multipleFormats": {
+      "title": "多种照片格式",
+      "description": "支持1寸、2寸、5寸、6寸、A4等多种照片排版"
+    },
+    "paperSizes": {
+      "title": "多种纸张尺寸",
+      "description": "支持6寸、A4、A5等常见纸张尺寸，智能排布"
+    },
+    "pdfExport": {
+      "title": "即时PDF导出",
+      "description": "一键导出高质量PDF文件，随时可打印"
+    },
+    "easyToUse": {
+      "title": "零学习成本",
+      "description": "拖拽、预览、调整，无缝操作，零学习成本"
+    }
+  },
+  "footer": {
+    "copyright": "© 2025 PPhoto | 独立开发者开源项目 | GitHub | 联系我们"
+  },
+  "language": {
+    "en": "English",
+    "zh": "中文"
+  }
+} 

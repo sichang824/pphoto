@@ -1,0 +1,44 @@
+{
+  "app": {
+    "title": "PPhoto",
+    "subtitle": "Photo Printing Layout Tool",
+    "slogan": "Smart · Efficient · Zero Waste —— Redefining your photo printing experience!",
+    "description": "PPhoto is a simple and efficient photo printing layout tool that helps you quickly organize photos, create smart layouts, and print in multiple formats. No login required, completely free, can be used online or deployed locally."
+  },
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "tutorials": "Tutorials",
+    "about": "About",
+    "getStarted": "Get Started"
+  },
+  "hero": {
+    "startLayoutNow": "Start Layout Now"
+  },
+  "features": {
+    "title": "Feature Highlights",
+    "multipleFormats": {
+      "title": "Multiple Photo Formats",
+      "description": "Supports layouts for 1-inch, 2-inch, 5-inch, 6-inch, A4 and more"
+    },
+    "paperSizes": {
+      "title": "Variety of Paper Sizes",
+      "description": "Supports 6-inch, A4, A5 and other common paper sizes with smart arrangement"
+    },
+    "pdfExport": {
+      "title": "Instant PDF Export",
+      "description": "One-click export of high-quality PDF files, ready for printing"
+    },
+    "easyToUse": {
+      "title": "Minimal Learning Curve",
+      "description": "Drag, preview, and adjust seamlessly with zero learning cost"
+    }
+  },
+  "footer": {
+    "copyright": "© 2025 PPhoto | Independent Developer Open Source Project | GitHub | Contact"
+  },
+  "language": {
+    "en": "English",
+    "zh": "中文"
+  }
+} 
