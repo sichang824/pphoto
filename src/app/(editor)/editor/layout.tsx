@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Editor',
+  title: "Editor",
 };
 
 export default function EditorLayout({
@@ -7,9 +7,5 @@ export default function EditorLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <html lang="en">
-    <body>
-      <main>{children}</main>
-    </body>
-  </html>;
+  return <main>{children}</main>;
 }
