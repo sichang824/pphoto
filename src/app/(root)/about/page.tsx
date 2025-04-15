@@ -4,12 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   BookOpenIcon,
   Code2Icon,
-  GithubIcon,
   HeartIcon,
-  MailIcon,
 } from "lucide-react";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
+import { ContactSection } from "@/components/ContactSection";
 
 export default function AboutPage() {
   const { t } = useTranslation("common");
@@ -116,66 +115,7 @@ export default function AboutPage() {
       </div>
 
       {/* Contact & Connect Section */}
-      <div className="bg-white rounded-xl p-8 shadow-md">
-        <h2 className="text-2xl font-bold text-center mb-8">
-          {t("about.contact.title")}
-        </h2>
-        <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          <div className="flex flex-col items-center text-center">
-            <MailIcon className="h-10 w-10 text-indigo-600 mb-3" />
-            <h3 className="font-medium text-lg mb-2">
-              {t("about.contact.email")}
-            </h3>
-            <a
-              href="mailto:zhaoanke@163.com"
-              className="text-indigo-600 hover:underline"
-            >
-              zhaoanke@163.com
-            </a>
-          </div>
-
-          <div className="flex flex-col items-center text-center">
-            <GithubIcon className="h-10 w-10 text-indigo-600 mb-3" />
-            <h3 className="font-medium text-lg mb-2">
-              {t("about.contact.github")}
-            </h3>
-            <a
-              href="https://github.com/sichang824/pphoto"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-indigo-600 hover:underline"
-            >
-              sichang824/pphoto
-            </a>
-          </div>
-
-          <div className="flex flex-col items-center text-center">
-            <div className="h-10 w-10 flex items-center justify-center mb-3">
-              <Image
-                src="/logo.png"
-                alt="Xiaohongshu icon"
-                width={40}
-                height={40}
-              />
-            </div>
-            <h3 className="font-medium text-lg mb-2">
-              {t("about.contact.xiaohongshu")}
-            </h3>
-            <div className="w-32 h-32 bg-white p-1 border border-gray-200 rounded-md shadow-sm">
-              <Image
-                src="/rednote.png"
-                alt="Xiaohongshu QR Code"
-                width={128}
-                height={128}
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <p className="text-sm text-gray-500 mt-2">
-              {t("about.contact.scanToFollow")}
-            </p>
-          </div>
-        </div>
-      </div>
+      <ContactSection className="mb-20" />
 
       {/* FAQ Section */}
       <div className="mt-20">
