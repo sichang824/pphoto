@@ -11,9 +11,9 @@
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://www.conventionalcommits.org/) specification when making commits.
 
 ---
-### [0.1.3](https://github.com/sichang824/pphoto/compare/0.1.2...0.1.3) (2025-04-16)
+### [0.1.4](https://github.com/sichang824/pphoto/compare/0.1.3...0.1.4) (2025-04-16)
 
 ### Commits
 
-* feat: Add English README file for photo printing layout tool ([e8ce960](https://github.com/sichang824/pphoto/commit/e8ce960c81500906445b8c1ff66ac3942fac7ca0))
+* feat: Update README files with enhanced branding and layout ([f7d7213](https://github.com/sichang824/pphoto/commit/f7d7213225d0c05b824ca456c501639a18bf1b5f))
 
