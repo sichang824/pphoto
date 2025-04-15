@@ -10,7 +10,8 @@
     "features": "Features",
     "tutorials": "Tutorials",
     "about": "About",
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "openEditor": "Open Editor"
   },
   "hero": {
     "startLayoutNow": "Start Layout Now"

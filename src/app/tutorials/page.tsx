@@ -19,8 +19,6 @@ import {
   GalleryVerticalEndIcon,
   SettingsIcon,
 } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 
@@ -28,13 +26,6 @@ export default function TutorialsPage() {
   const { t } = useTranslation("common");
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
-
-  const navItems = [
-    { label: t("nav.home"), href: "/" },
-    { label: t("nav.features"), href: "/features" },
-    { label: t("nav.tutorials"), href: "/tutorials" },
-    { label: t("nav.about"), href: "/about" },
-  ];
 
   const tutorialsList = [
     {
@@ -130,142 +121,104 @@ export default function TutorialsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navbar */}
-      <header className="flex justify-between items-center px-6 py-4 shadow-md backdrop-blur-md bg-white/80 sticky top-0 z-50">
-        <div className="text-2xl font-bold text-indigo-600 flex items-center gap-2">
-          <Link href="/">
-            <div className="flex items-center gap-2">
-              <Image src="/logo.png" alt="PPhoto Logo" width={40} height={40} />
-              <span className="text-xl font-bold">{t("app.title")}</span>
+    <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="text-center mb-16">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          {t("tutorials.pageTitle", "使用教程")}
+        </h1>
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          {t("tutorials.pageDescription", "通过我们的分步教程，从零开始掌握照片打印排版的所有技巧。无论您是初学者还是专业用户，都能找到适合您的内容。")}
+        </p>
+      </div>
+
+      {/* Search and Filter */}
+      <div className="mb-12 flex flex-col items-center space-y-4">
+        {/* 搜索框 */}
+        <div className="w-full max-w-md mb-4">
+          <div className="relative">
+            <input
+              type="text"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder={t("tutorials.searchPlaceholder", "搜索教程...")}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
             </div>
-          </Link>
+          </div>
         </div>
-        <nav className="hidden md:flex space-x-6 text-sm font-medium">
-          {navItems.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={item.href === "/tutorials" ? "text-indigo-600 font-bold" : "hover:text-indigo-600 transition duration-200"}
+        
+        {/* 过滤按钮 */}
+        <div className="inline-flex rounded-md shadow-sm">
+          {filterOptions.map((option, index) => (
+            <Button
+              key={option.id}
+              variant="outline"
+              className={`
+                ${index === 0 ? "rounded-l-md rounded-r-none" : 
+                  index === filterOptions.length - 1 ? "rounded-r-md rounded-l-none" : 
+                  "rounded-none"} 
+                ${index !== filterOptions.length - 1 ? "border-r-0" : ""}
+                ${activeFilter === option.id ? "bg-indigo-100 text-indigo-700 border-indigo-300" : "bg-white"}
+              `}
+              onClick={() => setActiveFilter(option.id)}
             >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="flex items-center">
-          <Link href="/editor">
-            <Button className="bg-indigo-600 text-white hover:bg-indigo-500">
-              {t("nav.openEditor")}
+              {option.label}
             </Button>
-          </Link>
+          ))}
         </div>
-      </header>
+      </div>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-12">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            {t("tutorials.pageTitle", "使用教程")}
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            {t("tutorials.pageDescription", "通过我们的分步教程，从零开始掌握照片打印排版的所有技巧。无论您是初学者还是专业用户，都能找到适合您的内容。")}
-          </p>
-        </div>
-
-        {/* Search and Filter */}
-        <div className="mb-12 flex flex-col items-center space-y-4">
-          {/* 搜索框 */}
-          <div className="w-full max-w-md mb-4">
-            <div className="relative">
-              <input
-                type="text"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                placeholder={t("tutorials.searchPlaceholder", "搜索教程...")}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
+      {/* Tutorials Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        {filteredTutorials.length > 0 ? (
+          filteredTutorials.map((tutorial, index) => (
+          <Card key={index} className="border border-gray-200 hover:shadow-lg transition-shadow duration-300">
+            <CardHeader>
+              <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${tutorial.color}`}>
+                {tutorial.icon}
               </div>
-            </div>
-          </div>
-          
-          {/* 过滤按钮 */}
-          <div className="inline-flex rounded-md shadow-sm">
-            {filterOptions.map((option, index) => (
-              <Button
-                key={option.id}
-                variant="outline"
-                className={`
-                  ${index === 0 ? "rounded-l-md rounded-r-none" : 
-                    index === filterOptions.length - 1 ? "rounded-r-md rounded-l-none" : 
-                    "rounded-none"} 
-                  ${index !== filterOptions.length - 1 ? "border-r-0" : ""}
-                  ${activeFilter === option.id ? "bg-indigo-100 text-indigo-700 border-indigo-300" : "bg-white"}
-                `}
-                onClick={() => setActiveFilter(option.id)}
-              >
-                {option.label}
+              <CardTitle className="text-xl">{tutorial.title}</CardTitle>
+              <CardDescription>{tutorial.description}</CardDescription>
+              <div className="flex justify-between items-center mt-2">
+                <span className="text-sm px-2 py-1 rounded-full bg-gray-100">{tutorial.level}</span>
+                <span className="text-sm">{tutorial.time}</span>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {/* Content removed to avoid duplication with CardDescription */}
+            </CardContent>
+            <CardFooter>
+              <Button variant="outline" className="w-full">
+                {t("tutorials.viewTutorial", "查看教程")}
               </Button>
-            ))}
+            </CardFooter>
+          </Card>
+        ))
+        ) : (
+          <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-12">
+            <p className="text-gray-500 text-lg">
+              {t("tutorials.noResults", "没有找到匹配的教程")}
+            </p>
           </div>
-        </div>
+        )}
+      </div>
 
-        {/* Tutorials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-          {filteredTutorials.length > 0 ? (
-            filteredTutorials.map((tutorial, index) => (
-            <Card key={index} className="border border-gray-200 hover:shadow-lg transition-shadow duration-300">
-              <CardHeader>
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${tutorial.color}`}>
-                  {tutorial.icon}
-                </div>
-                <CardTitle className="text-xl">{tutorial.title}</CardTitle>
-                <CardDescription>{tutorial.description}</CardDescription>
-                <div className="flex justify-between items-center mt-2">
-                  <span className="text-sm px-2 py-1 rounded-full bg-gray-100">{tutorial.level}</span>
-                  <span className="text-sm">{tutorial.time}</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {/* Content removed to avoid duplication with CardDescription */}
-              </CardContent>
-              <CardFooter>
-                <Button variant="outline" className="w-full">
-                  {t("tutorials.viewTutorial", "查看教程")}
-                </Button>
-              </CardFooter>
-            </Card>
-          ))
-          ) : (
-            <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-12">
-              <p className="text-gray-500 text-lg">
-                {t("tutorials.noResults", "没有找到匹配的教程")}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Request Tutorial Section */}
-        <div className="mt-20 bg-indigo-50 rounded-xl p-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">
-            {t("tutorials.requestTitle", "没有找到您需要的教程？")}
-          </h2>
-          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            {t("tutorials.requestDescription", "我们不断添加新的教程内容。如果您有特定需求，请告诉我们，我们会考虑添加到我们的教程库中。")}
-          </p>
-          <Button className="bg-indigo-600 text-white hover:bg-indigo-500">
-            {t("tutorials.requestButton", "请求新教程")}
-          </Button>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-gray-100 py-10 px-6 text-center text-gray-500 mt-20">
-        <div>{t("footer.copyright")}</div>
-      </footer>
+      {/* Request Tutorial Section */}
+      <div className="mt-20 bg-indigo-50 rounded-xl p-8 text-center">
+        <h2 className="text-2xl font-bold text-gray-900 mb-3">
+          {t("tutorials.requestTitle", "没有找到您需要的教程？")}
+        </h2>
+        <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+          {t("tutorials.requestDescription", "我们不断添加新的教程内容。如果您有特定需求，请告诉我们，我们会考虑添加到我们的教程库中。")}
+        </p>
+        <Button className="bg-indigo-600 text-white hover:bg-indigo-500">
+          {t("tutorials.requestButton", "请求新教程")}
+        </Button>
+      </div>
     </div>
   );
-}
+} 

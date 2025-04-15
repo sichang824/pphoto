@@ -1,12 +1,10 @@
 "use client";
 
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ImageIcon, LayoutIcon, RocketIcon, SmileIcon } from "lucide-react";
 import { motion } from "motion/react";
-import { Inter, VT323 } from "next/font/google";
-import Image from "next/image";
+import { VT323 } from "next/font/google";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
@@ -16,51 +14,13 @@ const pixelFont = VT323({
   display: "swap",
 });
 
-const inter = Inter({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-});
-
 export default function Home() {
   const { t } = useTranslation("common");
 
-  const navItems = [
-    { label: t("nav.home"), href: "/" },
-    { label: t("nav.features"), href: "/features" },
-    { label: t("nav.tutorials"), href: "/tutorials" },
-    { label: t("nav.about"), href: "/about" },
-  ];
-
   return (
-    <main
-      className={`${pixelFont.className} ${inter.className} bg-[url('/mosaic-bg.png')] bg-repeat text-gray-800 font-sans overflow-x-hidden`}
+    <div
+      className={`${pixelFont.className} bg-[url('/mosaic-bg.png')] bg-repeat text-gray-800 font-sans overflow-x-hidden`}
     >
-      {/* Top Navbar */}
-      <header className="flex justify-between items-center px-6 py-4 shadow-md backdrop-blur-md bg-white/80 sticky top-0 z-50">
-        <div className="text-2xl font-bold text-indigo-600 animate-pulse flex items-center gap-2">
-          <Image src="/logo.png" alt="PPhoto Logo" width={40} height={40} />
-          <span className={`${pixelFont.className} text-4xl font-bold`}>
-            {t("app.title")}
-          </span>
-        </div>
-        <nav className="hidden md:flex space-x-6 text-sm font-medium">
-          {navItems.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="hover:text-indigo-600 transition duration-200"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="flex items-center">
-          <LanguageSwitcher />
-          {/* "Get Started" button removed */}
-        </div>
-      </header>
-
       {/* Hero Section */}
       <section className="text-center py-20 px-6 relative overflow-hidden">
         <motion.div
@@ -78,14 +38,10 @@ export default function Home() {
           >
             ✨ {t("app.subtitle")}
           </h2>
-          <p
-            className={`${inter.className} text-lg md:text-xl text-gray-600 mb-6`}
-          >
+          <p className="text-lg md:text-xl text-gray-600 mb-6">
             🚀 {t("app.slogan")}
           </p>
-          <p
-            className={`${inter.className} max-w-xl mx-auto text-gray-500 mb-8`}
-          >
+          <p className="max-w-xl mx-auto text-gray-500 mb-8">
             {t("app.description")}
           </p>
           <motion.div whileHover={{ scale: 1.05 }}>
@@ -154,11 +110,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-100 py-10 px-6 text-sm text-center text-gray-500 mt-20">
-        <div>{t("footer.copyright")}</div>
-      </footer>
-    </main>
+    </div>
   );
 }

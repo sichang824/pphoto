@@ -16,19 +16,11 @@ import {
   SmileIcon,
   ZoomInIcon,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 export default function FeaturesPage() {
   const { t } = useTranslation("common");
-
-  const navItems = [
-    { label: t("nav.home"), href: "/" },
-    { label: t("nav.features"), href: "/features" },
-    { label: t("nav.tutorials"), href: "/tutorials" },
-    { label: t("nav.about"), href: "/about" },
-  ];
 
   const featuresList = [
     {
@@ -130,97 +122,55 @@ export default function FeaturesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navbar */}
-      <header className="flex justify-between items-center px-6 py-4 shadow-md backdrop-blur-md bg-white/80 sticky top-0 z-50">
-        <div className="text-2xl font-bold text-indigo-600 flex items-center gap-2">
-          <Link href="/">
-            <div className="flex items-center gap-2">
-              <Image src="/logo.png" alt="PPhoto Logo" width={40} height={40} />
-              <span className="text-xl font-bold">{t("app.title")}</span>
-            </div>
-          </Link>
-        </div>
-        <nav className="hidden md:flex space-x-6 text-sm font-medium">
-          {navItems.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={
-                item.href === "/features"
-                  ? "text-indigo-600 font-bold"
-                  : "hover:text-indigo-600 transition duration-200"
-              }
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="flex items-center">
-          <Link href="/editor">
-            <Button className="bg-indigo-600 text-white hover:bg-indigo-500">
-              {t("nav.openEditor")}
-            </Button>
-          </Link>
-        </div>
-      </header>
+    <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="text-center mb-16">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          {t("features.pageTitle", "强大的功能")}
+        </h1>
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          {t(
+            "features.pageDescription",
+            "我们的照片打印排版工具提供了丰富的功能，满足您各种打印需求。从简单的ID照片到复杂的相册排版，一应俱全。"
+          )}
+        </p>
+      </div>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-12">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            {t("features.pageTitle", "强大的功能")}
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            {t(
-              "features.pageDescription",
-              "我们的照片打印排版工具提供了丰富的功能，满足您各种打印需求。从简单的ID照片到复杂的相册排版，一应俱全。"
-            )}
-          </p>
-        </div>
+      {/* Features Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        {featuresList.map((feature, index) => (
+          <Card
+            key={index}
+            className="border border-gray-200 hover:shadow-lg transition-shadow duration-300"
+          >
+            <CardHeader>
+              <div
+                className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${feature.color}`}
+              >
+                {feature.icon}
+              </div>
+              <CardTitle className="text-xl">{feature.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">{feature.description}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-          {featuresList.map((feature, index) => (
-            <Card
-              key={index}
-              className="border border-gray-200 hover:shadow-lg transition-shadow duration-300"
-            >
-              <CardHeader>
-                <div
-                  className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${feature.color}`}
-                >
-                  {feature.icon}
-                </div>
-                <CardTitle className="text-xl">{feature.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">{feature.description}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* CTA Section */}
-        <div className="mt-20 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            {t("features.readyToTry", "准备好体验这些强大功能了吗？")}
-          </h2>
-          <Link href="/editor">
-            <Button
-              size="lg"
-              className="bg-indigo-600 text-white hover:bg-indigo-500 px-8"
-            >
-              {t("features.startNow", "立即开始")}
-            </Button>
-          </Link>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-gray-100 py-10 px-6 text-center text-gray-500 mt-20">
-        <div>{t("footer.copyright")}</div>
-      </footer>
+      {/* CTA Section */}
+      <div className="mt-20 text-center">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          {t("features.readyToTry", "准备好体验这些强大功能了吗？")}
+        </h2>
+        <Link href="/editor">
+          <Button
+            size="lg"
+            className="bg-indigo-600 text-white hover:bg-indigo-500 px-8"
+          >
+            {t("features.startNow", "立即开始")}
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }
