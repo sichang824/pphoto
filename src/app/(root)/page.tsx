@@ -2,9 +2,17 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { ImageIcon, LayoutIcon, RocketIcon, SmileIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { VT323 } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
@@ -57,8 +65,25 @@ export default function Home() {
           transition={{ duration: 1.2 }}
           className="mt-12"
         >
-          <div className="mx-auto w-full max-w-4xl rounded-2xl shadow-2xl border-4 border-indigo-100 bg-gray-100 h-72 flex items-center justify-center">
-            <p className="text-gray-500">App preview will be here</p>
+          <div className="mx-auto w-full max-w-5xl rounded-2xl shadow-2xl border-4 border-indigo-100 bg-gray-100">
+            <Carousel className="w-full">
+              <CarouselContent>
+                <CarouselItem>
+                  <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+                    <Image
+                      src="/preview.png"
+                      alt="PPhoto"
+                      fill
+                      className="object-cover"
+                      quality={95}
+                      priority
+                    />
+                  </div>
+                </CarouselItem>
+              </CarouselContent>
+              <CarouselPrevious className="left-2" />
+              <CarouselNext className="right-2" />
+            </Carousel>
           </div>
         </motion.div>
 
