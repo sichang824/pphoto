@@ -1,0 +1,226 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  FileIcon,
+  ImageIcon,
+  LayoutIcon,
+  PencilIcon,
+  PrinterIcon,
+  RocketIcon,
+  SaveIcon,
+  ScissorsIcon,
+  SearchIcon,
+  SlidersIcon,
+  SmileIcon,
+  ZoomInIcon,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useTranslation } from "react-i18next";
+
+export default function FeaturesPage() {
+  const { t } = useTranslation("common");
+
+  const navItems = [
+    { label: t("nav.home"), href: "/" },
+    { label: t("nav.features"), href: "/features" },
+    { label: t("nav.tutorials"), href: "/tutorials" },
+    { label: t("nav.about"), href: "/about" },
+  ];
+
+  const featuresList = [
+    {
+      icon: <ImageIcon className="h-8 w-8" />,
+      title: t("features.multipleFormats.title"),
+      description: t("features.multipleFormats.description"),
+      color: "bg-indigo-100 text-indigo-700",
+    },
+    {
+      icon: <LayoutIcon className="h-8 w-8" />,
+      title: t("features.paperSizes.title"),
+      description: t("features.paperSizes.description"),
+      color: "bg-pink-100 text-pink-700",
+    },
+    {
+      icon: <RocketIcon className="h-8 w-8" />,
+      title: t("features.pdfExport.title"),
+      description: t("features.pdfExport.description"),
+      color: "bg-amber-100 text-amber-700",
+    },
+    {
+      icon: <SmileIcon className="h-8 w-8" />,
+      title: t("features.easyToUse.title"),
+      description: t("features.easyToUse.description"),
+      color: "bg-emerald-100 text-emerald-700",
+    },
+    {
+      icon: <FileIcon className="h-8 w-8" />,
+      title: t("features.templates.title", "模板库"),
+      description: t(
+        "features.templates.description",
+        "提供多种常用排版模板，一键应用，快速完成排版"
+      ),
+      color: "bg-blue-100 text-blue-700",
+    },
+    {
+      icon: <PencilIcon className="h-8 w-8" />,
+      title: t("features.customization.title", "自定义设置"),
+      description: t(
+        "features.customization.description",
+        "调整照片边距、间距、旋转等参数，完全掌控排版效果"
+      ),
+      color: "bg-purple-100 text-purple-700",
+    },
+    {
+      icon: <SlidersIcon className="h-8 w-8" />,
+      title: t("features.optimization.title", "智能优化"),
+      description: t(
+        "features.optimization.description",
+        "自动计算最佳排列方式，减少纸张浪费"
+      ),
+      color: "bg-green-100 text-green-700",
+    },
+    {
+      icon: <PrinterIcon className="h-8 w-8" />,
+      title: t("features.batchPrinting.title", "批量打印"),
+      description: t(
+        "features.batchPrinting.description",
+        "支持多组照片同时编排打印，提高工作效率"
+      ),
+      color: "bg-red-100 text-red-700",
+    },
+    {
+      icon: <SearchIcon className="h-8 w-8" />,
+      title: t("features.preview.title", "实时预览"),
+      description: t(
+        "features.preview.description",
+        "所见即所得的编辑模式，随时查看最终打印效果"
+      ),
+      color: "bg-yellow-100 text-yellow-700",
+    },
+    {
+      icon: <ScissorsIcon className="h-8 w-8" />,
+      title: t("features.crop.title", "智能裁剪"),
+      description: t(
+        "features.crop.description",
+        "根据选定尺寸自动裁剪照片，确保比例正确"
+      ),
+      color: "bg-cyan-100 text-cyan-700",
+    },
+    {
+      icon: <ZoomInIcon className="h-8 w-8" />,
+      title: t("features.finetuning.title", "精细调整"),
+      description: t(
+        "features.finetuning.description",
+        "微调照片位置和大小，实现完美排版"
+      ),
+      color: "bg-rose-100 text-rose-700",
+    },
+    {
+      icon: <SaveIcon className="h-8 w-8" />,
+      title: t("features.save.title", "保存项目"),
+      description: t(
+        "features.save.description",
+        "保存编辑项目，随时继续完善或重复使用"
+      ),
+      color: "bg-teal-100 text-teal-700",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Navbar */}
+      <header className="flex justify-between items-center px-6 py-4 shadow-md backdrop-blur-md bg-white/80 sticky top-0 z-50">
+        <div className="text-2xl font-bold text-indigo-600 flex items-center gap-2">
+          <Link href="/">
+            <div className="flex items-center gap-2">
+              <Image src="/logo.png" alt="PPhoto Logo" width={40} height={40} />
+              <span className="text-xl font-bold">{t("app.title")}</span>
+            </div>
+          </Link>
+        </div>
+        <nav className="hidden md:flex space-x-6 text-sm font-medium">
+          {navItems.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={
+                item.href === "/features"
+                  ? "text-indigo-600 font-bold"
+                  : "hover:text-indigo-600 transition duration-200"
+              }
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+        <div className="flex items-center">
+          <Link href="/editor">
+            <Button className="bg-indigo-600 text-white hover:bg-indigo-500">
+              {t("nav.openEditor")}
+            </Button>
+          </Link>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 py-12">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            {t("features.pageTitle", "强大的功能")}
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            {t(
+              "features.pageDescription",
+              "我们的照片打印排版工具提供了丰富的功能，满足您各种打印需求。从简单的ID照片到复杂的相册排版，一应俱全。"
+            )}
+          </p>
+        </div>
+
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          {featuresList.map((feature, index) => (
+            <Card
+              key={index}
+              className="border border-gray-200 hover:shadow-lg transition-shadow duration-300"
+            >
+              <CardHeader>
+                <div
+                  className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${feature.color}`}
+                >
+                  {feature.icon}
+                </div>
+                <CardTitle className="text-xl">{feature.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">{feature.description}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* CTA Section */}
+        <div className="mt-20 text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            {t("features.readyToTry", "准备好体验这些强大功能了吗？")}
+          </h2>
+          <Link href="/editor">
+            <Button
+              size="lg"
+              className="bg-indigo-600 text-white hover:bg-indigo-500 px-8"
+            >
+              {t("features.startNow", "立即开始")}
+            </Button>
+          </Link>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-100 py-10 px-6 text-center text-gray-500 mt-20">
+        <div>{t("footer.copyright")}</div>
+      </footer>
+    </div>
+  );
+}
