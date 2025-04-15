@@ -1,6 +1,18 @@
-# Photo Printing Layout Tool
+<div align="center">
 
-This is a photo printing layout tool developed based on [Next.js](https://nextjs.org), helping users easily achieve intelligent layout of photos on different sized printing papers. With simple operations, you can optimize photo layouts, save paper, and achieve professional printing results.
+<img src="public/logo.png" alt="PPhoto Logo" width="200"/>
+
+# PPhoto
+
+✨ Photo Printing Layout Tool
+
+🚀 Smart · Efficient · Zero Waste —— Redefining Your Photo Printing Experience!
+
+PPhoto is a simple and efficient photo printing layout tool, helping you quickly organize photos, intelligently layout, and print in multiple formats. No login required, completely free, can be used online or deployed locally.
+
+English | [简体中文](./README.md)
+
+</div>
 
 ## Features
 
