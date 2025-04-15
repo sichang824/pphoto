@@ -173,7 +173,10 @@
     "requestButton": "Request New Tutorial"
   },
   "footer": {
-    "copyright": "© 2025 PPhoto | Independent Developer Open Source Project | GitHub | Contact"
+    "copyright": "Copyright © 2025 PPhoto. All Rights Reserved. Made with 🦄 from Sichuan.",
+    "projectInfo": "Independent Developer Open Source Project",
+    "github": "GitHub",
+    "contact": "Contact"
   },
   "language": {
     "en": "English",

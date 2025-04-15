@@ -90,7 +90,9 @@ export function ContactSection({
                       >
                         <Card className="border-0 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer">
                           <CardContent className="p-6 flex flex-col items-center text-center">
-                            {contact.customIcon && (
+                            {contact.icon ? (
+                              <contact.icon className={`h-14 w-14 ${contact.iconColor || 'text-indigo-600'} mb-3`} />
+                            ) : contact.customIcon ? (
                               <div className="h-14 w-14 flex items-center justify-center mb-3">
                                 <Image
                                   src={contact.customIcon}
@@ -99,7 +101,7 @@ export function ContactSection({
                                   height={56}
                                 />
                               </div>
-                            )}
+                            ) : null}
                             
                             <span className="text-indigo-600 text-sm">
                               {contact.title}
@@ -144,7 +146,7 @@ export function ContactSection({
                     <Card className="border-0 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer">
                       <CardContent className="p-6 flex flex-col items-center text-center">
                         {contact.icon ? (
-                          <contact.icon className="h-14 w-14 text-indigo-600 mb-3" />
+                          <contact.icon className={`h-14 w-14 ${contact.iconColor || 'text-indigo-600'} mb-3`} />
                         ) : contact.customIcon ? (
                           <div className="h-14 w-14 flex items-center justify-center mb-3">
                             <Image

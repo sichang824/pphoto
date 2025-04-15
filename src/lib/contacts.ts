@@ -5,6 +5,7 @@ export type ContactInfo = {
   title: string;
   titleKey: string;
   icon?: LucideIcon;
+  iconColor?: string;
   customIcon?: string;
   customIconAlt?: string;
   link?: string;
@@ -21,6 +22,7 @@ export const contactsInfo: ContactInfo[] = [
     title: "Email",
     titleKey: "about.contact.email",
     icon: Mail,
+    iconColor: "text-blue-500",
     email: "zhaoanke@163.com",
     link: "mailto:zhaoanke@163.com",
   },
@@ -29,6 +31,7 @@ export const contactsInfo: ContactInfo[] = [
     title: "GitHub",
     titleKey: "about.contact.github",
     icon: Github,
+    iconColor: "text-gray-800",
     link: "https://github.com/sichang824/pphoto",
   },
   {

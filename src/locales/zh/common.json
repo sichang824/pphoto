@@ -173,7 +173,10 @@
     "requestButton": "请求新教程"
   },
   "footer": {
-    "copyright": "© 2025 PPhoto | 独立开发者开源项目 | GitHub | 联系我们"
+    "copyright": "版权所有 © 2025 PPhoto。保留所有权利。四川的 🦄 制作。",
+    "projectInfo": "独立开发者开源项目",
+    "github": "GitHub",
+    "contact": "联系我"
   },
   "language": {
     "en": "English",
