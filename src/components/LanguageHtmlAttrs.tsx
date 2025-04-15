@@ -11,9 +11,9 @@ export default function LanguageHtmlAttrs({ children }: { children: ReactNode })
     setMounted(true);
   }, []);
 
-  // During server rendering and initial client rendering, use a default
+  // During server rendering and initial client rendering, use Chinese as default
   if (!mounted) {
-    return <html lang="en">{children}</html>;
+    return <html lang="zh">{children}</html>;
   }
 
   return <html lang={language}>{children}</html>;

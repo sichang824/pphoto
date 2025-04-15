@@ -6,8 +6,8 @@ import { initReactI18next } from 'react-i18next';
 import enCommon from '../locales/en/common.json';
 import zhCommon from '../locales/zh/common.json';
 
-// Try to get the stored language preference
-let storedLanguage = 'en';
+// Try to get the stored language preference, default to Chinese
+let storedLanguage = 'zh';
 if (typeof window !== 'undefined') {
   try {
     const languageStorage = localStorage.getItem('language-storage');
@@ -39,8 +39,8 @@ if (!isInitialized) {
     .use(initReactI18next)
     .init({
       resources,
-      lng: storedLanguage, // 使用存储的语言或默认为英文
-      fallbackLng: 'en',
+      lng: storedLanguage, // Default to Chinese if no stored preference
+      fallbackLng: 'zh',   // Use Chinese as fallback language
       interpolation: {
         escapeValue: false // 不转义HTML
       },

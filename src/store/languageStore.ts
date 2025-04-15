@@ -6,7 +6,7 @@ import i18n from '@/lib/i18n';
 
 type Language = 'en' | 'zh';
 
-// Get the current i18n language or default to 'en'
+// Get the current i18n language or default to 'zh'
 const getInitialLanguage = (): Language => {
   // Try to get the stored language from localStorage first
   if (typeof window !== 'undefined') {
@@ -23,8 +23,8 @@ const getInitialLanguage = (): Language => {
     }
   }
   
-  // Fallback to current i18n language or 'en'
-  return (i18n.language as Language) || 'en';
+  // Fallback to current i18n language or 'zh'
+  return (i18n.language as Language) || 'zh';
 };
 
 interface LanguageState {

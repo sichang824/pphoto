@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { useLanguageStore } from '@/store/languageStore';
+import { Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export default function LanguageSwitcher() {
@@ -13,11 +14,15 @@ export default function LanguageSwitcher() {
   return (
     <Button
       onClick={toggleLanguage}
-      variant="outline"
+      variant="ghost"
       size="sm"
-      className="text-sm font-medium"
+      title={language === 'en' ? t('language.zh') : t('language.en')}
+      className="flex items-center gap-1 px-3 rounded-md"
     >
-      {language === 'en' ? t('language.zh') : t('language.en')}
+      <Globe className="h-4 w-4" />
+      <span className="font-medium text-xs">
+        {language === 'en' ? 'EN' : '中文'}
+      </span>
     </Button>
   );
-} 
+}

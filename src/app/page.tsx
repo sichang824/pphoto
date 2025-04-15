@@ -55,11 +55,9 @@ export default function Home() {
             </Link>
           ))}
         </nav>
-        <div className="space-x-4 flex items-center">
+        <div className="flex items-center">
           <LanguageSwitcher />
-          <Button className="bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg">
-            {t("nav.getStarted")}
-          </Button>
+          {/* "Get Started" button removed */}
         </div>
       </header>
 
