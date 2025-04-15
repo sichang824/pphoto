@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ImageIcon, LayoutIcon, RocketIcon, SmileIcon } from "lucide-react";
 import { motion } from "motion/react";
+import { Inter, VT323 } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import { Inter, Playfair_Display } from "next/font/google";
 
+const pixelFont = VT323({ subsets: ["latin"], weight: "400" });
 const inter = Inter({ subsets: ["latin"] });
-const playfair = Playfair_Display({ subsets: ["latin"], weight: ["400", "700"] });
 
 export default function Home() {
   const navItems = [
@@ -20,12 +20,16 @@ export default function Home() {
   ];
 
   return (
-    <main className={`${inter.className} bg-gradient-to-b from-white via-gray-50 to-white text-gray-800 font-sans overflow-x-hidden`}>
+    <main
+      className={`${pixelFont.className} ${inter.className} bg-[url('/mosaic-bg.png')] bg-repeat text-gray-800 font-sans overflow-x-hidden`}
+    >
       {/* Top Navbar */}
       <header className="flex justify-between items-center px-6 py-4 shadow-md backdrop-blur-md bg-white/80 sticky top-0 z-50">
         <div className="text-2xl font-bold text-indigo-600 animate-pulse flex items-center gap-2">
           <Image src="/logo.png" alt="PPhoto Logo" width={40} height={40} />
-          <span className="text-xl font-bold">PPhoto</span>
+          <span className={`${pixelFont.className} text-4xl font-bold`}>
+            PPhoto
+          </span>
         </div>
         <nav className="hidden md:flex space-x-6 text-sm font-medium">
           {navItems.map((item) => (
@@ -52,14 +56,25 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className={`${playfair.className} text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-600 to-pink-500 bg-clip-text text-transparent mb-4`}>
-            ✨Photo Printing Layout Tool | PPhoto
+          <h1
+            className={`${pixelFont.className} text-6xl md:text-8xl text-indigo-700 mb-4`}
+          >
+            PPhoto
           </h1>
-          <p className={`${inter.className} text-lg md:text-xl text-gray-600 mb-6`}>
+          <h2
+            className={`${pixelFont.className} text-2xl md:text-3xl text-pink-500 mb-4`}
+          >
+            ✨ Photo Printing Layout Tool
+          </h2>
+          <p
+            className={`${inter.className} text-lg md:text-xl text-gray-600 mb-6`}
+          >
             🚀 Smart · Efficient · Zero Waste —— Redefining your photo printing
             experience!
           </p>
-          <p className={`${inter.className} max-w-xl mx-auto text-gray-500 mb-8`}>
+          <p
+            className={`${inter.className} max-w-xl mx-auto text-gray-500 mb-8`}
+          >
             PPhoto is a simple and efficient photo printing layout tool that
             helps you quickly organize photos, create smart layouts, and print
             in multiple formats. No login required, completely free, can be used
