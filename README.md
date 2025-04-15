@@ -8,6 +8,8 @@
 
 🚀 智能 · 高效 · 零浪费 —— 重新定义您的照片打印体验！
 
+[![License: Non-Commercial](https://img.shields.io/badge/license-Non--Commercial-red)](./LICENSE)
+
 PPhoto 是一个简单高效的照片打印排版工具，帮助您快速整理照片、智能排版、多格式打印。无需登录，完全免费，可在线使用或本地部署。
 
 [English](./README.en.md) | 简体中文
@@ -131,11 +133,11 @@ src/
 
 ## 📄 许可证
 
-本项目采用自定义许可证。允许个人免费使用，但禁止商业用途。详细条款请查看 [LICENSE](./LICENSE) 文件。
+本项目采用双许可证策略：
 
-主要条款：
+- ✅ 允许个人、学习用途免费使用
+- ❌ 禁止任何形式的商业使用，除非获得正式授权
 
-- ✅ 允许个人免费使用
-- ✅ 允许用于学习目的
-- ✅ 允许修改和分发
-- ❌ 禁止商业使用
+如需商业授权，请联系：**[zhaoanke@163.com](mailto:zhaoanke@163.com)**
+
+详细条款请查看 [LICENSE](./LICENSE) 文件。
