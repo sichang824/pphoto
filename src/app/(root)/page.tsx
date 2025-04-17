@@ -33,6 +33,14 @@ export default function Home() {
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Create an array of useInView hooks for the features
+  const featureRefs = [
+    useInView({ triggerOnce: true, threshold: 0.3 }),
+    useInView({ triggerOnce: true, threshold: 0.3 }),
+    useInView({ triggerOnce: true, threshold: 0.3 }),
+    useInView({ triggerOnce: true, threshold: 0.3 }),
+  ];
+
   useEffect(() => {
     async function fetchPreviewImages() {
       try {
@@ -231,10 +239,8 @@ export default function Home() {
               desc: t("features.easyToUse.description"),
             },
           ].map((f, idx) => {
-            const { ref, inView } = useInView({
-              triggerOnce: true,
-              threshold: 0.3,
-            });
+            // Use the pre-created hooks from the array
+            const { ref, inView } = featureRefs[idx];
 
             return (
               <motion.div
