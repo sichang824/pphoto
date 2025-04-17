@@ -15,6 +15,8 @@ import { VT323 } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import { useEffect, useRef, useState } from "react";
+import type { CarouselApi } from "@/components/ui/carousel";
 
 const pixelFont = VT323({
   weight: "400",
@@ -24,6 +26,51 @@ const pixelFont = VT323({
 
 export default function Home() {
   const { t } = useTranslation("common");
+  const [api, setApi] = useState<CarouselApi>();
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch preview images from API
+  useEffect(() => {
+    async function fetchPreviewImages() {
+      try {
+        const response = await fetch('/api/preview-images');
+        const data = await response.json();
+        
+        if (data.images && Array.isArray(data.images)) {
+          setPreviewImages(data.images);
+        } else {
+          // Fallback to default images if API fails or returns invalid data
+          setPreviewImages(["/preview/preview1.png", "/preview/preview2.png"]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch preview images:", error);
+        // Fallback to default images
+        setPreviewImages(["/preview/preview1.png", "/preview/preview2.png"]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPreviewImages();
+  }, []);
+
+  useEffect(() => {
+    if (!api) return;
+
+    // Start autoplay
+    intervalRef.current = setInterval(() => {
+      api.scrollNext();
+    }, 3000);
+
+    // Cleanup on unmount
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [api]);
 
   return (
     <div
@@ -66,23 +113,40 @@ export default function Home() {
           className="mt-12"
         >
           <div className="mx-auto w-full max-w-5xl rounded-2xl shadow-2xl border-4 border-indigo-100 bg-gray-100">
-            <Carousel className="w-full">
+            <Carousel 
+              opts={{
+                loop: true,
+                align: "start",
+              }}
+              setApi={setApi}
+              className="w-full relative"
+            >
               <CarouselContent>
-                <CarouselItem>
-                  <div className="relative w-full aspect-video rounded-xl overflow-hidden">
-                    <Image
-                      src="/preview.png"
-                      alt="PPhoto"
-                      fill
-                      className="object-cover"
-                      quality={95}
-                      priority
-                    />
-                  </div>
-                </CarouselItem>
+                {loading ? (
+                  <CarouselItem>
+                    <div className="relative w-full aspect-video rounded-xl overflow-hidden flex items-center justify-center bg-gray-200">
+                      <div className="animate-pulse">Loading...</div>
+                    </div>
+                  </CarouselItem>
+                ) : (
+                  previewImages.map((image, index) => (
+                    <CarouselItem key={index}>
+                      <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+                        <Image
+                          src={image}
+                          alt="PPhoto"
+                          fill
+                          className="object-cover"
+                          quality={95}
+                          priority={index === 0}
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))
+                )}
               </CarouselContent>
-              <CarouselPrevious className="left-2" />
-              <CarouselNext className="right-2" />
+              <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white" />
+              <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white" />
             </Carousel>
           </div>
         </motion.div>
