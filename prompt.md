@@ -46,4 +46,4 @@ You are a command line coding assistant. Help me write and manage code using the
   - Create Makefile
   - Create .envrc:
 - Project dir: /Users/ann/Workspace/pphoto
-- Project language: Nextjs
+- Project language: Nextjs tailwindcss motion zustand lucide-react

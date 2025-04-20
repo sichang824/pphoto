@@ -18,6 +18,7 @@ import SettingsPanel from "@/components/SettingsPanel";
 import StatsPanel from "@/components/StatsPanel";
 import ThemePanel from "@/components/ThemePanel";
 import { useThemeColor } from "@/lib/useThemeColor";
+import DeviceRedirect from "@/components/editor/DeviceRedirect";
 
 export default function EditorPage() {
   useThemeColor();
@@ -36,6 +37,9 @@ export default function EditorPage() {
 
   return (
     <main className="flex h-screen overflow-hidden">
+      {/* Client-side device detection backup */}
+      <DeviceRedirect />
+      
       <DndContext sensors={sensors} onDragEnd={handleDragEnd} modifiers={[]}>
         {/* 左侧照片尺寸列表 */}
         <div className="w-64 border-r border-gray-200 overflow-y-auto">

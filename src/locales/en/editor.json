@@ -1,0 +1,27 @@
+{
+  "panel": {
+    "title": "Photo Print Preview",
+    "templateManagement": "Template Management",
+    "batchSelection": "Batch Selection",
+    "print": "Print",
+    "exportPDF": "Export PDF",
+    "currentStatus": "Current Status",
+    "paperSize": "Paper Size",
+    "printOrientation": "Print Orientation",
+    "portrait": "Portrait",
+    "landscape": "Landscape",
+    "ratioType": "Ratio Type",
+    "photoCount": "Photo Count",
+    "settings": "Settings",
+    "spacing": "Spacing",
+    "pageMargin": "Page Margin",
+    "autoLayout": "Auto Layout",
+    "showGuides": "Show Guides",
+    "doubleSided": "Double Sided",
+    "backsideFlip": "Backside Flip",
+    "pixelRatio": "Pixel Ratio",
+    "imageQuality": "Image Quality",
+    "ratioSizeMapping": "Ratio Size Mapping",
+    "selectUniformSize": "Select Uniform Size"
+  }
+}

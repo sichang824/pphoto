@@ -1,0 +1,27 @@
+{
+  "panel": {
+    "title": "打印预览",
+    "templateManagement": "模板管理",
+    "batchSelection": "批量选择",
+    "print": "打印",
+    "exportPDF": "导出PDF",
+    "currentStatus": "当前状态",
+    "paperSize": "纸张大小",
+    "printOrientation": "打印方向",
+    "portrait": "纵向",
+    "landscape": "横向",
+    "ratioType": "比例类型",
+    "photoCount": "照片数量",
+    "settings": "设置",
+    "spacing": "照片间隔",
+    "pageMargin": "页边距",
+    "autoLayout": "自动布局",
+    "showGuides": "显示参考线",
+    "doubleSided": "双面打印",
+    "backsideFlip": "背面翻转",
+    "pixelRatio": "像素比",
+    "imageQuality": "图片质量",
+    "ratioSizeMapping": "比例尺寸映射",
+    "selectUniformSize": "选择统一尺寸"
+  }
+}
