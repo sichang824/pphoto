@@ -1,18 +1,12 @@
 "use client";
 
+import { pixelFont } from "@/app/fonts";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
-import { VT323 } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
-
-const pixelFont = VT323({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export default function MainHeader() {
   const { t } = useTranslation("common");
@@ -32,8 +26,8 @@ export default function MainHeader() {
           <div className="flex items-center gap-2">
             <Image src="/logo.png" alt="PPhoto Logo" width={40} height={40} />
             <span className={`${pixelFont.className} text-4xl font-bold`}>
-            {t("app.title")}
-          </span>
+              {t("app.title")}
+            </span>
           </div>
         </Link>
       </div>

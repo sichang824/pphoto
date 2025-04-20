@@ -8,7 +8,7 @@ body {
 
 @layer components {
   .font-vt323 {
-    font-family: "VT323", monospace;
+    font-family: var(--font-pixel), monospace;
   }
 
   .font-inter-custom {

@@ -1,5 +1,6 @@
 "use client";
 
+import { pixelFont } from "@/app/fonts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { CarouselApi } from "@/components/ui/carousel";
@@ -12,19 +13,12 @@ import {
 } from "@/components/ui/carousel";
 import { motion } from "framer-motion";
 import { ImageIcon, LayoutIcon, RocketIcon, SmileIcon } from "lucide-react";
-import { VT323 } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { TypeAnimation } from "react-type-animation";
-
-const pixelFont = VT323({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export default function Home() {
   const { t } = useTranslation("common");
@@ -192,7 +186,7 @@ export default function Home() {
           </div>
         </motion.div>
 
-        {/* 背景动效 */}
+        {/* Background effects */}
         <motion.div
           animate={{ scale: [1, 1.2, 1] }}
           transition={{ duration: 6, repeat: Infinity }}
