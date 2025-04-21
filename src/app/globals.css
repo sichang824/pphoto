@@ -6,16 +6,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-@layer components {
-  .font-vt323 {
-    font-family: var(--font-pixel), monospace;
-  }
-
-  .font-inter-custom {
-    font-family: "Inter", system-ui, sans-serif;
-  }
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;

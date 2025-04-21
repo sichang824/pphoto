@@ -65,13 +65,12 @@ export default function Home() {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [api]);
-
   return (
-    <div
-      className={`${pixelFont.className} bg-[url('/mosaic-bg.png')] bg-repeat text-gray-800 font-sans overflow-x-hidden`}
-    >
+    <div className="text-gray-800 font-sans overflow-x-hidden">
       {/* Hero Section */}
-      <section className="text-center py-20 px-6 relative overflow-hidden">
+      <section
+        className={`${pixelFont.className} text-center py-20 px-6 relative overflow-hidden`}
+      >
         <motion.div
           initial="hidden"
           animate="visible"
