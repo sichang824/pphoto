@@ -1,3 +1,5 @@
+"use client";
+
 import {
   PRESET_SIZES,
   generateId,
@@ -16,12 +18,12 @@ const MobilePhotoSizeList: FC = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5 pb-16">
       <MobileCustomPhotoSize />
       
       {customSizes.length > 0 && (
         <div>
-          <h3 className="text-base font-medium mb-3">自定义尺寸</h3>
+          <h3 className="text-base font-medium px-1 mb-2">自定义尺寸</h3>
           <div className="space-y-2">
             {customSizes.map((size) => (
               <MobilePhotoSize key={size.id} item={size} onAdd={handleAdd} />
@@ -31,8 +33,8 @@ const MobilePhotoSizeList: FC = () => {
       )}
       
       <div>
-        <h3 className="text-base font-medium mb-3">预设尺寸</h3>
-        <div className="space-y-2">
+        <h3 className="text-base font-medium px-1 mb-2">预设尺寸</h3>
+        <div className="grid grid-cols-1 gap-2">
           {PRESET_SIZES.map((size) => (
             <MobilePhotoSize key={size.id} item={size} onAdd={handleAdd} />
           ))}

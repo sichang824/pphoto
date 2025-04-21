@@ -10,23 +10,26 @@ import {
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
 import BacksidePrintStyleList from "@/components/BacksidePrintStyleList";
 import SettingsPanel from "@/components/SettingsPanel";
 import StatsPanel from "@/components/StatsPanel";
 import ThemePanel from "@/components/ThemePanel";
-import { useThemeColor } from "@/lib/useThemeColor";
-import { ChevronLeft } from "lucide-react";
-import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import MobilePreview from "@/components/mobile/MobilePreview";
 import MobilePhotoSizeList from "@/components/mobile/MobilePhotoSizeList";
 
 export default function MobileEditorPage() {
-  useThemeColor();
   const { t } = useTranslation(["common", "editor"]);
-
+  // 控制底部抽屉是否展开
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 10, // 更大的距离，适合触控
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -34,59 +37,47 @@ export default function MobileEditorPage() {
 
   function handleDragEnd({ over }: DragEndEvent) {
     if (over?.id) {
-      // Handle drag end logic if needed
+      // 拖拽结束逻辑
     }
   }
 
   return (
-    <main className="flex flex-col h-screen overflow-hidden bg-gray-50">
-      {/* Header with back button */}
-      <div className="flex items-center p-4 border-b border-gray-200 bg-white shadow-sm">
-        <Link href="/" className="flex items-center text-sm font-medium">
-          <ChevronLeft className="h-4 w-4 mr-1" />
-          {t("nav.home", { ns: "common" })}
-        </Link>
-        <h1 className="text-lg font-semibold mx-auto">Mobile Editor</h1>
-      </div>
-
-      {/* Main content area */}
-      <div className="flex-1 overflow-hidden">
-        <DndContext sensors={sensors} onDragEnd={handleDragEnd} modifiers={[]}>
-          {/* Preview area */}
-          <div className="h-1/2 overflow-y-auto p-4 bg-white">
-            <MobilePreview id="preview" />
-          </div>
-
-          {/* Controls in tabs */}
-          <div className="h-1/2 border-t border-gray-200 bg-white">
-            <Tabs defaultValue="options" className="h-full">
-              <TabsList className="grid grid-cols-3 w-full rounded-none border-b">
-                <TabsTrigger value="options">Options</TabsTrigger>
-                <TabsTrigger value="settings">{t("panel.settings", { ns: "editor" })}</TabsTrigger>
-                <TabsTrigger value="themes">Themes</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="options" className="p-4 h-[calc(50vh-48px)] overflow-y-auto">
-                <div className="space-y-6">
-                  <MobilePhotoSizeList />
-                  <BacksidePrintStyleList />
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="settings" className="p-4 h-[calc(50vh-48px)] overflow-y-auto">
-                <div className="space-y-4">
-                  <StatsPanel />
-                  <SettingsPanel />
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="themes" className="p-4 h-[calc(50vh-48px)] overflow-y-auto">
-                <ThemePanel />
-              </TabsContent>
-            </Tabs>
-          </div>
-        </DndContext>
-      </div>
-    </main>
+    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+        {/* 预览区域 - 占据更多空间 */}
+        <div className="h-[60%] overflow-y-auto pb-16 bg-white">
+          <MobilePreview id="preview" />
+        </div>
+        
+        {/* 底部控制区 - 使用标签页 */}
+        <div className="h-[40%] border-t border-gray-200 bg-white shadow-lg relative z-10 rounded-t-xl">
+          <Tabs defaultValue="photo-size" className="h-full flex flex-col">
+            <TabsList className="grid grid-cols-3 p-1 sticky top-0 bg-white z-10 border-b">
+              <TabsTrigger value="photo-size">照片尺寸</TabsTrigger>
+              <TabsTrigger value="settings">{t("panel.settings", { ns: "editor" })}</TabsTrigger>
+              <TabsTrigger value="themes">主题</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="photo-size" className="flex-1 p-4 overflow-y-auto">
+              <div className="space-y-4">
+                <MobilePhotoSizeList />
+                <BacksidePrintStyleList />
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="settings" className="flex-1 p-4 overflow-y-auto">
+              <div className="space-y-4">
+                <StatsPanel />
+                <SettingsPanel />
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="themes" className="flex-1 p-4 overflow-y-auto">
+              <ThemePanel />
+            </TabsContent>
+          </Tabs>
+        </div>
+      </DndContext>
+    </div>
   );
 }

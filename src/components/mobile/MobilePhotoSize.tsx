@@ -16,35 +16,35 @@ const MobilePhotoSize: FC<MobilePhotoSizeProps> = ({ item, onAdd }) => {
   const { removeCustomSize } = usePreviewStore();
 
   return (
-    <Card className="p-3 mb-2 flex justify-between items-center">
-      <div>
-        <div className="font-medium">{item.name}</div>
-        <div className="text-sm text-gray-500">
-          {item.width}mm × {item.height}mm
+    <Card className="overflow-hidden bg-white shadow-sm">
+      <div className="flex items-center p-3">
+        <div className="flex-1 min-w-0">
+          <div className="text-base font-medium truncate">{item.name}</div>
+          <div className="text-sm text-gray-500">
+            {item.width}mm × {item.height}mm
+          </div>
         </div>
-      </div>
-      
-      <div className="flex gap-2">
-        {item.name.startsWith("custom") && (
+        
+        <div className="flex">
+          {item.name.startsWith("custom") && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => removeCustomSize(item.id)}
+              className="h-10 w-10 text-red-500 hover:text-red-600 hover:bg-red-50"
+            >
+              <Trash2 className="h-5 w-5" />
+            </Button>
+          )}
           <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => removeCustomSize(item.id)}
-            className="h-9 px-2"
+            variant="ghost"
+            size="icon"
+            onClick={() => onAdd?.(item)}
+            className="h-10 w-10 text-blue-500 hover:text-blue-600 hover:bg-blue-50"
           >
-            <Trash2 className="h-4 w-4 mr-1" />
-            删除
+            <Plus className="h-5 w-5" />
           </Button>
-        )}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onAdd?.(item)}
-          className="h-9 px-2"
-        >
-          <Plus className="h-4 w-4 mr-1" />
-          添加
-        </Button>
+        </div>
       </div>
     </Card>
   );

@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { calcRatio } from "@/lib/utils";
 import { usePreviewStore } from "@/store/previewStore";
-import { PlusCircle } from "lucide-react";
 import { FC, useState } from "react";
 import { SizeItem } from "../types";
 import { Button } from "../ui/button";
@@ -37,37 +36,46 @@ const MobileCustomPhotoSize: FC = () => {
   };
 
   return (
-    <Card className="p-4 mb-4">
-      <h3 className="text-base font-medium mb-3">自定义尺寸 (mm)</h3>
-      
-      <div className="grid grid-cols-5 gap-2 items-center">
-        <Input
-          className="col-span-2 h-10"
-          type="number"
-          min="1"
-          placeholder="宽(mm)"
-          value={width}
-          onChange={(e) => setWidth(e.target.value)}
-        />
-        <div className="flex justify-center text-lg font-bold">X</div>
-        <Input
-          className="col-span-2 h-10"
-          type="number"
-          min="1"
-          placeholder="高(mm)"
-          value={height}
-          onChange={(e) => setHeight(e.target.value)}
-        />
+    <Card className="bg-white shadow-sm mb-4">
+      <div className="p-4">
+        <h3 className="text-base font-medium mb-4">自定义尺寸 (mm)</h3>
+        
+        <div className="grid grid-cols-2 gap-3 mb-3">
+          <div className="flex flex-col">
+            <label htmlFor="width" className="text-sm text-gray-500 mb-1">宽 (mm)</label>
+            <Input
+              id="width"
+              className="h-12 text-base"
+              type="number"
+              inputMode="decimal"
+              min="1"
+              value={width}
+              onChange={(e) => setWidth(e.target.value)}
+            />
+          </div>
+          
+          <div className="flex flex-col">
+            <label htmlFor="height" className="text-sm text-gray-500 mb-1">高 (mm)</label>
+            <Input
+              id="height"
+              className="h-12 text-base"
+              type="number"
+              inputMode="decimal"
+              min="1"
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+            />
+          </div>
+        </div>
+        
+        <Button
+          onClick={handleAdd}
+          disabled={!width || !height}
+          className="w-full h-12 text-base font-medium"
+        >
+          添加自定义尺寸
+        </Button>
       </div>
-      
-      <Button
-        onClick={handleAdd}
-        disabled={!width || !height}
-        className="w-full mt-3 h-10 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        <PlusCircle className="mr-2 h-4 w-4" />
-        添加自定义尺寸
-      </Button>
     </Card>
   );
 };
