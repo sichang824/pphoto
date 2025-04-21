@@ -55,5 +55,5 @@
     "lint": "next lint",
     "start": "next start"
   },
-  "version": "0.1.8"
+  "version": "0.1.9"
 }
