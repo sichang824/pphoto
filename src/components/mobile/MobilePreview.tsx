@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { PageCalculator } from "@/lib/PageCalculator";
 import { PAPER_SIZES, usePreviewStore } from "@/store/previewStore";
@@ -10,7 +9,6 @@ import { FC, useMemo, useState } from "react";
 import { BacksidePaperPreview } from "../BacksidePaperPreview";
 import PaperPreview from "../PaperPreview";
 import { cn } from "@/lib/utils";
-import { FilePlus2, Image, Printer } from "lucide-react";
 
 interface MobilePreviewProps {
   id: string;
@@ -27,11 +25,92 @@ const printStyles = `
   }
 `;
 
-const handlePrint = () => {
+const MobilePreview: FC<MobilePreviewProps> = ({ id }) => {
+  const [pdfProgress, setPdfProgress] = useState(0);
+
+  const {
+    paperLandscape,
+    previewItems,
+    paperSize,
+    pageMargin,
+    autoLayout,
+    ratioToSizeMap,
+    enableRatioMap,
+    customSizes,
+    doubleSided,
+    paperScale,
+    isPrinting,
+  } = usePreviewStore();
+
+  const pages = useMemo(() => {
+    const calculator = new PageCalculator(
+      paperLandscape,
+      paperSize,
+      autoLayout,
+      pageMargin,
+      ratioToSizeMap,
+      enableRatioMap,
+      customSizes
+    );
+    return calculator.calculate(previewItems);
+  }, [
+    previewItems,
+    paperLandscape,
+    paperSize,
+    autoLayout,
+    pageMargin,
+    ratioToSizeMap,
+    enableRatioMap,
+    customSizes,
+  ]);
+
+  return (
+    <div className="flex flex-col h-full">
+      <style>{printStyles}</style>
+
+      {/* 照片预览区域 */}
+      <div className="pb-20"> {/* Increased padding to avoid control bar overlap */}
+        {pdfProgress > 0 && (
+          <div className="w-full px-4 py-2 bg-white rounded-lg shadow-sm mb-3">
+            <Progress value={pdfProgress} className="h-2" />
+            <div className="text-center text-sm text-gray-500 mt-1">
+              正在生成PDF: {Math.round(pdfProgress)}%
+            </div>
+          </div>
+        )}
+
+        <div className="mx-auto max-w-full overflow-x-auto pb-4">
+          <div
+            id={id}
+            className={cn(
+              "flex flex-wrap items-center justify-center gap-4 origin-top min-h-[200px]"
+            )}
+            style={{
+              transform: `scale(${paperScale * 0.6})`, // 缩小比例以适应移动屏幕
+              transformOrigin: "center top",
+            }}
+          >
+            {pages.map((page) => (
+              <div key={page.id} className="shadow-md">
+                <PaperPreview id={page.id} items={page.items} />
+                {doubleSided && (
+                  <BacksidePaperPreview id={page.id} items={page.items} />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Export the PDF generation and print functions so they can be used in the control bar
+export const handlePrint = () => {
   window.print();
 };
 
-const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
+export const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
   const { setIsPrinting } = usePreviewStore.getState();
 
   try {
@@ -106,7 +185,7 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
   }
 };
 
-const handleBatchSelect = async () => {
+export const handleBatchSelect = async () => {
   try {
     const input = document.createElement("input");
     input.type = "file";
@@ -126,117 +205,6 @@ const handleBatchSelect = async () => {
   } catch (error) {
     console.error("批量选择图片失败:", error);
   }
-};
-
-const MobilePreview: FC<MobilePreviewProps> = ({ id }) => {
-  const [pdfProgress, setPdfProgress] = useState(0);
-
-  const {
-    paperLandscape,
-    previewItems,
-    paperSize,
-    pageMargin,
-    autoLayout,
-    ratioToSizeMap,
-    enableRatioMap,
-    customSizes,
-    doubleSided,
-    paperScale,
-  } = usePreviewStore();
-
-  const pages = useMemo(() => {
-    const calculator = new PageCalculator(
-      paperLandscape,
-      paperSize,
-      autoLayout,
-      pageMargin,
-      ratioToSizeMap,
-      enableRatioMap,
-      customSizes
-    );
-    return calculator.calculate(previewItems);
-  }, [
-    previewItems,
-    paperLandscape,
-    paperSize,
-    autoLayout,
-    pageMargin,
-    ratioToSizeMap,
-    enableRatioMap,
-    customSizes,
-  ]);
-
-  return (
-    <div className="flex flex-col">
-      <style>{printStyles}</style>
-      
-      {/* 固定在底部的操作栏 */}
-      <div className="fixed bottom-[40%] left-0 right-0 flex justify-center p-2 z-20">
-        <div className="bg-white shadow-lg rounded-full border border-gray-200 flex p-1">
-          <Button
-            onClick={handleBatchSelect}
-            variant="ghost"
-            className="rounded-full p-3 h-auto mx-1"
-            title="批量选择照片"
-          >
-            <Image className="h-6 w-6" />
-          </Button>
-          
-          <Button
-            onClick={handlePrint}
-            variant="ghost"
-            className="rounded-full p-3 h-auto mx-1"
-            title="打印"
-          >
-            <Printer className="h-6 w-6" />
-          </Button>
-          
-          <Button
-            onClick={() => handlePrintPdf((progress = 0) => setPdfProgress(progress))}
-            variant="ghost"
-            className="rounded-full p-3 h-auto mx-1"
-            title="导出PDF"
-          >
-            <FilePlus2 className="h-6 w-6" />
-          </Button>
-        </div>
-      </div>
-
-      {/* 照片预览区域 */}
-      <div>
-        {pdfProgress > 0 && (
-          <div className="w-full px-4 py-2 bg-white rounded-lg shadow-sm mb-3">
-            <Progress value={pdfProgress} className="h-2" />
-            <div className="text-center text-sm text-gray-500 mt-1">
-              正在生成PDF: {Math.round(pdfProgress)}%
-            </div>
-          </div>
-        )}
-
-        <div className="mx-auto max-w-full overflow-x-auto pb-4">
-          <div
-            id={id}
-            className={cn(
-              "flex flex-wrap items-center justify-center gap-4 origin-top min-h-[200px]"
-            )}
-            style={{
-              transform: `scale(${paperScale * 0.6})`, // 缩小比例以适应移动屏幕
-              transformOrigin: "center top",
-            }}
-          >
-            {pages.map((page) => (
-              <div key={page.id} className="shadow-md">
-                <PaperPreview id={page.id} items={page.items} />
-                {doubleSided && (
-                  <BacksidePaperPreview id={page.id} items={page.items} />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 };
 
 export default MobilePreview;
