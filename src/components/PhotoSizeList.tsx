@@ -1,17 +1,13 @@
 "use client";
 
-import {
-  PRESET_SIZES,
-  generateId,
-  usePreviewStore,
-} from "@/store/previewStore";
+import { generateId, usePreviewStore } from "@/store/previewStore";
 import { FC } from "react";
 import PhotoSize from "./PhotoSize";
 import { SizeItem } from "./types";
 import CustomPhotoSize from "./CustomPhotoSize";
 
 const PhotoSizeList: FC = () => {
-  const { addItem,customSizes } = usePreviewStore();
+  const { addItem, customSizes, presetSizes } = usePreviewStore();
 
   const handleAdd = (item: SizeItem) => {
     addItem({ id: generateId(), name: item.name, imageRatio: item.imageRatio });
@@ -25,7 +21,7 @@ const PhotoSizeList: FC = () => {
         {customSizes.length > 0 && customSizes.map((size) => (
           <PhotoSize key={size.name} item={size} onAdd={handleAdd} />
         ))}
-        {PRESET_SIZES.map((size) => (
+        {presetSizes.map((size) => (
           <PhotoSize key={size.name} item={size} onAdd={handleAdd} />
         ))}
       </div>

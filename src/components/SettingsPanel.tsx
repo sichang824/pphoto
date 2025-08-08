@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { PAPER_SIZES, PRESET_SIZES, usePreviewStore, SETTINGS_CONFIG } from "@/store/previewStore";
+import { usePreviewStore, SETTINGS_CONFIG } from "@/store/previewStore";
 import { Switch } from "./ui/switch";
 
 const SettingsPanel: FC = () => {
@@ -43,6 +43,9 @@ const SettingsPanel: FC = () => {
     setBacksideFlip,
     showGuides,
     setShowGuides,
+    paperSizes,
+    presetSizes,
+    customSizes,
   } = usePreviewStore();
 
   return (
@@ -60,7 +63,7 @@ const SettingsPanel: FC = () => {
                 <SelectValue placeholder="选择纸张大小" />
               </SelectTrigger>
               <SelectContent>
-                {Object.entries(PAPER_SIZES).map(([key, size]) => (
+                {Object.entries(paperSizes).map(([key, size]) => (
                   <SelectItem key={key} value={key}>
                     {key} ({size.width}×{size.height}mm)
                   </SelectItem>
@@ -236,7 +239,8 @@ const SettingsPanel: FC = () => {
                 <div className="flex items-center gap-2 mb-2">
                   <Select
                     onValueChange={(value) => {
-                      const size = PRESET_SIZES.find((s) => s.id === value);
+                      const allSizes = [...customSizes, ...presetSizes];
+                      const size = allSizes.find((s) => s.id === value);
                       if (size) {
                         Object.keys(ratioToSizeMap).forEach((ratio) => {
                           updateRatioMap(ratio, size);
@@ -248,7 +252,7 @@ const SettingsPanel: FC = () => {
                       <SelectValue placeholder="选择统一尺寸" />
                     </SelectTrigger>
                     <SelectContent>
-                      {PRESET_SIZES.map((size) => (
+                      {[...customSizes, ...presetSizes].map((size) => (
                         <SelectItem key={size.id} value={size.id}>
                           {size.name} ({size.width}×{size.height}mm)
                         </SelectItem>
@@ -263,9 +267,10 @@ const SettingsPanel: FC = () => {
                     <Select
                       value={size.id}
                       onValueChange={(value) => {
-                        const size = PRESET_SIZES.find((s) => s.id === value);
-                        if (size) {
-                          updateRatioMap(ratio, size);
+                        const allSizes = [...customSizes, ...presetSizes];
+                        const found = allSizes.find((s) => s.id === value);
+                        if (found) {
+                          updateRatioMap(ratio, found);
                         }
                       }}
                     >
@@ -273,9 +278,9 @@ const SettingsPanel: FC = () => {
                         <SelectValue placeholder="选择尺寸" />
                       </SelectTrigger>
                       <SelectContent>
-                        {PRESET_SIZES.map((size) => (
-                          <SelectItem key={size.id} value={size.id}>
-                            {size.name} ({size.width}×{size.height}mm)
+                        {[...customSizes, ...presetSizes].map((s) => (
+                          <SelectItem key={s.id} value={s.id}>
+                            {s.name} ({s.width}×{s.height}mm)
                           </SelectItem>
                         ))}
                       </SelectContent>

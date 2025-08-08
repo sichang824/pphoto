@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { PageCalculator } from "@/lib/PageCalculator";
-import { PAPER_SIZES, usePreviewStore } from "@/store/previewStore";
+import { usePreviewStore } from "@/store/previewStore";
 import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
 import { FC, useMemo, useState } from "react";
@@ -44,8 +44,9 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
       pixelRatio, 
       imageQuality,
       backsideFlip,
+      paperSizes,
     } = usePreviewStore.getState();
-    const ps = PAPER_SIZES[paperSize];
+    const ps = paperSizes[paperSize];
 
     const photoWidth = paperLandscape ? ps.height : ps.width;
     const photoHeight = paperLandscape ? ps.width : ps.height;
@@ -192,6 +193,8 @@ const Preview: FC<PreviewProps> = ({ id }) => {
     customSizes,
     doubleSided,
     paperScale,
+    paperSizes,
+    presetSizes,
   } = usePreviewStore();
 
   const pages = useMemo(() => {
@@ -202,7 +205,9 @@ const Preview: FC<PreviewProps> = ({ id }) => {
       pageMargin,
       ratioToSizeMap,
       enableRatioMap,
-      customSizes
+      customSizes,
+      paperSizes,
+      presetSizes
     );
     return calculator.calculate(previewItems);
   }, [

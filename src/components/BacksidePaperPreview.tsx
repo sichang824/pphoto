@@ -1,5 +1,4 @@
 import { usePreviewStore } from "@/store/previewStore";
-import { PAPER_SIZES } from "@/store/previewStore";
 import { PhotoItem } from "@/components/types";
 import { StyledPreviewItem } from "./StyledPreviewItem";
 
@@ -65,7 +64,8 @@ export function BacksidePaperPreview({
     spacing,
   } = usePreviewStore();
 
-  const ps = PAPER_SIZES[paperSize];
+  const { paperSizes } = usePreviewStore.getState();
+  const ps = paperSizes[paperSize];
   const paperWidth = paperLandscape ? ps.height : ps.width;
   const paperHeight = paperLandscape ? ps.width : ps.height;
 

@@ -1,13 +1,14 @@
 import { FC } from "react";
 import { Card } from "@/components/ui/card";
-import { PAPER_SIZES, usePreviewStore } from "@/store/previewStore";
+import { usePreviewStore } from "@/store/previewStore";
 
 const StatsPanel: FC = () => {
   const { paperLandscape, ratioToSizeMap, paperSize, previewItems } =
     usePreviewStore();
 
+  const { paperSizes } = usePreviewStore.getState();
   const stats = {
-    currentPaper: `${paperSize} (${PAPER_SIZES[paperSize].width}×${PAPER_SIZES[paperSize].height}mm)`,
+    currentPaper: `${paperSize} (${paperSizes[paperSize].width}×${paperSizes[paperSize].height}mm)`,
     orientation: paperLandscape ? "横向" : "纵向",
     ratioTypes: Object.keys(ratioToSizeMap).length,
     photoCount: previewItems.length,

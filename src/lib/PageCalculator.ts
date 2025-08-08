@@ -1,23 +1,20 @@
 import { Page, PhotoItem, SizeItem } from "@/components/types";
-import {
-  PAPER_SIZES,
-  PRESET_SIZES
-} from "@/store/previewStore";
 
 // 获取尺寸信息
 export const getItemSize = (
   item: PhotoItem,
   ratioToSizeMap: Record<string, { width: number; height: number }>,
   enableRatioMap: boolean,
-  customSizes: SizeItem[]
+  customSizes: SizeItem[],
+  presetSizes: SizeItem[]
 ) => {
   if (enableRatioMap && ratioToSizeMap[item.imageRatio]) {
     return ratioToSizeMap[item.imageRatio];
   }
   return (
     customSizes.find((s) => s.name === item.name) ||
-    PRESET_SIZES.find((s) => s.name === item.name) ||
-    PRESET_SIZES[0]
+    presetSizes.find((s) => s.name === item.name) ||
+    presetSizes[0]
   );
 };
 
@@ -38,9 +35,11 @@ export class PageCalculator {
     private pageMargin: number,
     private ratioToSizeMap: Record<string, { width: number; height: number }>,
     private enableRatioMap: boolean,
-    private customSizes: SizeItem[]
+    private customSizes: SizeItem[],
+    private paperSizes: Record<string, { width: number; height: number; imageRatio: string }>,
+    private presetSizes: SizeItem[]
   ) {
-    const ps = PAPER_SIZES[paperSize];
+    const ps = this.paperSizes[paperSize];
     const paperWidth = paperLandscape ? ps.height : ps.width;
     const paperHeight = paperLandscape ? ps.width : ps.height;
     const padding = pageMargin * 2;
@@ -50,7 +49,7 @@ export class PageCalculator {
   }
 
   private handleFullPageItem(item: PhotoItem): void {
-    const ps = PAPER_SIZES[this.paperSize];
+    const ps = this.paperSizes[this.paperSize];
     if (ps.imageRatio === item.imageRatio && this.currentPage.length === 0) {
       this.pages.push({
         id: `page-${this.currentPageId}`,
@@ -65,7 +64,8 @@ export class PageCalculator {
       item,
       this.ratioToSizeMap,
       this.enableRatioMap,
-      this.customSizes
+      this.customSizes,
+      this.presetSizes
     );
     const itemWidth = item.isVertical ? size.height : size.width;
     const itemHeight = item.isVertical ? size.width : size.height;

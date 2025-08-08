@@ -14,7 +14,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 // 添加预设尺寸列表
-export const PRESET_SIZES: SizeItem[] = [
+const PRESET_SIZES_DEFAULT: SizeItem[] = [
   { name: "1:1", width: 102, height: 102, id: "1", imageRatio: "1/1" },
   { name: "一寸", width: 25, height: 35, id: "2", imageRatio: "5/7" },
   { name: "二寸", width: 33, height: 48, id: "3", imageRatio: "11/16" },
@@ -28,21 +28,21 @@ export const PRESET_SIZES: SizeItem[] = [
   { name: "A3", width: 297, height: 420, id: "11", imageRatio: "99/140" },
 ];
 
-export const PAPER_SIZES: Record<
-  string,
-  { width: number; height: number; imageRatio: string }
-> = {
+const PAPER_SIZES_DEFAULT: Record<string, { width: number; height: number; imageRatio: string }> = {
   A3: { width: 297, height: 420, imageRatio: "99/140" },
   A4: { width: 210, height: 297, imageRatio: "70/99" },
   A5: { width: 148, height: 210, imageRatio: "74/105" },
   六寸: { width: 102, height: 152, imageRatio: "51/76" },
 };
 
-const RATIO_TO_SIZE_MAP: Record<string, SizeItem> = {
-  ...PRESET_SIZES.reduce<Record<string, SizeItem>>((acc, size) => {
+const buildRatioMapFromSizes = (sizes: SizeItem[]) =>
+  sizes.reduce<Record<string, SizeItem>>((acc, size) => {
     acc[size.imageRatio] = size;
     return acc;
-  }, {}),
+  }, {});
+
+const RATIO_TO_SIZE_MAP: Record<string, SizeItem> = {
+  ...buildRatioMapFromSizes(PRESET_SIZES_DEFAULT),
 };
 
 export const BACKSIDE_PRINT_STYLES: PrintStyle[] = [
@@ -152,6 +152,12 @@ interface PreviewStore {
   customSizes: SizeItem[];
   addCustomSize: (size: SizeItem) => void;
   removeCustomSize: (id: string) => void;
+  presetSizes: SizeItem[];
+  setPresetSizes: (sizes: SizeItem[]) => void;
+  paperSizes: Record<string, { width: number; height: number; imageRatio: string }>;
+  setPaperSizes: (
+    sizes: Record<string, { width: number; height: number; imageRatio: string }>
+  ) => void;
   exportTemplate: () => Partial<Template>;
   importTemplate: (template: Template) => void;
   templates: Template[];
@@ -177,6 +183,22 @@ export const usePreviewStore = create<PreviewStore>()(
       paperLandscape: false,
       previewItems: [],
       paperSize: "A4",
+      presetSizes: PRESET_SIZES_DEFAULT,
+      setPresetSizes: (sizes) => set((state) => {
+        const baseMap = buildRatioMapFromSizes([
+          ...sizes,
+          ...state.customSizes,
+        ]);
+        return {
+          presetSizes: sizes,
+          ratioToSizeMap: {
+            ...baseMap,
+            ...state.ratioToSizeMap,
+          },
+        };
+      }),
+      paperSizes: PAPER_SIZES_DEFAULT,
+      setPaperSizes: (sizes) => set({ paperSizes: sizes }),
       updateItem: (item) =>
         set((state) => ({
           previewItems: state.previewItems.map((i) =>
@@ -210,9 +232,10 @@ export const usePreviewStore = create<PreviewStore>()(
         })),
 
       findBestMatchSize: (imageRatio: number): SizeItem => {
-        let bestMatch = PRESET_SIZES[0];
+        const sizes = get().presetSizes;
+        let bestMatch = sizes[0];
         let minDifference = Infinity;
-        PRESET_SIZES.forEach((size) => {
+        sizes.forEach((size) => {
           const sizeRatio = size.width / size.height;
           const difference = Math.abs(sizeRatio - imageRatio);
 
@@ -295,13 +318,35 @@ export const usePreviewStore = create<PreviewStore>()(
       setEnableRatioMap: (enable) => set({ enableRatioMap: enable }),
       customSizes: [],
       addCustomSize: (size: SizeItem) =>
-        set((state) => ({
-          customSizes: [...state.customSizes, size],
-        })),
+        set((state) => {
+          const nextCustomSizes = [...state.customSizes, size];
+          const baseMap = buildRatioMapFromSizes([
+            ...state.presetSizes,
+            ...nextCustomSizes,
+          ]);
+          return {
+            customSizes: nextCustomSizes,
+            ratioToSizeMap: {
+              ...baseMap,
+              ...state.ratioToSizeMap,
+            },
+          };
+        }),
       removeCustomSize: (id: string) =>
-        set((state) => ({
-          customSizes: state.customSizes.filter((size) => size.id !== id),
-        })),
+        set((state) => {
+          const nextCustomSizes = state.customSizes.filter((size) => size.id !== id);
+          const baseMap = buildRatioMapFromSizes([
+            ...state.presetSizes,
+            ...nextCustomSizes,
+          ]);
+          return {
+            customSizes: nextCustomSizes,
+            ratioToSizeMap: {
+              ...baseMap,
+              ...state.ratioToSizeMap,
+            },
+          };
+        }),
       templates: [],
 
       exportTemplate: () => {
@@ -341,20 +386,29 @@ export const usePreviewStore = create<PreviewStore>()(
         })),
 
       importTemplate: (template: Template) => {
-        set({
-          previewItems: template.items,
-          customSizes: template.customSizes,
-
-          pixelRatio: template.configs.pixelRatio,
-          imageQuality: template.configs.imageQuality,
-          paperSize: template.configs.paperSize,
-          paperLandscape: template.configs.paperLandscape,
-          pageMargin: template.configs.pageMargin,
-          pageMarginUnit: template.configs.pageMarginUnit,
-          spacing: template.configs.spacing,
-          doubleSided: template.configs.doubleSided,
-          printStyleId: template.configs.printStyleId,
-          enableRatioMap: template.configs.enableRatioMap,
+        set((state) => {
+          const baseMap = buildRatioMapFromSizes([
+            ...state.presetSizes,
+            ...template.customSizes,
+          ]);
+          return {
+            previewItems: template.items,
+            customSizes: template.customSizes,
+            pixelRatio: template.configs.pixelRatio,
+            imageQuality: template.configs.imageQuality,
+            paperSize: template.configs.paperSize,
+            paperLandscape: template.configs.paperLandscape,
+            pageMargin: template.configs.pageMargin,
+            pageMarginUnit: template.configs.pageMarginUnit,
+            spacing: template.configs.spacing,
+            doubleSided: template.configs.doubleSided,
+            printStyleId: template.configs.printStyleId,
+            enableRatioMap: template.configs.enableRatioMap,
+            ratioToSizeMap: {
+              ...baseMap,
+              ...state.ratioToSizeMap,
+            },
+          };
         });
         return template;
       },

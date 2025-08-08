@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { useDroppable } from "@dnd-kit/core";
-import { PAPER_SIZES, usePreviewStore } from "@/store/previewStore";
+import { usePreviewStore } from "@/store/previewStore";
 import { PhotoItem } from "./types";
 import PreviewItem from "./PreviewItem";
 
@@ -22,7 +22,8 @@ const PaperPreview: FC<PaperPreviewProps> = ({ id, items }) => {
     showGuides 
   } = usePreviewStore();
 
-  const ps = PAPER_SIZES[paperSize];
+  const { paperSizes } = usePreviewStore.getState();
+  const ps = paperSizes[paperSize];
   const paperWidth = paperLandscape ? ps.height : ps.width;
   const paperHeight = paperLandscape ? ps.width : ps.height;
 

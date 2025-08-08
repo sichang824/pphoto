@@ -28,12 +28,19 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     ratioToSizeMap,
     enableRatioMap,
     customSizes,
+    presetSizes,
     isPrinting,
   } = usePreviewStore();
   const [position, setPosition] = useState({ x: item.x, y: item.y });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const size = getItemSize(item, ratioToSizeMap, enableRatioMap, customSizes);
+  const size = getItemSize(
+    item,
+    ratioToSizeMap,
+    enableRatioMap,
+    customSizes,
+    presetSizes
+  );
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
