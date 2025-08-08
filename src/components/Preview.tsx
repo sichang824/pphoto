@@ -11,6 +11,7 @@ import { BacksidePaperPreview } from "./BacksidePaperPreview";
 import PaperPreview from "./PaperPreview";
 import TemplateManager from "./templates/Manager";
 import { cn } from "@/lib/utils";
+import { stabilizeBeforeSnapshot } from "@/lib/snapshot";
 
 interface PreviewProps {
   id: string;
@@ -49,6 +50,22 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
     const photoWidth = paperLandscape ? ps.height : ps.width;
     const photoHeight = paperLandscape ? ps.width : ps.height;
 
+    // Diagnostics: environment and settings
+    const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+    const isSafari = /safari/i.test(ua) && !/chrome|android/i.test(ua);
+    const startTs = performance.now();
+    console.log("[PDF] Start export", {
+      ua,
+      isSafari,
+      paperSize,
+      paperLandscape,
+      pixelRatio,
+      imageQuality,
+      backsideFlip,
+      photoWidth,
+      photoHeight,
+    });
+
     const pdf = new jsPDF({
       orientation: paperLandscape ? "landscape" : "portrait",
       unit: "mm",
@@ -59,6 +76,7 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
       document.querySelectorAll('[id^="page-"]')
     );
     const totalPages = pageElements.length;
+    console.log("[PDF] Found pages", { totalPages, ids: pageElements.map((e) => e.id) });
 
     for (let i = 0; i < pageElements.length; i++) {
       const element = pageElements[i];
@@ -69,14 +87,40 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
       const isBackside = element.id.includes("backside");
 
       try {
+        const rect = element.getBoundingClientRect();
+        const computed = getComputedStyle(element);
+        console.log("[PDF] toPng input", {
+          index: i,
+          id: element.id,
+          clientWidth: element.clientWidth,
+          clientHeight: element.clientHeight,
+          offsetWidth: element.offsetWidth,
+          offsetHeight: element.offsetHeight,
+          rect: { w: rect.width, h: rect.height },
+          transform: computed.transform,
+          willFlip: isBackside && backsideFlip,
+          pixelRatio,
+          imageQuality,
+        });
+        const pageStart = performance.now();
+        const metrics = await stabilizeBeforeSnapshot(element);
+        console.log("[PDF] stabilized", { index: i, id: element.id, metrics });
         const dataUrl = await toPng(element, {
           style: {
             transform: isBackside && backsideFlip ? `rotate(180deg) scaleX(-1)` : "",
           },
           pixelRatio,
           quality: imageQuality,
+          backgroundColor: "#ffffff",
         });
 
+        console.log("[PDF] toPng output", {
+          index: i,
+          id: element.id,
+          dataUrlPrefix: dataUrl.slice(0, 30),
+          dataUrlLen: dataUrl.length,
+          elapsedMs: Math.round(performance.now() - pageStart),
+        });
         pdf.addImage(
           dataUrl,
           "PNG",
@@ -87,6 +131,7 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
           undefined,
           "SLOW"
         );
+        console.log("[PDF] addImage done", { index: i, id: element.id });
 
         onProgress?.(((i + 1) / totalPages) * 100);
       } catch (error) {
@@ -94,7 +139,9 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
       }
     }
 
+    console.log("[PDF] Saving file...");
     pdf.save("照片打印.pdf");
+    console.log("[PDF] Save complete", { totalElapsedMs: Math.round(performance.now() - startTs) });
     setTimeout(() => {
       onProgress?.(0);
       setIsPrinting(false);
