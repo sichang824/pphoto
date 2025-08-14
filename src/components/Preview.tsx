@@ -35,6 +35,8 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
 
   try {
     setIsPrinting(true);
+    // Show progress before starting the first page capture
+    onProgress?.(1);
 
     const {
       paperSize,
