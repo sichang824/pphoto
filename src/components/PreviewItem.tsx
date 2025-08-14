@@ -186,6 +186,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
             alt="预览照片"
             fill
             sizes="100vw"
+            crossOrigin="anonymous"
             style={{
               objectFit: item.fitMode === "width" ? "contain" : "cover",
               transform: ` scaleX(${item.isVertical ? -1 : 1}) scale(${

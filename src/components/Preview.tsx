@@ -4,14 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { PageCalculator } from "@/lib/PageCalculator";
 import { usePreviewStore } from "@/store/previewStore";
-import { toPng } from "html-to-image";
-import jsPDF from "jspdf";
 import { FC, useMemo, useState } from "react";
+import { exportPreviewToPdf } from "@/lib/pdf";
 import { BacksidePaperPreview } from "./BacksidePaperPreview";
 import PaperPreview from "./PaperPreview";
 import TemplateManager from "./templates/Manager";
 import { cn } from "@/lib/utils";
-import { stabilizeBeforeSnapshot } from "@/lib/snapshot";
 
 interface PreviewProps {
   id: string;
@@ -38,10 +36,10 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
   try {
     setIsPrinting(true);
 
-    const { 
-      paperSize, 
-      paperLandscape, 
-      pixelRatio, 
+    const {
+      paperSize,
+      paperLandscape,
+      pixelRatio,
       imageQuality,
       backsideFlip,
       paperSizes,
@@ -67,82 +65,21 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
       photoHeight,
     });
 
-    const pdf = new jsPDF({
-      orientation: paperLandscape ? "landscape" : "portrait",
-      unit: "mm",
-      format: [photoWidth, photoHeight],
-    });
-
-    const pageElements: HTMLElement[] = Array.from(
-      document.querySelectorAll('[id^="page-"]')
+    await exportPreviewToPdf(
+      {
+        wrapperId: "preview",
+        photoWidthMm: photoWidth,
+        photoHeightMm: photoHeight,
+        pixelRatio,
+        imageQuality,
+        backsideFlip,
+        filename: "照片打印.pdf",
+      },
+      onProgress
     );
-    const totalPages = pageElements.length;
-    console.log("[PDF] Found pages", { totalPages, ids: pageElements.map((e) => e.id) });
-
-    for (let i = 0; i < pageElements.length; i++) {
-      const element = pageElements[i];
-
-      if (i > 0) {
-        pdf.addPage();
-      }
-      const isBackside = element.id.includes("backside");
-
-      try {
-        const rect = element.getBoundingClientRect();
-        const computed = getComputedStyle(element);
-        console.log("[PDF] toPng input", {
-          index: i,
-          id: element.id,
-          clientWidth: element.clientWidth,
-          clientHeight: element.clientHeight,
-          offsetWidth: element.offsetWidth,
-          offsetHeight: element.offsetHeight,
-          rect: { w: rect.width, h: rect.height },
-          transform: computed.transform,
-          willFlip: isBackside && backsideFlip,
-          pixelRatio,
-          imageQuality,
-        });
-        const pageStart = performance.now();
-        const metrics = await stabilizeBeforeSnapshot(element);
-        console.log("[PDF] stabilized", { index: i, id: element.id, metrics });
-        const dataUrl = await toPng(element, {
-          style: {
-            transform: isBackside && backsideFlip ? `rotate(180deg) scaleX(-1)` : "",
-          },
-          pixelRatio,
-          quality: imageQuality,
-          backgroundColor: "#ffffff",
-        });
-
-        console.log("[PDF] toPng output", {
-          index: i,
-          id: element.id,
-          dataUrlPrefix: dataUrl.slice(0, 30),
-          dataUrlLen: dataUrl.length,
-          elapsedMs: Math.round(performance.now() - pageStart),
-        });
-        pdf.addImage(
-          dataUrl,
-          "PNG",
-          0,
-          0,
-          photoWidth,
-          photoHeight,
-          undefined,
-          "SLOW"
-        );
-        console.log("[PDF] addImage done", { index: i, id: element.id });
-
-        onProgress?.(((i + 1) / totalPages) * 100);
-      } catch (error) {
-        console.error(`第 ${i + 1} 页图片生成失败:`, error);
-      }
-    }
-
-    console.log("[PDF] Saving file...");
-    pdf.save("照片打印.pdf");
-    console.log("[PDF] Save complete", { totalElapsedMs: Math.round(performance.now() - startTs) });
+    console.log("[PDF] Save complete", {
+      totalElapsedMs: Math.round(performance.now() - startTs),
+    });
     setTimeout(() => {
       onProgress?.(0);
       setIsPrinting(false);
