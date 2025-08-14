@@ -77,7 +77,7 @@ export const SETTINGS_CONFIG = {
   },
   pixelRatio: {
     min: 1,
-    max: 4,
+    max: 6,
     step: 0.5,
     default: 2,
   },
