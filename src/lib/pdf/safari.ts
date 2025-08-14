@@ -41,13 +41,24 @@ export async function exportPdfSafari(
 
 		const elemWidthPx = element.offsetWidth || element.clientWidth;
 		const elemHeightPx = element.offsetHeight || element.clientHeight;
-		const targetDpi = 300;
-		const targetWidthPx = Math.round((photoWidthMm / 25.4) * targetDpi);
-		const targetHeightPx = Math.round((photoHeightMm / 25.4) * targetDpi);
+		// Base 300 DPI for print; allow DPI to scale with pixelRatio up to 1200
+		const baseDpi = 300;
+		const desiredDpi = Math.min(1200, Math.round(baseDpi * Math.max(1, pixelRatio || 2)));
+		const targetWidthPx = Math.round((photoWidthMm / 25.4) * desiredDpi);
+		const targetHeightPx = Math.round((photoHeightMm / 25.4) * desiredDpi);
 		const scaleX = targetWidthPx / Math.max(1, elemWidthPx);
 		const scaleY = targetHeightPx / Math.max(1, elemHeightPx);
-		// Allow higher scale for sharper output in Safari, while keeping a reasonable upper bound
-		const scale = Math.min(5, Math.min(scaleX, scaleY, pixelRatio || 2));
+		// Dynamic cap to avoid Safari canvas limits (side/area). Conservative defaults.
+		const maxCanvasSide = 8192; // conservative side limit per canvas
+		const maxCanvasArea = 64 * 1024 * 1024; // 64M pixels
+		const sideCap = Math.min(
+			maxCanvasSide / Math.max(1, elemWidthPx),
+			maxCanvasSide / Math.max(1, elemHeightPx)
+		);
+		const areaCap = Math.sqrt(
+			maxCanvasArea / Math.max(1, elemWidthPx * elemHeightPx)
+		);
+		const scale = Math.max(1, Math.min(scaleX, scaleY, sideCap, areaCap));
 
 		// Apply backside flip when needed (temporary), then restore after capture
 		const isBackside = element.id.includes("backside");
