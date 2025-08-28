@@ -1,5 +1,6 @@
 import { getItemSize } from "@/lib/PageCalculator";
 import { usePreviewStore } from "@/store/previewStore";
+import { usePhotoStore } from "@/store/PhotoStore";
 import {
   Image as LucideImage,
 } from "lucide-react";
@@ -23,6 +24,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     presetSizes,
     isPrinting,
   } = usePreviewStore();
+  const { showPhotoBackground, photoBackgroundColor } = usePhotoStore();
   const [position, setPosition] = useState({ x: item.x, y: item.y });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -162,17 +164,20 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
       {/* 图片容器 */}
       {item.imageUrl ? (
         <div
-          className="relative border border-white box-border overflow-hidden bg-gray-100"
+          className="relative border border-white box-border overflow-hidden"
           style={{
             width: `${size.width}mm`,
             height: `${size.height}mm`,
-            transform: `rotate(${item.isVertical ? -90 : 0}deg) scaleX(${
+            transform: `rotate(${item.isVertical ? -90 : 0}deg) scaleX(${ 
               item.isVertical ? -1 : 1
             }) `,
             transformOrigin: "0 0",
             position: "absolute",
             top: "0",
             left: "0",
+            background: showPhotoBackground
+              ? photoBackgroundColor
+              : "transparent",
           }}
         >
           <Image

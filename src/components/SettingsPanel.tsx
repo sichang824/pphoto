@@ -13,6 +13,8 @@ import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { usePreviewStore, SETTINGS_CONFIG } from "@/store/previewStore";
 import { Switch } from "./ui/switch";
+import { usePhotoStore } from "@/store/PhotoStore";
+import { GradientPicker } from "./ui/GradientPicker";
 
 const SettingsPanel: FC = () => {
   const {
@@ -47,6 +49,12 @@ const SettingsPanel: FC = () => {
     presetSizes,
     customSizes,
   } = usePreviewStore();
+  const {
+    showPhotoBackground,
+    setShowPhotoBackground,
+    photoBackgroundColor,
+    setPhotoBackgroundColor,
+  } = usePhotoStore();
 
   return (
     <>
@@ -150,6 +158,26 @@ const SettingsPanel: FC = () => {
             <p className="text-sm text-gray-500">
               显示或隐藏页边距的参考虚线
             </p>
+          </div>
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium">显示照片背景</label>
+              <Switch
+                checked={showPhotoBackground}
+                onCheckedChange={(checked) => setShowPhotoBackground(checked)}
+              />
+            </div>
+            <p className="text-sm text-gray-500">控制图片容器的背景色显示</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">照片背景颜色</label>
+            <div className={"w-full " + (!showPhotoBackground ? "opacity-50 pointer-events-none" : "")}>
+              <GradientPicker
+                className="w-full truncate"
+                background={photoBackgroundColor}
+                setBackground={setPhotoBackgroundColor}
+              />
+            </div>
           </div>
           <div>
             <div className="flex items-center justify-between mb-1">
