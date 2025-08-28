@@ -25,6 +25,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
   } = usePreviewStore();
   const [position, setPosition] = useState({ x: item.x, y: item.y });
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const anchorRef = useRef<HTMLDivElement>(null);
 
   const size = getItemSize(
     item,
@@ -148,6 +149,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
         height: item.isVertical ? `${size.width}mm` : `${size.height}mm`,
         width: item.isVertical ? `${size.height}mm` : `${size.width}mm`,
       }}
+      ref={anchorRef}
     >
       <input
         type="file"
@@ -222,6 +224,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
         onZoomOut={handleZoomOut}
         onOrientationChange={handleOrientationChange}
         onRemove={handleRemove}
+        anchorRef={anchorRef}
       />
     </div>
   );
