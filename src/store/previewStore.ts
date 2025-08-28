@@ -24,15 +24,25 @@ const PRESET_SIZES_DEFAULT: SizeItem[] = [
   { name: "大六寸", width: 114, height: 152, id: "7", imageRatio: "3/4" },
   { name: "七寸", width: 127, height: 178, id: "8", imageRatio: "127/178" },
   { name: "八寸", width: 152, height: 203, id: "9", imageRatio: "152/203" },
+  { name: "A5", width: 148, height: 210, id: "12", imageRatio: "74/105" },
   { name: "A4", width: 210, height: 297, id: "10", imageRatio: "70/99" },
   { name: "A3", width: 297, height: 420, id: "11", imageRatio: "99/140" },
 ];
 
-const PAPER_SIZES_DEFAULT: Record<string, { width: number; height: number; imageRatio: string }> = {
-  A3: { width: 297, height: 420, imageRatio: "99/140" },
-  A4: { width: 210, height: 297, imageRatio: "70/99" },
-  A5: { width: 148, height: 210, imageRatio: "74/105" },
-  六寸: { width: 102, height: 152, imageRatio: "51/76" },
+// 从预设尺寸生成纸张尺寸
+const generatePaperSizes = (presetSizes: SizeItem[], customSizes?: SizeItem[]) => {
+  const orderedSizes = [
+    ...(customSizes || []),
+    ...presetSizes.slice().reverse()
+  ];
+  return orderedSizes.reduce<Record<string, { width: number; height: number; imageRatio: string }>>((acc, size) => {
+    acc[size.name] = {
+      width: size.width,
+      height: size.height,
+      imageRatio: size.imageRatio
+    };
+    return acc;
+  }, {});
 };
 
 const buildRatioMapFromSizes = (sizes: SizeItem[]) =>
@@ -101,7 +111,7 @@ export const SETTINGS_CONFIG = {
   },
   paperScale: {
     min: 0.5,
-    max: 1,
+    max: 2,
     step: 0.1,
     default: 1,
   },
@@ -191,13 +201,14 @@ export const usePreviewStore = create<PreviewStore>()(
         ]);
         return {
           presetSizes: sizes,
+          paperSizes: generatePaperSizes(sizes, state.customSizes),
           ratioToSizeMap: {
             ...baseMap,
             ...state.ratioToSizeMap,
           },
         };
       }),
-      paperSizes: PAPER_SIZES_DEFAULT,
+      paperSizes: generatePaperSizes(PRESET_SIZES_DEFAULT),
       setPaperSizes: (sizes) => set({ paperSizes: sizes }),
       updateItem: (item) =>
         set((state) => ({
@@ -326,6 +337,7 @@ export const usePreviewStore = create<PreviewStore>()(
           ]);
           return {
             customSizes: nextCustomSizes,
+            paperSizes: generatePaperSizes(state.presetSizes, nextCustomSizes),
             ratioToSizeMap: {
               ...baseMap,
               ...state.ratioToSizeMap,
@@ -341,6 +353,7 @@ export const usePreviewStore = create<PreviewStore>()(
           ]);
           return {
             customSizes: nextCustomSizes,
+            paperSizes: generatePaperSizes(state.presetSizes, nextCustomSizes),
             ratioToSizeMap: {
               ...baseMap,
               ...state.ratioToSizeMap,
@@ -458,6 +471,16 @@ export const usePreviewStore = create<PreviewStore>()(
           backsideFlip: state.backsideFlip,
           showGuides: state.showGuides,
         };
+      },
+      onRehydrateStorage: () => (state) => {
+        if (state && state.customSizes.length > 0) {
+          state.paperSizes = generatePaperSizes(state.presetSizes, state.customSizes);
+          const baseMap = buildRatioMapFromSizes([...state.presetSizes, ...state.customSizes]);
+          state.ratioToSizeMap = {
+            ...baseMap,
+            ...state.ratioToSizeMap,
+          };
+        }
       },
     }
   )

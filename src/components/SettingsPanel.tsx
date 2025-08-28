@@ -86,6 +86,9 @@ const SettingsPanel: FC = () => {
               step={SETTINGS_CONFIG.paperScale.step}
               className="w-full"
             />
+            <p className="text-sm text-gray-500 mt-1">
+              预览效果，不影响打印
+            </p>
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">打印方向</label>

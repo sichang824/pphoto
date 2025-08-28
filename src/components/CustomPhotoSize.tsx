@@ -33,7 +33,6 @@ const CustomPhotoSize: FC = () => {
   return (
     <Card className="p-2">
       <div className="flex flex-col gap-4">
-        <div className="text-sm font-medium">自定义尺寸（mm）</div>
         <div className="flex gap-1 items-center">
           <Input
             className="p-1 h-8"
