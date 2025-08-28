@@ -19,7 +19,6 @@ beforeAll(() => {
       return Object.keys(store).length;
     },
   } as unknown as Storage;
-  // @ts-expect-error attach to global for tests
   globalThis.localStorage = mockLocalStorage;
 });
 
@@ -30,6 +29,8 @@ describe("PhotoStore", () => {
     const state = usePhotoStore.getState();
     expect(state.showPhotoBackground).toBe(true);
     expect(state.photoBackgroundColor.toLowerCase()).toBe("#f3f4f6");
+    expect(state.horizontalAlign).toBe("center");
+    expect(state.verticalAlign).toBe("center");
   });
 
   it("should update showPhotoBackground", () => {
@@ -44,5 +45,25 @@ describe("PhotoStore", () => {
     expect(usePhotoStore.getState().photoBackgroundColor.toLowerCase()).toBe(
       "#ff0000"
     );
+  });
+
+  it("should update horizontal alignment", () => {
+    const { setHorizontalAlign } = usePhotoStore.getState();
+    setHorizontalAlign("left");
+    expect(usePhotoStore.getState().horizontalAlign).toBe("left");
+    setHorizontalAlign("right");
+    expect(usePhotoStore.getState().horizontalAlign).toBe("right");
+    setHorizontalAlign("center");
+    expect(usePhotoStore.getState().horizontalAlign).toBe("center");
+  });
+
+  it("should update vertical alignment", () => {
+    const { setVerticalAlign } = usePhotoStore.getState();
+    setVerticalAlign("top");
+    expect(usePhotoStore.getState().verticalAlign).toBe("top");
+    setVerticalAlign("bottom");
+    expect(usePhotoStore.getState().verticalAlign).toBe("bottom");
+    setVerticalAlign("center");
+    expect(usePhotoStore.getState().verticalAlign).toBe("center");
   });
 });

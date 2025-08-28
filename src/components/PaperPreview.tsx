@@ -3,6 +3,7 @@
 import { FC } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { usePreviewStore } from "@/store/previewStore";
+import { usePhotoStore } from "@/store/PhotoStore";
 import { PhotoItem } from "./types";
 import PreviewItem from "./PreviewItem";
 
@@ -26,10 +27,23 @@ const PaperPreview: FC<PaperPreviewProps> = ({ id, items }) => {
   const ps = paperSizes[paperSize];
   const paperWidth = paperLandscape ? ps.height : ps.width;
   const paperHeight = paperLandscape ? ps.width : ps.height;
-
-  const contentClass = paperSize == "六寸" ? "content-center" : "content-start";
-  const itemsClass = paperSize == "六寸" ? "items-center" : "items-start";
-  const justifyClass = paperSize == "六寸" ? "justify-center" : "justify-start";
+  // Use global photo alignment settings instead of paper-size specific logic
+  const { horizontalAlign, verticalAlign } = usePhotoStore();
+  const justifyMap: Record<string, string> = {
+    left: "justify-start",
+    center: "justify-center",
+    right: "justify-end",
+  };
+  const itemsMap: Record<string, string> = {
+    top: "items-start",
+    center: "items-center",
+    bottom: "items-end",
+  };
+  const contentMap: Record<string, string> = {
+    top: "content-start",
+    center: "content-center",
+    bottom: "content-end",
+  };
 
   return (
     <>
@@ -45,7 +59,7 @@ const PaperPreview: FC<PaperPreviewProps> = ({ id, items }) => {
         className={`relative bg-white border border-gray-100`}
       >
         <div
-          className={`absolute inset-0 ${showGuides ? 'border border-dashed border-gray-300' : ''} overflow-hidden flex flex-wrap ${contentClass} ${itemsClass} ${justifyClass}`}
+          className={`absolute inset-0 ${showGuides ? 'border border-dashed border-gray-300' : ''} overflow-hidden flex flex-wrap ${contentMap[verticalAlign]} ${itemsMap[verticalAlign]} ${justifyMap[horizontalAlign]}`}
           style={{
             margin: `${pageMargin}${pageMarginUnit}`,
             gap: `${spacing}mm`,

@@ -15,6 +15,15 @@ import { usePreviewStore, SETTINGS_CONFIG } from "@/store/previewStore";
 import { Switch } from "./ui/switch";
 import { usePhotoStore } from "@/store/PhotoStore";
 import { GradientPicker } from "./ui/GradientPicker";
+import { Button } from "./ui/button";
+import {
+  AlignStartHorizontal,
+  AlignCenterHorizontal,
+  AlignEndHorizontal,
+  AlignStartVertical,
+  AlignCenterVertical,
+  AlignEndVertical,
+} from "lucide-react";
 
 const SettingsPanel: FC = () => {
   const {
@@ -54,6 +63,10 @@ const SettingsPanel: FC = () => {
     setShowPhotoBackground,
     photoBackgroundColor,
     setPhotoBackgroundColor,
+    horizontalAlign,
+    setHorizontalAlign,
+    verticalAlign,
+    setVerticalAlign,
   } = usePhotoStore();
 
   return (
@@ -177,6 +190,76 @@ const SettingsPanel: FC = () => {
                 background={photoBackgroundColor}
                 setBackground={setPhotoBackgroundColor}
               />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">水平对齐</label>
+            <div className="inline-flex gap-2">
+              <Button
+                variant={horizontalAlign === "left" ? "default" : "outline"}
+                size="icon"
+                className="w-8 h-8"
+                onClick={() => setHorizontalAlign("left")}
+                title="左对齐"
+                aria-label="Align Left"
+              >
+                <AlignStartHorizontal className="w-4 h-4" />
+              </Button>
+              <Button
+                variant={horizontalAlign === "center" ? "default" : "outline"}
+                size="icon"
+                className="w-8 h-8"
+                onClick={() => setHorizontalAlign("center")}
+                title="居中对齐"
+                aria-label="Align Center"
+              >
+                <AlignCenterHorizontal className="w-4 h-4" />
+              </Button>
+              <Button
+                variant={horizontalAlign === "right" ? "default" : "outline"}
+                size="icon"
+                className="w-8 h-8"
+                onClick={() => setHorizontalAlign("right")}
+                title="右对齐"
+                aria-label="Align Right"
+              >
+                <AlignEndHorizontal className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">垂直对齐</label>
+            <div className="inline-flex gap-2">
+              <Button
+                variant={verticalAlign === "top" ? "default" : "outline"}
+                size="icon"
+                className="w-8 h-8"
+                onClick={() => setVerticalAlign("top")}
+                title="顶端对齐"
+                aria-label="Align Top"
+              >
+                <AlignStartVertical className="w-4 h-4" />
+              </Button>
+              <Button
+                variant={verticalAlign === "center" ? "default" : "outline"}
+                size="icon"
+                className="w-8 h-8"
+                onClick={() => setVerticalAlign("center")}
+                title="垂直居中"
+                aria-label="Align Middle"
+              >
+                <AlignCenterVertical className="w-4 h-4" />
+              </Button>
+              <Button
+                variant={verticalAlign === "bottom" ? "default" : "outline"}
+                size="icon"
+                className="w-8 h-8"
+                onClick={() => setVerticalAlign("bottom")}
+                title="底部对齐"
+                aria-label="Align Bottom"
+              >
+                <AlignEndVertical className="w-4 h-4" />
+              </Button>
             </div>
           </div>
           <div>
