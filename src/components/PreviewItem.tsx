@@ -1,18 +1,12 @@
 import { getItemSize } from "@/lib/PageCalculator";
-import { isMobileDevice } from "@/lib/utils";
 import { usePreviewStore } from "@/store/previewStore";
 import {
   Image as LucideImage,
-  MoveVertical,
-  RectangleVertical,
-  Trash,
-  ZoomIn,
-  ZoomOut,
 } from "lucide-react";
 import Image from "next/image";
 import { FC, useRef, useState } from "react";
+import ToolBar from "./ToolBar";
 import { PhotoItem } from "./types";
-import { Button } from "./ui/button";
 
 interface PreviewItemProps {
   item: PhotoItem;
@@ -23,8 +17,6 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     removeItem,
     toggleOrientation,
     updateItem,
-    pageMargin,
-    pageMarginUnit,
     ratioToSizeMap,
     enableRatioMap,
     customSizes,
@@ -124,10 +116,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     window.addEventListener("touchend", handleEnd as EventListener);
   };
 
-  // 添加缩放步长常量
   const ZOOM_STEP = 0.1;
-  const MAX_ZOOM = 3;
-  const MIN_ZOOM = 0.5;
 
   const handleZoomIn = () => {
     updateItem({ ...item, scale: (item.scale || 1) + ZOOM_STEP });
@@ -137,23 +126,24 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     updateItem({ ...item, scale: (item.scale || 1) - ZOOM_STEP });
   };
 
-  // 修改 fitMode 的切换处理函数
-  const handleFitModeChange = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleFitModeChange = () => {
     const newFitMode = item.fitMode === "width" ? "height" : "width";
     updateItem({ ...item, fitMode: newFitMode, x: 0, y: 0, scale: 1 });
     setPosition({ x: 0, y: 0 });
-    console.log("Fit mode changed to:", newFitMode); // 添加日志以便调试
   };
 
-  const handleOrientationChange = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleOrientationChange = () => {
     toggleOrientation(item.id);
   };
 
+  const handleRemove = () => {
+    removeItem(item.id);
+  };
+
+
   return (
     <div
-      className="group relative"
+      className="group relative overflow-visible"
       style={{
         height: item.isVertical ? `${size.width}mm` : `${size.height}mm`,
         width: item.isVertical ? `${size.height}mm` : `${size.width}mm`,
@@ -170,7 +160,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
       {/* 图片容器 */}
       {item.imageUrl ? (
         <div
-          className="relative border border-white box-border overflow-hidden"
+          className="relative border border-white box-border overflow-hidden bg-gray-100"
           style={{
             width: `${size.width}mm`,
             height: `${size.height}mm`,
@@ -178,6 +168,9 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
               item.isVertical ? -1 : 1
             }) `,
             transformOrigin: "0 0",
+            position: "absolute",
+            top: "0",
+            left: "0",
           }}
         >
           <Image
@@ -200,7 +193,14 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
         </div>
       ) : (
         <div
-          className="w-full h-full flex items-center justify-center bg-gray-50 cursor-pointer"
+          className="flex items-center justify-center bg-gray-50 cursor-pointer"
+          style={{
+            width: `${size.width}mm`,
+            height: `${size.height}mm`,
+            position: "absolute",
+            top: "0",
+            left: "0",
+          }}
           onClick={(e) => {
             e.stopPropagation();
             fileInputRef.current?.click();
@@ -213,115 +213,16 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
         </div>
       )}
 
-      {/* 控制按钮组 */}
-      {!isPrinting && (
-        <div
-          className={`absolute z-30 flex flex-wrap gap-1 ${
-            isMobileDevice()
-              ? "opacity-100"
-              : "opacity-0 group-hover:opacity-100"
-          } transition-opacity`}
-          style={
-            item.isVertical
-              ? {
-                  flexDirection: size.width < 100 ? "column" : "row",
-                  top: `${pageMargin + 0.2}${pageMarginUnit}`,
-                  left: size.width < 100 ? `${pageMargin + 0.2}${pageMarginUnit}` : "50%",
-                  transform: size.width < 100 ? "none" : "translateX(-50%)",
-                }
-              : {
-                  flexDirection: size.height < 100 ? "row" : "column",
-                  top: size.height < 100 ? `${pageMargin + 0.2}${pageMarginUnit}` : "50%",
-                  left: `${pageMargin + 0.2}${pageMarginUnit}`,
-                  transform: size.height < 100 ? "none" : "translateY(-50%)",
-                }
-          }
-        >
-          {item.imageUrl && (
-            <>
-              <Button
-                size="icon"
-                onClick={handleFitModeChange}
-                className="w-8 h-8 rounded-full shadow"
-                title={
-                  item.fitMode === "width" ? "切换为高度铺满" : "切换为宽度铺满"
-                }
-              >
-                <MoveVertical
-                  className="w-3.5 h-3.5"
-                  style={{
-                    transform:
-                      item.fitMode === "width" ? "rotate(-90deg)" : "none",
-                    transition: "transform 0.2s ease-in-out",
-                  }}
-                />
-              </Button>
-              <Button
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  fileInputRef.current?.click();
-                }}
-                className="w-8 h-8 rounded-full shadow"
-                title="更换图片"
-              >
-                <LucideImage className="w-3.5 h-3.5" />
-              </Button>
-              <Button
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleZoomIn();
-                }}
-                className="w-8 h-8 rounded-full shadow"
-                title={`放大 (${Math.round(item.scale * 100)}%)`}
-                disabled={item.scale >= MAX_ZOOM}
-              >
-                <ZoomIn className="w-3.5 h-3.5" />
-              </Button>
-              <Button
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleZoomOut();
-                }}
-                className="w-8 h-8 rounded-full shadow"
-                title={`缩小 (${Math.round(item.scale * 100)}%)`}
-                disabled={item.scale <= MIN_ZOOM}
-              >
-                <ZoomOut className="w-3.5 h-3.5" />
-              </Button>
-            </>
-          )}
-
-          <Button
-            size="icon"
-            onClick={handleOrientationChange}
-            className="w-8 h-8 rounded-full shadow"
-            title={item.isVertical ? "切换为横向" : "切换为竖向"}
-          >
-            <RectangleVertical
-              className="w-3.5 h-3.5"
-              style={{
-                transform: item.isVertical ? "rotate(90deg)" : "none",
-                transition: "transform 0.2s ease-in-out",
-              }}
-            />
-          </Button>
-
-          <Button
-            size="icon"
-            onClick={(e) => {
-              e.stopPropagation();
-              removeItem(item.id);
-            }}
-            className="w-8 h-8 rounded-full shadow bg-red-500 hover:bg-red-600"
-            title="移除"
-          >
-            <Trash />
-          </Button>
-        </div>
-      )}
+      <ToolBar
+        item={item}
+        isPrinting={isPrinting}
+        fileInputRef={fileInputRef}
+        onFitModeChange={handleFitModeChange}
+        onZoomIn={handleZoomIn}
+        onZoomOut={handleZoomOut}
+        onOrientationChange={handleOrientationChange}
+        onRemove={handleRemove}
+      />
     </div>
   );
 };
