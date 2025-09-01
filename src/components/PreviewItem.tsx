@@ -23,6 +23,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     customSizes,
     presetSizes,
     isPrinting,
+    setItemImage,
   } = usePreviewStore();
   const { showPhotoBackground, photoBackgroundColor } = usePhotoStore();
   const [position, setPosition] = useState({ x: item.x, y: item.y });
@@ -37,12 +38,10 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     presetSizes
   );
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      updateItem({ ...item, imageUrl: url });
-    }
+    if (!file) return;
+    await setItemImage(item.id, file);
   };
 
   // 添加新的辅助函数来处理坐标计算

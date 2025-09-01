@@ -9,6 +9,7 @@ import {
   SizeItem,
 } from "@/components/types";
 import { calcRatio } from "@/lib/utils";
+import { computeAndEnsureRatioMapping, readFileAsDataURL, probeImageSizeFromDataURL } from "@/lib/imageLoader";
 import { Template, TemplateConfig } from "@/types/template";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
@@ -138,6 +139,7 @@ interface PreviewStore {
   paperSize: string;
   setPaperSize: (size: string) => void;
   addBatchImages: (files: File[]) => Promise<void>;
+  setItemImage: (id: string, file: File) => Promise<void>;
   pageMargin: number;
   setPageMargin: (margin: number) => void;
   autoLayout: boolean;
@@ -261,44 +263,52 @@ export const usePreviewStore = create<PreviewStore>()(
 
       addBatchImages: async (files: File[]) => {
         const state = usePreviewStore.getState();
-        const { ratioToSizeMap, updateRatioMap, findBestMatchSize, addItem } =
-          state;
+        const { ratioToSizeMap, updateRatioMap, findBestMatchSize, addItem } = state;
 
         const processImage = async (file: File) => {
-          return new Promise<void>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const img = new Image();
-              img.onload = () => {
-                const w = img.width;
-                const h = img.height;
-                const imageRatio = calcRatio(w, h);
-                
-                if (!ratioToSizeMap[imageRatio]) {
-                const size = findBestMatchSize(w / h);
-                  updateRatioMap(imageRatio, size);
-                }
-
-                addItem({
-                  imageRatio,
-                  id: generateId(),
-                  name: `${file.name}`,
-                  imageUrl: e.target?.result as string,
-                });
-                resolve();
-              };
-              img.onerror = reject;
-              img.src = e.target?.result as string;
-            };
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-          });
+          try {
+            const dataUrl = await readFileAsDataURL(file);
+            const { width, height } = await probeImageSizeFromDataURL(dataUrl);
+            const imageRatio = computeAndEnsureRatioMapping(
+              { ratioToSizeMap, updateRatioMap, findBestMatchSize },
+              width,
+              height
+            );
+            addItem({
+              imageRatio,
+              id: generateId(),
+              name: `${file.name}`,
+              imageUrl: dataUrl,
+            });
+          } catch (error) {
+            console.error("处理图片失败:", error);
+          }
         };
 
         try {
           await Promise.all(files.map(processImage));
         } catch (error) {
           console.error("处理批量图片失败:", error);
+        }
+      },
+
+      setItemImage: async (id: string, file: File) => {
+        const state = usePreviewStore.getState();
+        const { ratioToSizeMap, updateRatioMap, findBestMatchSize, updateItem } = state;
+        try {
+          const dataUrl = await readFileAsDataURL(file);
+          const { width, height } = await probeImageSizeFromDataURL(dataUrl);
+          const imageRatio = computeAndEnsureRatioMapping(
+            { ratioToSizeMap, updateRatioMap, findBestMatchSize },
+            width,
+            height
+          );
+          updateItem({ id, imageUrl: dataUrl, imageRatio });
+        } catch (error) {
+          console.error("设置单张图片失败:", error);
+          // 最小化降级：至少把图片展示出来
+          const dataUrl = await readFileAsDataURL(file);
+          updateItem({ id, imageUrl: dataUrl });
         }
       },
       pageMargin: SETTINGS_CONFIG.pageMargin.default,
