@@ -54,6 +54,8 @@ const SettingsPanel: FC = () => {
     setBacksideFlip,
     showGuides,
     setShowGuides,
+    showPaperBorder,
+    setShowPaperBorder,
     paperSizes,
     presetSizes,
     customSizes,
@@ -159,6 +161,18 @@ const SettingsPanel: FC = () => {
                 ))}
               </RadioGroup>
             </div>
+          </div>
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium">显示纸张边框</label>
+              <Switch
+                checked={showPaperBorder}
+                onCheckedChange={(checked) => setShowPaperBorder(checked)}
+              />
+            </div>
+            <p className="text-sm text-gray-500">
+              显示或隐藏纸张外边框线
+            </p>
           </div>
           <div>
             <div className="flex items-center justify-between mb-1">

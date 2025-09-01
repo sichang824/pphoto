@@ -31,9 +31,16 @@ const handlePrint = () => {
 };
 
 const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
-  const { setIsPrinting } = usePreviewStore.getState();
+  const { setIsPrinting, showPaperBorder, setShowPaperBorder } =
+    usePreviewStore.getState();
+  const originalShowPaperBorder = showPaperBorder;
 
   try {
+    // Hide paper border for clean export
+    setShowPaperBorder(false);
+    // Wait for next frame to ensure DOM updated before capture
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
     setIsPrinting(true);
     // Show progress before starting the first page capture
     onProgress?.(1);
@@ -82,6 +89,8 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
     console.log("[PDF] Save complete", {
       totalElapsedMs: Math.round(performance.now() - startTs),
     });
+    // Restore paper border after export completes
+    setShowPaperBorder(originalShowPaperBorder);
     setTimeout(() => {
       onProgress?.(0);
       setIsPrinting(false);
@@ -89,6 +98,8 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
   } catch (error) {
     console.error("生成 PDF 失败:", error);
     onProgress?.(0);
+    // Ensure paper border is restored even on failure
+    setShowPaperBorder(originalShowPaperBorder);
     setIsPrinting(false);
   }
 };

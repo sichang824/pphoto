@@ -20,7 +20,8 @@ const PaperPreview: FC<PaperPreviewProps> = ({ id, items }) => {
     pageMargin, 
     pageMarginUnit, 
     spacing,
-    showGuides 
+    showGuides,
+    showPaperBorder,
   } = usePreviewStore();
 
   const { paperSizes } = usePreviewStore.getState();
@@ -56,7 +57,7 @@ const PaperPreview: FC<PaperPreviewProps> = ({ id, items }) => {
           height: `${paperHeight}mm`,
         }}
         id={id}
-        className={`relative bg-white border border-gray-100`}
+        className={`relative bg-white ${showPaperBorder ? 'border border-gray-100' : ''}`}
       >
         <div
           className={`absolute inset-0 ${showGuides ? 'border border-dashed border-gray-300' : ''} overflow-hidden flex flex-wrap ${contentMap[verticalAlign]} ${itemsMap[verticalAlign]} ${justifyMap[horizontalAlign]}`}
