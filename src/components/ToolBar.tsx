@@ -104,7 +104,7 @@ const ToolBar: FC<ToolBarProps> = ({
       el.removeEventListener("mouseenter", onEnter);
       el.removeEventListener("mouseleave", onLeave);
     };
-  }, [anchorRef]);
+  }, [anchorRef, scheduleClose]);
 
   // Cleanup any pending timers on unmount
   useEffect(() => {

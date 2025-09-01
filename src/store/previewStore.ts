@@ -8,7 +8,6 @@ import {
   PrintStyleId,
   SizeItem,
 } from "@/components/types";
-import { calcRatio } from "@/lib/utils";
 import { computeAndEnsureRatioMapping, readFileAsDataURL, probeImageSizeFromDataURL } from "@/lib/imageLoader";
 import { Template, TemplateConfig } from "@/types/template";
 import { create } from "zustand";

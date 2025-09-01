@@ -191,6 +191,8 @@ const Preview: FC<PreviewProps> = ({ id }) => {
     ratioToSizeMap,
     enableRatioMap,
     customSizes,
+    paperSizes,
+    presetSizes,
   ]);
 
   return (
