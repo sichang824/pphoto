@@ -189,6 +189,8 @@ interface PreviewStore {
   setShowGuides: (value: boolean) => void;
   showPaperBorder: boolean;
   setShowPaperBorder: (value: boolean) => void;
+  cleanExport?: boolean;
+  setCleanExport?: (value: boolean) => void;
 }
 
 export const usePreviewStore = create<PreviewStore>()(
@@ -470,6 +472,8 @@ export const usePreviewStore = create<PreviewStore>()(
       setShowGuides: (value) => set({ showGuides: value }),
       showPaperBorder: true,
       setShowPaperBorder: (value) => set({ showPaperBorder: value }),
+      cleanExport: true,
+      setCleanExport: (value) => set({ cleanExport: value }),
     }),
     {
       name: "print-store",
@@ -484,6 +488,7 @@ export const usePreviewStore = create<PreviewStore>()(
           paperScale: state.paperScale,
           backsideFlip: state.backsideFlip,
           showGuides: state.showGuides,
+          cleanExport: state.cleanExport,
           showPaperBorder: state.showPaperBorder,
         };
       },

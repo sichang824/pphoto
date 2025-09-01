@@ -41,4 +41,19 @@ describe("PreviewStore - paper border visibility", () => {
   });
 });
 
+describe("PreviewStore - clean export option", () => {
+  it("should have cleanExport enabled by default", () => {
+    const state = usePreviewStore.getState();
+    expect(state.cleanExport).toBe(true);
+  });
+
+  it("should update cleanExport via setter", () => {
+    const { setCleanExport } = usePreviewStore.getState();
+    setCleanExport?.(false);
+    expect(usePreviewStore.getState().cleanExport).toBe(false);
+    setCleanExport?.(true);
+    expect(usePreviewStore.getState().cleanExport).toBe(true);
+  });
+});
+
 
