@@ -67,6 +67,75 @@ export default function Home() {
   }, [api]);
   return (
     <div className="text-gray-800 font-sans overflow-x-hidden">
+      {/* Celebration Banner */}
+      <motion.div
+        className="fixed top-16 left-4 right-4 z-50 bg-gradient-to-r from-red-600 via-red-700 to-red-800 py-6 px-8 overflow-hidden rounded-2xl shadow-2xl backdrop-blur-sm border border-red-400/30"
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(220, 38, 38, 0.95), rgba(185, 28, 28, 0.95), rgba(153, 27, 27, 0.95))",
+          backdropFilter: "blur(10px)",
+        }}
+      >
+        <div className="relative z-10 flex items-center justify-between">
+          <motion.div
+            className="flex-shrink-0"
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-visible">
+              <Image
+                src="/zgrmkrzz.png"
+                alt="Logo"
+                width={80}
+                height={80}
+                className="w-[80px] h-[80px] object-cover scale-150"
+              />
+            </div>
+          </motion.div>
+
+          <div className="flex-1 text-center mx-4">
+            <motion.h1
+              className="text-white text-xl md:text-2xl font-bold"
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              🎉 纪念中国人民抗日战争暨世界反法西斯战争胜利80周年 🎉
+            </motion.h1>
+            <motion.p
+              className="text-red-100 text-sm md:text-base mt-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              铭记历史、勿忘国耻、吾辈自强
+            </motion.p>
+          </div>
+
+          <div className="flex-shrink-0 w-12 md:w-16"></div>
+        </div>
+
+        {/* Blur effects */}
+        <motion.div
+          animate={{ scale: [1, 1.3, 1], x: [0, 20, 0] }}
+          transition={{ duration: 4, repeat: Infinity }}
+          className="absolute -top-10 -left-10 w-40 h-40 bg-red-400 opacity-30 rounded-full blur-2xl"
+        />
+        <motion.div
+          animate={{ scale: [1, 1.2, 1], x: [0, -15, 0] }}
+          transition={{ duration: 5, repeat: Infinity }}
+          className="absolute -top-5 right-10 w-32 h-32 bg-red-300 opacity-40 rounded-full blur-xl"
+        />
+        <motion.div
+          animate={{ scale: [1, 1.1, 1], y: [0, 10, 0] }}
+          transition={{ duration: 3, repeat: Infinity }}
+          className="absolute bottom-0 left-1/3 w-24 h-24 bg-red-500 opacity-25 rounded-full blur-2xl"
+        />
+      </motion.div>
+
       {/* Hero Section */}
       <section
         className={`${pixelFont.className} text-center py-20 px-6 relative overflow-hidden`}
