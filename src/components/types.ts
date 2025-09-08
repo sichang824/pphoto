@@ -16,6 +16,7 @@ export interface PhotoItem {
   y: number;
   scale: number;
   fitMode: "width" | "height";
+  rotation?: number;
 }
 
 export const defaultPhotoItem: PhotoItem = {
@@ -27,6 +28,7 @@ export const defaultPhotoItem: PhotoItem = {
   y: 0,
   scale: 1,
   fitMode: "height",
+  rotation: 0,
 };
 
 export type PrintStyleId = "normal" | "borderless" | `style${number}`;

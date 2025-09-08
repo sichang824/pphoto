@@ -3,6 +3,8 @@ import {
   Image as LucideImage,
   MoveVertical,
   RectangleVertical,
+  RotateCcw,
+  RotateCw,
   Trash,
   ZoomIn,
   ZoomOut,
@@ -20,6 +22,8 @@ interface ToolBarProps {
   onFitModeChange: () => void;
   onZoomIn: () => void;
   onZoomOut: () => void;
+  onRotateCW: () => void;
+  onRotateCCW: () => void;
   onOrientationChange: () => void;
   onRemove: () => void;
   anchorRef: RefObject<HTMLDivElement>;
@@ -36,6 +40,8 @@ const ToolBar: FC<ToolBarProps> = ({
   onFitModeChange,
   onZoomIn,
   onZoomOut,
+  onRotateCW,
+  onRotateCCW,
   onOrientationChange,
   onRemove,
   anchorRef,
@@ -186,6 +192,28 @@ const ToolBar: FC<ToolBarProps> = ({
               disabled={(item.scale || 1) <= MIN_ZOOM}
             >
               <ZoomOut className="w-3.5 h-3.5" />
+            </Button>
+            <Button
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRotateCCW();
+              }}
+              className="w-8 h-8 rounded-full shadow"
+              title="逆时针旋转"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+            </Button>
+            <Button
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRotateCW();
+              }}
+              className="w-8 h-8 rounded-full shadow"
+              title="顺时针旋转"
+            >
+              <RotateCw className="w-3.5 h-3.5" />
             </Button>
           </>
         )}

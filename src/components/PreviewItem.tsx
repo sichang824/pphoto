@@ -44,22 +44,22 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     await setItemImage(item.id, file);
   };
 
-  // 添加新的辅助函数来处理坐标计算
+  // 计算拖动映射到图片本地坐标（考虑旋转与缩放）
   const calculatePosition = (
     clientX: number,
     clientY: number,
     baseX: number,
     baseY: number
   ) => {
-    if (item.isVertical) {
-      return {
-        x: -clientY - baseX,
-        y: clientX - baseY,
-      };
-    }
+    const thetaDeg = (item.rotation || 0) + (item.isVertical ? -90 : 0);
+    const theta = (thetaDeg * Math.PI) / 180;
+    const cos = Math.cos(theta);
+    const sin = Math.sin(theta);
+    const scale = item.scale || 1;
+
     return {
-      x: clientX - baseX,
-      y: clientY - baseY,
+      x: (cos * clientX + sin * clientY) / scale - baseX,
+      y: (-sin * clientX + cos * clientY) / scale - baseY,
     };
   };
 
@@ -142,6 +142,16 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
     removeItem(item.id);
   };
 
+  const handleRotateCW = () => {
+    const current = item.rotation || 0;
+    updateItem({ ...item, rotation: (current + 90) % 360 });
+  };
+
+  const handleRotateCCW = () => {
+    const current = item.rotation || 0;
+    updateItem({ ...item, rotation: (current + 270) % 360 });
+  };
+
 
   return (
     <div
@@ -188,9 +198,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
             crossOrigin="anonymous"
             style={{
               objectFit: item.fitMode === "width" ? "contain" : "cover",
-              transform: ` scaleX(${item.isVertical ? -1 : 1}) scale(${
-                item.scale
-              }) translate(${position.x}px, ${position.y}px)`,
+              transform: ` scaleX(${item.isVertical ? -1 : 1}) rotate(${item.rotation || 0}deg) scale(${item.scale}) translate(${position.x}px, ${position.y}px)`,
               transformOrigin: "center",
             }}
             onMouseDown={handleMove}
@@ -226,6 +234,8 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
         onFitModeChange={handleFitModeChange}
         onZoomIn={handleZoomIn}
         onZoomOut={handleZoomOut}
+        onRotateCW={handleRotateCW}
+        onRotateCCW={handleRotateCCW}
         onOrientationChange={handleOrientationChange}
         onRemove={handleRemove}
         anchorRef={anchorRef}
