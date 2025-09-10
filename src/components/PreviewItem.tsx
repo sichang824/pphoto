@@ -188,6 +188,7 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
               ? photoBackgroundColor
               : "transparent",
           }}
+          data-pphoto-container="true"
         >
           <Image
             className="relative"
@@ -201,6 +202,13 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
               transform: ` scaleX(${item.isVertical ? -1 : 1}) rotate(${item.rotation || 0}deg) scale(${item.scale}) translate(${position.x}px, ${position.y}px)`,
               transformOrigin: "center",
             }}
+            data-pphoto-img="true"
+            data-fit-mode={item.fitMode === "width" ? "contain" : "cover"}
+            data-rotation={(item.rotation || 0).toString()}
+            data-scale={(item.scale || 1).toString()}
+            data-tx={position.x.toString()}
+            data-ty={position.y.toString()}
+            data-vertical={item.isVertical ? "true" : "false"}
             onMouseDown={handleMove}
             onTouchStart={handleMove}
           />

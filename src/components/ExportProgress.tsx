@@ -31,6 +31,7 @@ export default function ExportProgress() {
       <DialogContent hideClose className="sm:max-w-md">
         <DialogTitle className="sr-only">正在导出 PDF</DialogTitle>
         <div className="flex flex-col items-center text-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/anim.webp"
             alt="processing animation"
@@ -38,14 +39,30 @@ export default function ExportProgress() {
             draggable={false}
           />
           <div className="relative h-[2.25rem] w-full overflow-hidden mb-1">
-            <div key={displayText} className="absolute inset-0 flex items-center justify-center text-lg font-semibold text-gray-900 slide-in-up">
+            <div
+              key={displayText}
+              className="absolute inset-0 flex items-center justify-center text-lg font-semibold text-gray-900 slide-in-up"
+            >
               {displayText}
             </div>
           </div>
-          <div className="text-base font-semibold tabular-nums text-gray-700">{percent}%</div>
+          <div className="text-base font-semibold tabular-nums text-gray-700">
+            {percent}%
+          </div>
           <style jsx>{`
-            @keyframes slideInUp { from { transform: translateY(10px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
-            .slide-in-up { animation: slideInUp 200ms ease-out; }
+            @keyframes slideInUp {
+              from {
+                transform: translateY(10px);
+                opacity: 0;
+              }
+              to {
+                transform: translateY(0);
+                opacity: 1;
+              }
+            }
+            .slide-in-up {
+              animation: slideInUp 200ms ease-out;
+            }
           `}</style>
         </div>
       </DialogContent>

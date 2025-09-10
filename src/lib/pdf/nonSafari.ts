@@ -56,7 +56,6 @@ export async function exportPdfDefault(
     if (typeof createImageBitmap === "function") {
       const bmp = await createImageBitmap(blob);
       const size = { width: bmp.width, height: bmp.height };
-      // @ts-ignore
       bmp.close?.();
       return size;
     }
@@ -65,8 +64,8 @@ export async function exportPdfDefault(
       const img = new Image();
       img.onload = () => {
         const size = {
-          width: img.naturalWidth || (img as any).width,
-          height: img.naturalHeight || (img as any).height,
+          width: img.naturalWidth || img.width,
+          height: img.naturalHeight || img.height,
         };
         URL.revokeObjectURL(url);
         resolve(size);

@@ -9,7 +9,7 @@ import {
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
-import { FC, RefObject, useEffect, useRef, useState } from "react";
+import { FC, RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { PhotoItem } from "./types";
 import { Button } from "./ui/button";
 import { createPortal } from "react-dom";
@@ -52,21 +52,21 @@ const ToolBar: FC<ToolBarProps> = ({
   const [open, setOpen] = useState<boolean>(isMobileDevice());
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const cancelClose = () => {
+  const cancelClose = useCallback(() => {
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
     }
-  };
+  }, []);
 
-  const scheduleClose = () => {
+  const scheduleClose = useCallback(() => {
     if (isMobileDevice()) return; // mobile stays open
     cancelClose();
     closeTimeoutRef.current = setTimeout(() => {
       setOpen(false);
       closeTimeoutRef.current = null;
     }, HOVER_CLOSE_DELAY_MS);
-  };
+  }, [cancelClose]);
 
   // Positioning: only left/top (no flip) to avoid appearing on right/bottom
   const { x, y, strategy, refs, update } = useFloating({
@@ -110,12 +110,12 @@ const ToolBar: FC<ToolBarProps> = ({
       el.removeEventListener("mouseenter", onEnter);
       el.removeEventListener("mouseleave", onLeave);
     };
-  }, [anchorRef, scheduleClose]);
+  }, [anchorRef, scheduleClose, cancelClose]);
 
   // Cleanup any pending timers on unmount
   useEffect(() => {
     return () => cancelClose();
-  }, []);
+  }, [cancelClose]);
 
   // Do not render when printing, or no anchor/open, or not mounted/SSR
   if (isPrinting) return null;
