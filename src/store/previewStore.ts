@@ -8,10 +8,14 @@ import {
   PrintStyleId,
   SizeItem,
 } from "@/components/types";
-import { computeAndEnsureRatioMapping, readFileAsDataURL, probeImageSizeFromDataURL } from "@/lib/imageLoader";
+import {
+  computeAndEnsureRatioMapping,
+  probeImageSizeFromDataURL,
+  readFileAsDataURL,
+} from "@/lib/imageLoader";
 import { Template, TemplateConfig } from "@/types/template";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 // 添加预设尺寸列表
 const PRESET_SIZES_DEFAULT: SizeItem[] = [
@@ -30,16 +34,21 @@ const PRESET_SIZES_DEFAULT: SizeItem[] = [
 ];
 
 // 从预设尺寸生成纸张尺寸
-const generatePaperSizes = (presetSizes: SizeItem[], customSizes?: SizeItem[]) => {
+const generatePaperSizes = (
+  presetSizes: SizeItem[],
+  customSizes?: SizeItem[]
+) => {
   const orderedSizes = [
     ...(customSizes || []),
-    ...presetSizes.slice().reverse()
+    ...presetSizes.slice().reverse(),
   ];
-  return orderedSizes.reduce<Record<string, { width: number; height: number; imageRatio: string }>>((acc, size) => {
+  return orderedSizes.reduce<
+    Record<string, { width: number; height: number; imageRatio: string }>
+  >((acc, size) => {
     acc[size.name] = {
       width: size.width,
       height: size.height,
-      imageRatio: size.imageRatio
+      imageRatio: size.imageRatio,
     };
     return acc;
   }, {});
@@ -165,7 +174,10 @@ interface PreviewStore {
   removeCustomSize: (id: string) => void;
   presetSizes: SizeItem[];
   setPresetSizes: (sizes: SizeItem[]) => void;
-  paperSizes: Record<string, { width: number; height: number; imageRatio: string }>;
+  paperSizes: Record<
+    string,
+    { width: number; height: number; imageRatio: string }
+  >;
   setPaperSizes: (
     sizes: Record<string, { width: number; height: number; imageRatio: string }>
   ) => void;
@@ -190,6 +202,8 @@ interface PreviewStore {
   setShowPaperBorder: (value: boolean) => void;
   cleanExport?: boolean;
   setCleanExport?: (value: boolean) => void;
+  enableTiles: boolean;
+  setEnableTiles: (value: boolean) => void;
 }
 
 export const usePreviewStore = create<PreviewStore>()(
@@ -199,20 +213,21 @@ export const usePreviewStore = create<PreviewStore>()(
       previewItems: [],
       paperSize: "A4",
       presetSizes: PRESET_SIZES_DEFAULT,
-      setPresetSizes: (sizes) => set((state) => {
-        const baseMap = buildRatioMapFromSizes([
-          ...sizes,
-          ...state.customSizes,
-        ]);
-        return {
-          presetSizes: sizes,
-          paperSizes: generatePaperSizes(sizes, state.customSizes),
-          ratioToSizeMap: {
-            ...baseMap,
-            ...state.ratioToSizeMap,
-          },
-        };
-      }),
+      setPresetSizes: (sizes) =>
+        set((state) => {
+          const baseMap = buildRatioMapFromSizes([
+            ...sizes,
+            ...state.customSizes,
+          ]);
+          return {
+            presetSizes: sizes,
+            paperSizes: generatePaperSizes(sizes, state.customSizes),
+            ratioToSizeMap: {
+              ...baseMap,
+              ...state.ratioToSizeMap,
+            },
+          };
+        }),
       paperSizes: generatePaperSizes(PRESET_SIZES_DEFAULT),
       setPaperSizes: (sizes) => set({ paperSizes: sizes }),
       updateItem: (item) =>
@@ -266,7 +281,8 @@ export const usePreviewStore = create<PreviewStore>()(
 
       addBatchImages: async (files: File[]) => {
         const state = usePreviewStore.getState();
-        const { ratioToSizeMap, updateRatioMap, findBestMatchSize, addItem } = state;
+        const { ratioToSizeMap, updateRatioMap, findBestMatchSize, addItem } =
+          state;
 
         const processImage = async (file: File) => {
           try {
@@ -297,7 +313,12 @@ export const usePreviewStore = create<PreviewStore>()(
 
       setItemImage: async (id: string, file: File) => {
         const state = usePreviewStore.getState();
-        const { ratioToSizeMap, updateRatioMap, findBestMatchSize, updateItem } = state;
+        const {
+          ratioToSizeMap,
+          updateRatioMap,
+          findBestMatchSize,
+          updateItem,
+        } = state;
         try {
           const dataUrl = await readFileAsDataURL(file);
           const { width, height } = await probeImageSizeFromDataURL(dataUrl);
@@ -359,7 +380,9 @@ export const usePreviewStore = create<PreviewStore>()(
         }),
       removeCustomSize: (id: string) =>
         set((state) => {
-          const nextCustomSizes = state.customSizes.filter((size) => size.id !== id);
+          const nextCustomSizes = state.customSizes.filter(
+            (size) => size.id !== id
+          );
           const baseMap = buildRatioMapFromSizes([
             ...state.presetSizes,
             ...nextCustomSizes,
@@ -473,6 +496,8 @@ export const usePreviewStore = create<PreviewStore>()(
       setShowPaperBorder: (value) => set({ showPaperBorder: value }),
       cleanExport: true,
       setCleanExport: (value) => set({ cleanExport: value }),
+      enableTiles: false,
+      setEnableTiles: (value: boolean) => set({ enableTiles: value }),
     }),
     {
       name: "print-store",
@@ -489,12 +514,19 @@ export const usePreviewStore = create<PreviewStore>()(
           showGuides: state.showGuides,
           cleanExport: state.cleanExport,
           showPaperBorder: state.showPaperBorder,
+          enableTiles: state.enableTiles,
         };
       },
       onRehydrateStorage: () => (state) => {
         if (state && state.customSizes.length > 0) {
-          state.paperSizes = generatePaperSizes(state.presetSizes, state.customSizes);
-          const baseMap = buildRatioMapFromSizes([...state.presetSizes, ...state.customSizes]);
+          state.paperSizes = generatePaperSizes(
+            state.presetSizes,
+            state.customSizes
+          );
+          const baseMap = buildRatioMapFromSizes([
+            ...state.presetSizes,
+            ...state.customSizes,
+          ]);
           state.ratioToSizeMap = {
             ...baseMap,
             ...state.ratioToSizeMap,
