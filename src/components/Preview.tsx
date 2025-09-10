@@ -1,14 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { PageCalculator } from "@/lib/PageCalculator";
 import { exportPreviewToPdf } from "@/lib/pdf";
 import { cn } from "@/lib/utils";
 import { useDownloadStore } from "@/store/DownloadStore";
 import { usePhotoStore } from "@/store/PhotoStore";
 import { usePreviewStore } from "@/store/previewStore";
-import { FC, useMemo, useState } from "react";
+import { FC, useMemo } from "react";
 import { BacksidePaperPreview } from "./BacksidePaperPreview";
 import PaperPreview from "./PaperPreview";
 import TemplateManager from "./templates/Manager";
@@ -148,7 +147,7 @@ const handleBatchSelect = async () => {
 };
 
 const Preview: FC<PreviewProps> = ({ id }) => {
-  const [pdfProgress, setPdfProgress] = useState(0);
+  const { setPdfProgress } = useDownloadStore();
 
   const {
     paperLandscape,
@@ -226,15 +225,6 @@ const Preview: FC<PreviewProps> = ({ id }) => {
             </Button>
           </div>
         </div>
-
-        {pdfProgress > 0 && (
-          <div className="w-full px-4 mb-4">
-            <Progress value={pdfProgress} />
-            <div className="text-center text-sm text-gray-500 mt-1">
-              正在生成PDF: {Math.round(pdfProgress)}%
-            </div>
-          </div>
-        )}
 
         <div
           id={id}

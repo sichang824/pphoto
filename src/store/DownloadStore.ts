@@ -5,6 +5,7 @@ export type DownloadMethod = "auto" | "fileSystem" | "anchor";
 
 interface DownloadState {
   isExporting: boolean;
+  pdfProgress: number; // 0..100
   preferredMethod: DownloadMethod;
   askBeforeDownload: boolean;
   // Export-related settings decoupled from preview store
@@ -13,6 +14,7 @@ interface DownloadState {
   enableTiles: boolean;
   cleanExport: boolean;
   setIsExporting: (value: boolean) => void;
+  setPdfProgress: (value: number) => void;
   setPreferredMethod: (method: DownloadMethod) => void;
   setAskBeforeDownload: (value: boolean) => void;
   setPixelRatio: (value: number) => void;
@@ -25,6 +27,7 @@ export const useDownloadStore = create<DownloadState>()(
   persist(
     (set) => ({
       isExporting: false,
+      pdfProgress: 0,
       preferredMethod: "auto",
       askBeforeDownload: false,
       pixelRatio: 2,
@@ -32,6 +35,7 @@ export const useDownloadStore = create<DownloadState>()(
       enableTiles: false,
       cleanExport: true,
       setIsExporting: (value: boolean) => set({ isExporting: value }),
+      setPdfProgress: (value: number) => set({ pdfProgress: value }),
       setPreferredMethod: (method: DownloadMethod) =>
         set({ preferredMethod: method }),
       setAskBeforeDownload: (value: boolean) => set({ askBeforeDownload: value }),

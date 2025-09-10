@@ -1,0 +1,1 @@
+uv run python3 /Users/ann/Workspace/pphoto/video2webp.py "/Users/ann/Workspace/pphoto/简约像素画风视频生成.mp4" -o "/Users/ann/Workspace/pphoto/简约像素画风视频生成_transparent.webp" --remove-bg --bg-method borderfill --white-threshold 245 --fps 12 --max-width 800 --quality 80 --compression-level 6 --preset picture --verbose | cat
