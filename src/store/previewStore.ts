@@ -16,6 +16,7 @@ import {
 import { Template, TemplateConfig } from "@/types/template";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { useDownloadStore } from "./DownloadStore";
 
 // 添加预设尺寸列表
 const PRESET_SIZES_DEFAULT: SizeItem[] = [
@@ -152,10 +153,6 @@ interface PreviewStore {
   setPageMargin: (margin: number) => void;
   autoLayout: boolean;
   setAutoLayout: (auto: boolean) => void;
-  pixelRatio: number;
-  setPixelRatio: (ratio: number) => void;
-  imageQuality: number;
-  setImageQuality: (quality: number) => void;
   ratioToSizeMap: Record<string, SizeItem>;
   updateRatioMap: (ratio: string, size: SizeItem) => void;
   findBestMatchSize: (imageRatio: number) => SizeItem;
@@ -200,10 +197,7 @@ interface PreviewStore {
   setShowGuides: (value: boolean) => void;
   showPaperBorder: boolean;
   setShowPaperBorder: (value: boolean) => void;
-  cleanExport?: boolean;
-  setCleanExport?: (value: boolean) => void;
-  enableTiles: boolean;
-  setEnableTiles: (value: boolean) => void;
+  enableTiles?: boolean; // deprecated: moved to DownloadStore
 }
 
 export const usePreviewStore = create<PreviewStore>()(
@@ -339,10 +333,7 @@ export const usePreviewStore = create<PreviewStore>()(
       setPageMargin: (margin) => set({ pageMargin: margin }),
       autoLayout: true,
       setAutoLayout: (auto) => set({ autoLayout: auto }),
-      pixelRatio: SETTINGS_CONFIG.pixelRatio.default,
-      setPixelRatio: (ratio) => set({ pixelRatio: ratio }),
-      imageQuality: SETTINGS_CONFIG.imageQuality.default,
-      setImageQuality: (quality) => set({ imageQuality: quality }),
+
       ratioToSizeMap: RATIO_TO_SIZE_MAP,
       updateRatioMap: (ratio, size) =>
         set((state) => ({
@@ -400,6 +391,7 @@ export const usePreviewStore = create<PreviewStore>()(
 
       exportTemplate: () => {
         const state = get();
+        const download = useDownloadStore.getState();
         const config: TemplateConfig = {
           paperSize: state.paperSize,
           paperLandscape: state.paperLandscape,
@@ -408,8 +400,8 @@ export const usePreviewStore = create<PreviewStore>()(
           spacing: state.spacing,
           doubleSided: state.doubleSided,
           printStyleId: state.printStyleId,
-          pixelRatio: state.pixelRatio,
-          imageQuality: state.imageQuality,
+          pixelRatio: download.pixelRatio,
+          imageQuality: download.imageQuality,
           enableRatioMap: state.enableRatioMap,
         };
 
@@ -494,27 +486,19 @@ export const usePreviewStore = create<PreviewStore>()(
       setShowGuides: (value) => set({ showGuides: value }),
       showPaperBorder: true,
       setShowPaperBorder: (value) => set({ showPaperBorder: value }),
-      cleanExport: true,
-      setCleanExport: (value) => set({ cleanExport: value }),
-      enableTiles: false,
-      setEnableTiles: (value: boolean) => set({ enableTiles: value }),
     }),
     {
       name: "print-store",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => {
         return {
-          pixelRatio: state.pixelRatio,
-          imageQuality: state.imageQuality,
           themeColor: state.themeColor,
           customSizes: state.customSizes,
           templates: state.templates,
           paperScale: state.paperScale,
           backsideFlip: state.backsideFlip,
           showGuides: state.showGuides,
-          cleanExport: state.cleanExport,
           showPaperBorder: state.showPaperBorder,
-          enableTiles: state.enableTiles,
         };
       },
       onRehydrateStorage: () => (state) => {

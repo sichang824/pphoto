@@ -1,9 +1,13 @@
-import { usePreviewStore } from "@/store/previewStore";
+import { savePdfBytes } from "@/lib/download";
+import { useDownloadStore } from "@/store/DownloadStore";
 import { toBlob as htmlToBlob } from "html-to-image";
 import { PDFDocument } from "pdf-lib";
 import { del, get, prefixClear, put } from "../idb";
 import { logMemory } from "../memory";
 import { stabilizeBeforeSnapshot } from "../snapshot";
+import { MAX_PAGE_PIXELS, MAX_PAGE_SIDE, TILE_SIDE } from "./constants";
+import { disableTransform, restoreTransform } from "./dom";
+import { computeFitCenterRect } from "./layout";
 import { microYield } from "./microYield";
 import { extractTileBlob, getImageSizeFromBlob, planTiles } from "./tiling";
 
@@ -32,9 +36,6 @@ export async function exportPdfDefault(
   const totalPages = pageElements.length;
 
   // Large image thresholds and tile config (balanced for performance)
-  const MAX_PAGE_SIDE = 4096; // px
-  const MAX_PAGE_PIXELS = 16 * 1024 * 1024; // 16M px
-  const TILE_SIDE = 2048; // px per tile side
 
   console.log("[PDF:nonSafari] Begin export", {
     totalPages,
@@ -55,10 +56,10 @@ export async function exportPdfDefault(
 
   // Temporarily disable scale on wrapper to avoid capture distortion
   const wrapper = document.getElementById(wrapperId) as HTMLElement | null;
-  const prevTransform = wrapper?.style.transform;
+  let prevTransform: string | undefined;
   if (wrapper) {
     console.log("[PDF:nonSafari] Temporarily disabling wrapper transform");
-    wrapper.style.setProperty("transform", "none", "important");
+    prevTransform = disableTransform(wrapper);
     logMemory("after disable transform");
   }
 
@@ -86,7 +87,7 @@ export async function exportPdfDefault(
     // Check size and optionally tile
     let tiled = false;
     try {
-      const { enableTiles } = usePreviewStore.getState();
+      const { enableTiles } = useDownloadStore.getState();
       const { width: imgW, height: imgH } = await getImageSizeFromBlob(blob);
       const exceedSide = imgW > MAX_PAGE_SIDE || imgH > MAX_PAGE_SIDE;
       const exceedArea = imgW * imgH > MAX_PAGE_PIXELS;
@@ -150,28 +151,12 @@ export async function exportPdfDefault(
       // Preserve aspect ratio and center inside the page
       const imgWidthPt = img.width;
       const imgHeightPt = img.height;
-      const imgRatio = imgWidthPt / Math.max(1, imgHeightPt);
-      const pageRatio = pageWidthPt / Math.max(1, pageHeightPt);
-      let drawWidth = pageWidthPt;
-      let drawHeight = pageHeightPt;
-      let drawX = 0;
-      let drawY = 0;
-      if (Math.abs(imgRatio - pageRatio) < 1e-3) {
-        drawWidth = pageWidthPt;
-        drawHeight = pageHeightPt;
-        drawX = 0;
-        drawY = 0;
-      } else if (imgRatio > pageRatio) {
-        drawWidth = pageWidthPt;
-        drawHeight = pageWidthPt / imgRatio;
-        drawX = 0;
-        drawY = (pageHeightPt - drawHeight) / 2;
-      } else {
-        drawHeight = pageHeightPt;
-        drawWidth = pageHeightPt * imgRatio;
-        drawX = (pageWidthPt - drawWidth) / 2;
-        drawY = 0;
-      }
+      const { drawX, drawY, drawWidth, drawHeight } = computeFitCenterRect(
+        imgWidthPt,
+        imgHeightPt,
+        pageWidthPt,
+        pageHeightPt
+      );
       console.log("[PDF:nonSafari] Assemble single image", {
         index: i,
         imgWidthPt,
@@ -194,28 +179,12 @@ export async function exportPdfDefault(
       const imgW = meta.imgW;
       const imgH = meta.imgH;
       // Compute draw rect consistent with single-image logic (fit and center)
-      const imgRatio = imgW / Math.max(1, imgH);
-      const pageRatio = pageWidthPt / Math.max(1, pageHeightPt);
-      let drawWidth = pageWidthPt;
-      let drawHeight = pageHeightPt;
-      let drawX = 0;
-      let drawY = 0;
-      if (Math.abs(imgRatio - pageRatio) < 1e-3) {
-        drawWidth = pageWidthPt;
-        drawHeight = pageHeightPt;
-        drawX = 0;
-        drawY = 0;
-      } else if (imgRatio > pageRatio) {
-        drawWidth = pageWidthPt;
-        drawHeight = pageWidthPt / imgRatio;
-        drawX = 0;
-        drawY = (pageHeightPt - drawHeight) / 2;
-      } else {
-        drawHeight = pageHeightPt;
-        drawWidth = pageHeightPt * imgRatio;
-        drawX = (pageWidthPt - drawWidth) / 2;
-        drawY = 0;
-      }
+      const { drawX, drawY, drawWidth, drawHeight } = computeFitCenterRect(
+        imgW,
+        imgH,
+        pageWidthPt,
+        pageHeightPt
+      );
 
       console.log("[PDF:nonSafari] Assemble tiled image", {
         index: i,
@@ -258,8 +227,7 @@ export async function exportPdfDefault(
 
   // restore wrapper transform
   if (wrapper) {
-    if (prevTransform) wrapper.style.setProperty("transform", prevTransform);
-    else wrapper.style.removeProperty("transform");
+    restoreTransform(wrapper, prevTransform);
     console.log("[PDF:nonSafari] Wrapper transform restored");
     logMemory("after restore transform");
   }
@@ -267,13 +235,5 @@ export async function exportPdfDefault(
   const pdfBytes = await pdfDoc.save({ useObjectStreams: false });
   console.log("[PDF:nonSafari] Save complete", { bytes: pdfBytes.length });
   logMemory("after save pdf (bytes in memory)");
-  const blob = new Blob([pdfBytes], { type: "application/pdf" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1500);
+  await savePdfBytes(pdfBytes, filename);
 }

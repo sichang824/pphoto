@@ -3,14 +3,15 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { PageCalculator } from "@/lib/PageCalculator";
+import { exportPreviewToPdf } from "@/lib/pdf";
+import { cn } from "@/lib/utils";
+import { useDownloadStore } from "@/store/DownloadStore";
+import { usePhotoStore } from "@/store/PhotoStore";
 import { usePreviewStore } from "@/store/previewStore";
 import { FC, useMemo, useState } from "react";
-import { exportPreviewToPdf } from "@/lib/pdf";
 import { BacksidePaperPreview } from "./BacksidePaperPreview";
 import PaperPreview from "./PaperPreview";
 import TemplateManager from "./templates/Manager";
-import { cn } from "@/lib/utils";
-import { usePhotoStore } from "@/store/PhotoStore";
 
 interface PreviewProps {
   id: string;
@@ -38,8 +39,8 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
     setShowPaperBorder,
     showGuides,
     setShowGuides,
-    cleanExport,
   } = usePreviewStore.getState();
+  const { cleanExport } = useDownloadStore.getState();
   const { showPhotoBackground, setShowPhotoBackground } =
     usePhotoStore.getState();
   const originalShowPaperBorder = showPaperBorder;
@@ -61,14 +62,9 @@ const handlePrintPdf = async (onProgress?: (progress?: number) => void) => {
     // Show progress before starting the first page capture
     onProgress?.(1);
 
-    const {
-      paperSize,
-      paperLandscape,
-      pixelRatio,
-      imageQuality,
-      backsideFlip,
-      paperSizes,
-    } = usePreviewStore.getState();
+    const { paperSize, paperLandscape, backsideFlip, paperSizes } =
+      usePreviewStore.getState();
+    const { pixelRatio, imageQuality } = useDownloadStore.getState();
     const ps = paperSizes[paperSize];
 
     const photoWidth = paperLandscape ? ps.height : ps.width;

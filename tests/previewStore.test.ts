@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from "bun:test";
+import { beforeAll, describe, expect, it } from "bun:test";
 
 // Setup mock localStorage before importing the store
 beforeAll(() => {
@@ -23,6 +23,7 @@ beforeAll(() => {
   globalThis.localStorage = mockLocalStorage;
 });
 
+import { useDownloadStore } from "@/store/DownloadStore";
 import { usePreviewStore } from "@/store/previewStore";
 
 describe("PreviewStore - paper border visibility", () => {
@@ -41,19 +42,17 @@ describe("PreviewStore - paper border visibility", () => {
   });
 });
 
-describe("PreviewStore - clean export option", () => {
+describe("DownloadStore - clean export option", () => {
   it("should have cleanExport enabled by default", () => {
-    const state = usePreviewStore.getState();
+    const state = useDownloadStore.getState();
     expect(state.cleanExport).toBe(true);
   });
 
   it("should update cleanExport via setter", () => {
-    const { setCleanExport } = usePreviewStore.getState();
-    setCleanExport?.(false);
-    expect(usePreviewStore.getState().cleanExport).toBe(false);
-    setCleanExport?.(true);
-    expect(usePreviewStore.getState().cleanExport).toBe(true);
+    const { setCleanExport } = useDownloadStore.getState();
+    setCleanExport(false);
+    expect(useDownloadStore.getState().cleanExport).toBe(false);
+    setCleanExport(true);
+    expect(useDownloadStore.getState().cleanExport).toBe(true);
   });
 });
-
-

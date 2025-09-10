@@ -4,19 +4,11 @@ import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { SETTINGS_CONFIG, usePreviewStore } from "@/store/previewStore";
+import { useDownloadStore } from "@/store/DownloadStore";
 import { FC } from "react";
 
 const ExportSettings: FC = () => {
-  const {
-    cleanExport,
-    setCleanExport,
-    pixelRatio,
-    setPixelRatio,
-    imageQuality,
-    setImageQuality,
-    enableTiles,
-    setEnableTiles,
-  } = usePreviewStore();
+  const { askBeforeDownload, setAskBeforeDownload, pixelRatio, setPixelRatio, imageQuality, setImageQuality, enableTiles, setEnableTiles, cleanExport, setCleanExport } = useDownloadStore();
 
   return (
     <Card className="p-4">
@@ -45,6 +37,19 @@ const ExportSettings: FC = () => {
           </div>
           <p className="text-sm text-gray-500">
             开启将节约内存，但导出速度会变慢
+          </p>
+        </div>
+
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-sm font-medium">下载时是否询问</label>
+            <Switch
+              checked={!!askBeforeDownload}
+              onCheckedChange={(checked) => setAskBeforeDownload(checked)}
+            />
+          </div>
+          <p className="text-sm text-gray-500">
+            开启后，每次导出将询问使用系统保存对话框或直接下载
           </p>
         </div>
 
