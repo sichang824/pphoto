@@ -1,15 +1,11 @@
-import { savePdfBytes } from "@/lib/download";
 import { useDownloadStore } from "@/store/DownloadStore";
-import { toBlob as htmlToBlob } from "html-to-image";
-import { PDFDocument } from "pdf-lib";
-import { del, get, prefixClear, put } from "../idb";
-import { logMemory } from "../memory";
+import { toJpeg as htmlToJpeg } from "html-to-image";
 import { stabilizeBeforeSnapshot } from "../snapshot";
 import { MAX_PAGE_PIXELS, MAX_PAGE_SIDE, TILE_SIDE } from "./constants";
 import { disableTransform, restoreTransform } from "./dom";
 import { computeFitCenterRect } from "./layout";
 import { microYield } from "./microYield";
-import { extractTileBlob, getImageSizeFromBlob, planTiles } from "./tiling";
+import { createStreamingPdf } from "./stream";
 
 import type { ExportPdfOptions, ProgressCallback } from "./index";
 
@@ -35,9 +31,8 @@ export async function exportPdfDefault(
   );
   const totalPages = pageElements.length;
 
-  // Large image thresholds and tile config (balanced for performance)
-
-  console.log("[PDF:nonSafari] Begin export", {
+  // Large image thresholds (kept for logging/reference)
+  console.log("[PDF:nonSafari] Begin export (streaming)", {
     totalPages,
     pixelRatio,
     filename,
@@ -47,12 +42,6 @@ export async function exportPdfDefault(
     MAX_PAGE_PIXELS,
     TILE_SIDE,
   });
-  logMemory("begin export");
-
-  // Clean up any leftover cache from previous runs
-  try {
-    await prefixClear("page:");
-  } catch {}
 
   // Temporarily disable scale on wrapper to avoid capture distortion
   const wrapper = document.getElementById(wrapperId) as HTMLElement | null;
@@ -60,15 +49,45 @@ export async function exportPdfDefault(
   if (wrapper) {
     console.log("[PDF:nonSafari] Temporarily disabling wrapper transform");
     prevTransform = disableTransform(wrapper);
-    logMemory("after disable transform");
   }
 
-  // Capture phase (store blobs in IndexedDB)
+  // Helper: get image size from blob without loading full image into DOM
+  const getImageSizeFromBlob = async (blob: Blob) => {
+    if (typeof createImageBitmap === "function") {
+      const bmp = await createImageBitmap(blob);
+      const size = { width: bmp.width, height: bmp.height };
+      // @ts-ignore
+      bmp.close?.();
+      return size;
+    }
+    return new Promise<{ width: number; height: number }>((resolve, reject) => {
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => {
+        const size = {
+          width: img.naturalWidth || (img as any).width,
+          height: img.naturalHeight || (img as any).height,
+        };
+        URL.revokeObjectURL(url);
+        resolve(size);
+      };
+      img.onerror = (e) => {
+        URL.revokeObjectURL(url);
+        reject(e);
+      };
+      img.src = url;
+    });
+  };
+
+  const { imageQuality } = useDownloadStore.getState();
+  const { doc, finalize } = await createStreamingPdf(filename);
+
+  // Build pages one-by-one and stream immediately
   for (let i = 0; i < pageElements.length; i++) {
     const element = pageElements[i];
     await stabilizeBeforeSnapshot(element);
 
-    const toBlobOptions = {
+    const toJpegOptions = {
       style: {
         transform:
           element.id.includes("backside") && backsideFlip
@@ -79,161 +98,51 @@ export async function exportPdfDefault(
       backgroundColor: "#ffffff",
       cacheBust: true,
       crossOrigin: "anonymous",
-    } as unknown as Parameters<typeof htmlToBlob>[1];
-    const blob: Blob | null = await htmlToBlob(element, toBlobOptions);
-    if (!blob) throw new Error("Canvas toBlob failed");
-    logMemory(`after toBlob page ${i}`);
+      quality: Math.max(0, Math.min(1, imageQuality ?? 0.85)),
+    } as unknown as Parameters<typeof htmlToJpeg>[1];
 
-    // Check size and optionally tile
-    let tiled = false;
-    try {
-      const { enableTiles } = useDownloadStore.getState();
-      const { width: imgW, height: imgH } = await getImageSizeFromBlob(blob);
-      const exceedSide = imgW > MAX_PAGE_SIDE || imgH > MAX_PAGE_SIDE;
-      const exceedArea = imgW * imgH > MAX_PAGE_PIXELS;
-      const exceeds = exceedSide || exceedArea;
-      console.log("[PDF:nonSafari] Capture page", {
-        index: i,
-        imgW,
-        imgH,
-        exceedSide,
-        exceedArea,
-        exceeds,
-      });
-      if (enableTiles && exceeds) {
-        const tiles = planTiles(imgW, imgH, TILE_SIDE);
-        console.log("[PDF:nonSafari] Page tiling", {
-          index: i,
-          tiles: tiles.length,
-          tileSide: TILE_SIDE,
-        });
-        await put(`page:${i}:meta`, { imgW, imgH, tileSide: TILE_SIDE });
-        for (let t = 0; t < tiles.length; t++) {
-          const tileBlob = await extractTileBlob(blob, tiles[t], "image/png");
-          await put(`page:${i}:${t}`, tileBlob);
-          await microYield();
-          logMemory(`after store tile ${i}:${t}`);
-        }
-        tiled = true;
-      }
-    } catch (e) {
-      console.warn(
-        "[PDF:nonSafari] Tiling failed, fallback to single image",
-        e
-      );
-    }
+    const dataUrl: string = await htmlToJpeg(element, toJpegOptions);
+    const blob: Blob = await (await fetch(dataUrl)).blob();
 
-    if (!tiled) {
-      await put(`page:${i}`, blob);
-      logMemory(`after store page ${i}`);
-    }
-    onProgress?.(((i + 1) / totalPages) * 50); // first 50% for capture
+    const { width: imgW, height: imgH } = await getImageSizeFromBlob(blob);
+    const exceedSide = imgW > MAX_PAGE_SIDE || imgH > MAX_PAGE_SIDE;
+    const exceedArea = imgW * imgH > MAX_PAGE_PIXELS;
+    const exceeds = exceedSide || exceedArea;
+    console.log("[PDF:nonSafari] Capture page", {
+      index: i,
+      imgW,
+      imgH,
+      exceedSide,
+      exceedArea,
+      exceeds,
+    });
 
+    // Add a page and draw the image scaled to fit and centered
+    doc.addPage({ size: [pageWidthPt, pageHeightPt], margin: 0 });
+    const { drawX, drawY, drawWidth, drawHeight } = computeFitCenterRect(
+      imgW,
+      imgH,
+      pageWidthPt,
+      pageHeightPt
+    );
+
+    const imgBuffer = await blob.arrayBuffer();
+    // PDFKit auto-detects PNG/JPEG. html-to-image returns PNG by default.
+    doc.image(imgBuffer as ArrayBuffer, drawX, drawY, {
+      width: drawWidth,
+      height: drawHeight,
+    });
+
+    onProgress?.(((i + 1) / totalPages) * 100);
     await microYield();
-    logMemory(`after yield capture page ${i}`);
   }
 
-  // Assembly phase (read blobs and build PDF)
-  const pdfDoc = await PDFDocument.create();
-  for (let i = 0; i < totalPages; i++) {
-    const page = pdfDoc.addPage([pageWidthPt, pageHeightPt]);
-    // Decide path by presence of meta
-    const meta =
-      (await get<{ imgW: number; imgH: number; tileSide: number }>(
-        `page:${i}:meta`
-      )) || null;
-    if (!meta) {
-      // Single image path
-      const blob = (await get<Blob>(`page:${i}`)) as Blob | undefined;
-      if (!blob) throw new Error(`Missing page blob for index ${i}`);
-      const bytes = new Uint8Array(await blob.arrayBuffer());
-      const img = await pdfDoc.embedPng(bytes);
-      // Preserve aspect ratio and center inside the page
-      const imgWidthPt = img.width;
-      const imgHeightPt = img.height;
-      const { drawX, drawY, drawWidth, drawHeight } = computeFitCenterRect(
-        imgWidthPt,
-        imgHeightPt,
-        pageWidthPt,
-        pageHeightPt
-      );
-      console.log("[PDF:nonSafari] Assemble single image", {
-        index: i,
-        imgWidthPt,
-        imgHeightPt,
-        drawX,
-        drawY,
-        drawWidth,
-        drawHeight,
-      });
-      page.drawImage(img, {
-        x: drawX,
-        y: drawY,
-        width: drawWidth,
-        height: drawHeight,
-      });
-      await del(`page:${i}`);
-      logMemory(`after assemble single page ${i}`);
-    } else {
-      // Tiled path
-      const imgW = meta.imgW;
-      const imgH = meta.imgH;
-      // Compute draw rect consistent with single-image logic (fit and center)
-      const { drawX, drawY, drawWidth, drawHeight } = computeFitCenterRect(
-        imgW,
-        imgH,
-        pageWidthPt,
-        pageHeightPt
-      );
-
-      console.log("[PDF:nonSafari] Assemble tiled image", {
-        index: i,
-        imgW,
-        imgH,
-        drawX,
-        drawY,
-        drawWidth,
-        drawHeight,
-      });
-
-      // Precompute tile rects and iterate deterministically by index
-      const tiles = planTiles(imgW, imgH, meta.tileSide);
-      for (let tileIdx = 0; tileIdx < tiles.length; tileIdx++) {
-        const rect = tiles[tileIdx];
-        const key = `page:${i}:${tileIdx}`;
-        const tBlob = await get<Blob>(key);
-        if (!tBlob) throw new Error(`Missing tile blob ${key}`);
-        const tBytes = new Uint8Array(await tBlob.arrayBuffer());
-        const tImg = await pdfDoc.embedPng(tBytes);
-        // Map tile rect in px to PDF pt inside draw rect
-        const scaleX = drawWidth / Math.max(1, imgW);
-        const scaleY = drawHeight / Math.max(1, imgH);
-        const xPt = drawX + rect.sx * scaleX;
-        const hPt = rect.sh * scaleY;
-        const yPt = drawY + (drawHeight - (rect.sy + rect.sh) * scaleY);
-        const wPt = rect.sw * scaleX;
-        page.drawImage(tImg, { x: xPt, y: yPt, width: wPt, height: hPt });
-        await del(key);
-        await microYield();
-        logMemory(`after draw tile ${i}:${tileIdx}`);
-      }
-      await del(`page:${i}:meta`);
-      logMemory(`after assemble tiled page ${i}`);
-    }
-    onProgress?.(50 + ((i + 1) / totalPages) * 50);
-    await microYield();
-    logMemory(`after yield assemble page ${i}`);
-  }
+  // Finalize the PDF stream
+  await finalize();
 
   // restore wrapper transform
   if (wrapper) {
     restoreTransform(wrapper, prevTransform);
     console.log("[PDF:nonSafari] Wrapper transform restored");
-    logMemory("after restore transform");
   }
-
-  const pdfBytes = await pdfDoc.save({ useObjectStreams: false });
-  console.log("[PDF:nonSafari] Save complete", { bytes: pdfBytes.length });
-  logMemory("after save pdf (bytes in memory)");
-  await savePdfBytes(pdfBytes, filename);
 }
