@@ -1,4 +1,4 @@
-import { usePreviewStore } from "@/store/previewStore";
+import { usePreviewStore } from "@/store/PreviewStore";
 import { PhotoItem } from "@/components/types";
 import { StyledPreviewItem } from "./StyledPreviewItem";
 

@@ -13,10 +13,11 @@ import {
   probeImageSizeFromDataURL,
   readFileAsDataURL,
 } from "@/lib/imageLoader";
-import { Template, TemplateConfig } from "@/types/template";
+import { Template, LegacyTemplateConfigs } from "@/types/template";
+import { exportSettings } from "@/store/Export";
+import { importSettings } from "@/store/Import";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { useDownloadStore } from "./DownloadStore";
 
 // 添加预设尺寸列表
 const PRESET_SIZES_DEFAULT: SizeItem[] = [
@@ -378,19 +379,8 @@ export const usePreviewStore = create<PreviewStore>()(
 
       exportTemplate: () => {
         const state = get();
-        const download = useDownloadStore.getState();
-        const config: TemplateConfig = {
-          paperSize: state.paperSize,
-          paperLandscape: state.paperLandscape,
-          pageMargin: state.pageMargin,
-          pageMarginUnit: state.pageMarginUnit,
-          spacing: state.spacing,
-          doubleSided: state.doubleSided,
-          printStyleId: state.printStyleId,
-          pixelRatio: download.pixelRatio,
-          imageQuality: download.imageQuality,
-          enableRatioMap: state.enableRatioMap,
-        };
+        // Unified settings export
+        const settings = exportSettings();
 
         // 创建一个深拷贝，并移除 imageUrl
         const items = state.previewItems.map((item) => {
@@ -402,7 +392,7 @@ export const usePreviewStore = create<PreviewStore>()(
         return {
           id: generateId(),
           createdAt: new Date().toISOString(),
-          configs: config,
+          settings,
           items: items,
           customSizes: state.customSizes,
         };
@@ -414,6 +404,25 @@ export const usePreviewStore = create<PreviewStore>()(
         })),
 
       importTemplate: (template: Template) => {
+        // Apply settings via new import API; support legacy templates with `configs`
+        const legacyToSettings = (cfg?: LegacyTemplateConfigs) =>
+          cfg
+            ? {
+                paperSize: cfg.paperSize,
+                paperLandscape: cfg.paperLandscape,
+                pageMargin: cfg.pageMargin,
+                pageMarginUnit: cfg.pageMarginUnit,
+                spacing: cfg.spacing,
+                doubleSided: cfg.doubleSided,
+                printStyleId: cfg.printStyleId,
+                pixelRatio: cfg.pixelRatio,
+                imageQuality: cfg.imageQuality,
+                enableRatioMap: cfg.enableRatioMap,
+              }
+            : undefined;
+
+        importSettings(template.settings || legacyToSettings(template.configs) || {});
+
         set((state) => {
           const baseMap = buildRatioMapFromSizes([
             ...state.presetSizes,
@@ -422,16 +431,6 @@ export const usePreviewStore = create<PreviewStore>()(
           return {
             previewItems: template.items,
             customSizes: template.customSizes,
-            pixelRatio: template.configs.pixelRatio,
-            imageQuality: template.configs.imageQuality,
-            paperSize: template.configs.paperSize,
-            paperLandscape: template.configs.paperLandscape,
-            pageMargin: template.configs.pageMargin,
-            pageMarginUnit: template.configs.pageMarginUnit,
-            spacing: template.configs.spacing,
-            doubleSided: template.configs.doubleSided,
-            printStyleId: template.configs.printStyleId,
-            enableRatioMap: template.configs.enableRatioMap,
             ratioToSizeMap: {
               ...baseMap,
               ...state.ratioToSizeMap,

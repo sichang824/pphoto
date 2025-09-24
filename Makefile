@@ -12,13 +12,16 @@ IMAGE = $(DOCKER_BUILD_DOCKER_IMAGE):$(DOCKER_BUILD_DOCKER_IMAGE_TAG)
 .PHONY: all build docker-build docker-push clean dev
 
 dev:
-	bun run dev
+	@echo "Starting the development server..."
+	@bun run dev
 
 # Default target
 all: 
 
 # Build the project
-build: docker-build docker-push clean
+build: 
+	@echo "Building the project..."
+	@bun run build
 
 # Build the Docker image
 docker-build:

@@ -4,7 +4,7 @@ import { FC } from "react";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { GradientPicker } from "@/components/ui/GradientPicker";
-import { usePreviewStore } from "@/store/previewStore";
+import { usePreviewStore } from "@/store/PreviewStore";
 import { usePhotoStore } from "@/store/PhotoStore";
 
 const AppearanceSettings: FC = () => {

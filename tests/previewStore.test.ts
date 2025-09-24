@@ -24,7 +24,7 @@ beforeAll(() => {
 });
 
 import { useDownloadStore } from "@/store/DownloadStore";
-import { usePreviewStore } from "@/store/previewStore";
+import { usePreviewStore } from "@/store/PreviewStore";
 
 describe("PreviewStore - paper border visibility", () => {
   it("should have showPaperBorder enabled by default", () => {

@@ -1,4 +1,4 @@
-import { usePreviewStore } from '@/store/previewStore';
+import { usePreviewStore } from '@/store/PreviewStore';
 import { useEffect } from 'react';
 
 // 将 hex 转换为 HSL

@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { calcRatio } from "@/lib/utils";
-import { usePreviewStore } from "@/store/previewStore";
+import { usePreviewStore } from "@/store/PreviewStore";
 import { PlusIcon } from "lucide-react";
 import { FC, useState } from "react";
 import { SizeItem } from "./types";

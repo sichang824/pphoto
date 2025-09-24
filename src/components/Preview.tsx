@@ -6,7 +6,7 @@ import { exportPreviewToPdf } from "@/lib/pdf";
 import { cn } from "@/lib/utils";
 import { useDownloadStore } from "@/store/DownloadStore";
 import { usePhotoStore } from "@/store/PhotoStore";
-import { usePreviewStore } from "@/store/previewStore";
+import { usePreviewStore } from "@/store/PreviewStore";
 import { FC, useMemo } from "react";
 import { BacksidePaperPreview } from "./BacksidePaperPreview";
 import PaperPreview from "./PaperPreview";

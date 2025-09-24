@@ -4,6 +4,8 @@ import { FC } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
+import { SETTINGS_LABELS, formatSettingValue } from "@/store/SettingsMeta";
+import type { ExportableSettings } from "@/store/Export";
 
 interface TemplatePreviewProps {
   selectedTemplate: Template | null;
@@ -47,44 +49,36 @@ export const TemplatePreview: FC<TemplatePreviewProps> = ({
             {/* 配置信息 */}
             <div className="w-full space-y-3">
               <h4 className="font-medium text-center">模板配置</h4>
-              <div className="grid grid-cols-2 gap-y-3 gap-x-4 bg-muted/30 rounded-lg p-4 text-sm">
-                <div className="space-y-1">
-                  <p className="text-muted-foreground">纸张大小</p>
-                  <p>{selectedTemplate.configs.paperSize}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-muted-foreground">纸张方向</p>
-                  <p>{selectedTemplate.configs.paperLandscape ? '横向' : '纵向'}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-muted-foreground">页面边距</p>
-                  <p>{selectedTemplate.configs.pageMargin}{selectedTemplate.configs.pageMarginUnit}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-muted-foreground">间距</p>
-                  <p>{selectedTemplate.configs.spacing}mm</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-muted-foreground">双面打印</p>
-                  <p>{selectedTemplate.configs.doubleSided ? '是' : '否'}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-muted-foreground">打印样式</p>
-                  <p>{selectedTemplate.configs.printStyleId}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-muted-foreground">像素比</p>
-                  <p>{selectedTemplate.configs.pixelRatio}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-muted-foreground">图片质量</p>
-                  <p>{selectedTemplate.configs.imageQuality}</p>
-                </div>
-                <div className="space-y-1 col-span-2">
-                  <p className="text-muted-foreground">启用比例映射</p>
-                  <p>{selectedTemplate.configs.enableRatioMap ? '是' : '否'}</p>
-                </div>
-              </div>
+              {(() => {
+                const cfg = selectedTemplate.configs;
+                const s: Partial<ExportableSettings> =
+                  selectedTemplate.settings ||
+                  (cfg
+                    ? {
+                        paperSize: cfg.paperSize,
+                        paperLandscape: cfg.paperLandscape,
+                        pageMargin: cfg.pageMargin,
+                        pageMarginUnit: cfg.pageMarginUnit,
+                        spacing: cfg.spacing,
+                        doubleSided: cfg.doubleSided,
+                        printStyleId: cfg.printStyleId,
+                        pixelRatio: cfg.pixelRatio,
+                        imageQuality: cfg.imageQuality,
+                        enableRatioMap: cfg.enableRatioMap,
+                      }
+                    : {});
+
+                return (
+                  <div className="grid grid-cols-2 gap-y-3 gap-x-4 bg-muted/30 rounded-lg p-4 text-sm">
+                    {Object.entries(s).map(([k, v]) => (
+                      <div className="space-y-1" key={k}>
+                        <p className="text-muted-foreground">{SETTINGS_LABELS[k as keyof typeof SETTINGS_LABELS] || k}</p>
+                        <p>{formatSettingValue(k as keyof ExportableSettings, v)}</p>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>
