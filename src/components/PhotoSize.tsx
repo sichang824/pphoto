@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { useDraggable } from "@dnd-kit/core";
 import { SizeItem } from "./types";
 import { PlusIcon, TrashIcon } from "lucide-react";
-import { usePreviewStore } from "@/store/PreviewStore1";
+import { usePreviewStore } from "@/store/PreviewStore";
 import { Button } from "./ui/button";
 
 interface PhotoSizeProps {

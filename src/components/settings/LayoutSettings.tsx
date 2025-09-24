@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { usePreviewStore, SETTINGS_CONFIG } from "@/store/PreviewStore1";
+import { usePreviewStore, SETTINGS_CONFIG } from "@/store/PreviewStore";
 import { usePhotoStore } from "@/store/PhotoStore";
 import {
   AlignStartHorizontal,

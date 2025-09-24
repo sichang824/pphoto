@@ -1,6 +1,6 @@
 "use client";
 
-import { generateId, usePreviewStore } from "@/store/PreviewStore1";
+import { generateId, usePreviewStore } from "@/store/PreviewStore";
 import { FC } from "react";
 import CustomPhotoSize from "./CustomPhotoSize";
 import PhotoSize from "./PhotoSize";

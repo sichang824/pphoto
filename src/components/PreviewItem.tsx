@@ -1,5 +1,5 @@
 import { getItemSize } from "@/lib/PageCalculator";
-import { usePreviewStore } from "@/store/PreviewStore1";
+import { usePreviewStore } from "@/store/PreviewStore";
 import { usePhotoStore } from "@/store/PhotoStore";
 import {
   Image as LucideImage,

@@ -1,4 +1,4 @@
-import { usePreviewStore } from "@/store/PreviewStore1";
+import { usePreviewStore } from "@/store/PreviewStore";
 import { useDownloadStore } from "@/store/DownloadStore";
 
 export type ExportableSettings = {

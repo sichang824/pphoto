@@ -1,4 +1,4 @@
-import { usePreviewStore } from "@/store/PreviewStore1";
+import { usePreviewStore } from "@/store/PreviewStore";
 import { useDownloadStore } from "@/store/DownloadStore";
 import type { ExportableSettings, ExportFilter } from "@/store/Export";
 import { PREVIEW_EXPORT_KEYS, DOWNLOAD_EXPORT_KEYS } from "@/store/Export";

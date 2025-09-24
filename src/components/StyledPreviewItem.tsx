@@ -1,5 +1,5 @@
 import { getItemSize } from "@/lib/PageCalculator";
-import { usePreviewStore } from "@/store/PreviewStore1";
+import { usePreviewStore } from "@/store/PreviewStore";
 import { Image as LucideImage } from "lucide-react";
 import React, { FC } from "react";
 import PostcardBorderless from "./postcard/borderless";

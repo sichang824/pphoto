@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { usePreviewStore, SETTINGS_CONFIG } from "@/store/PreviewStore1";
+import { usePreviewStore, SETTINGS_CONFIG } from "@/store/PreviewStore";
 
 const PaperSettings: FC = () => {
   const {
