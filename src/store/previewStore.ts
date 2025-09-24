@@ -306,25 +306,12 @@ export const usePreviewStore = create<PreviewStore>()(
       },
 
       setItemImage: async (id: string, file: File) => {
-        const state = usePreviewStore.getState();
-        const {
-          ratioToSizeMap,
-          updateRatioMap,
-          findBestMatchSize,
-          updateItem,
-        } = state;
+        const { updateItem } = usePreviewStore.getState();
         try {
           const dataUrl = await readFileAsDataURL(file);
-          const { width, height } = await probeImageSizeFromDataURL(dataUrl);
-          const imageRatio = computeAndEnsureRatioMapping(
-            { ratioToSizeMap, updateRatioMap, findBestMatchSize },
-            width,
-            height
-          );
-          updateItem({ id, imageUrl: dataUrl, imageRatio });
+          updateItem({ id, imageUrl: dataUrl });
         } catch (error) {
           console.error("设置单张图片失败:", error);
-          // 最小化降级：至少把图片展示出来
           const dataUrl = await readFileAsDataURL(file);
           updateItem({ id, imageUrl: dataUrl });
         }

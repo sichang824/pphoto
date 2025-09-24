@@ -20,10 +20,10 @@ const PhotoSizeList: FC = () => {
         <CustomPhotoSize />
         {customSizes.length > 0 &&
           customSizes.map((size) => (
-            <PhotoSize key={size.name} item={size} onAdd={handleAdd} />
+            <PhotoSize key={size.id} item={size} onAdd={handleAdd} />
           ))}
         {presetSizes.map((size) => (
-          <PhotoSize key={size.name} item={size} onAdd={handleAdd} />
+          <PhotoSize key={size.id} item={size} onAdd={handleAdd} />
         ))}
       </div>
     </>
