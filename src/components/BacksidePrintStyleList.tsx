@@ -1,6 +1,6 @@
-import { usePreviewStore } from "@/store/PreviewStore";
+import { usePreviewStore } from "@/store/PreviewStore1";
 import { cn } from "@/lib/utils";
-import { BACKSIDE_PRINT_STYLES } from "@/store/PreviewStore";
+import { BACKSIDE_PRINT_STYLES } from "@/store/PreviewStore1";
 
 export default function BacksidePrintStyleList() {
   const { printStyleId, setPrintStyleId, doubleSided } = usePreviewStore();

@@ -1,7 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { usePreviewStore } from "@/store/PreviewStore";
+import { usePreviewStore } from "@/store/PreviewStore1";
 import { FC } from "react";
 import { GradientPicker } from "./ui/GradientPicker";
 

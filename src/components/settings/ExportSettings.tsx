@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { useDownloadStore } from "@/store/DownloadStore";
-import { SETTINGS_CONFIG } from "@/store/PreviewStore";
+import { SETTINGS_CONFIG } from "@/store/PreviewStore1";
 import { FC } from "react";
 
 const ExportSettings: FC = () => {

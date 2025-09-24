@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Card } from "@/components/ui/card";
-import { usePreviewStore } from "@/store/PreviewStore";
+import { usePreviewStore } from "@/store/PreviewStore1";
 
 const StatsPanel: FC = () => {
   const { paperLandscape, ratioToSizeMap, paperSize, previewItems } =

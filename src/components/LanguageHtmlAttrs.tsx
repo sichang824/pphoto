@@ -1,6 +1,6 @@
 'use client';
 
-import { useLanguageStore } from '@/store/LanguageStore';
+import { useLanguageStore } from '@/store/LanguageStore1';
 import { ReactNode, useEffect, useState } from 'react';
 
 export default function LanguageHtmlAttrs({ children }: { children: ReactNode }) {

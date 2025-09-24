@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { usePreviewStore } from "@/store/PreviewStore";
+import { usePreviewStore } from "@/store/PreviewStore1";
 
 const DuplexSettings: FC = () => {
   const { doubleSided, setDoubleSided, backsideFlip, setBacksideFlip } = usePreviewStore();

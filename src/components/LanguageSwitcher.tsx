@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { useLanguageStore } from '@/store/LanguageStore';
+import { useLanguageStore } from '@/store/LanguageStore1';
 import { Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 

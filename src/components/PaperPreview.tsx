@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { useDroppable } from "@dnd-kit/core";
-import { usePreviewStore } from "@/store/PreviewStore";
+import { usePreviewStore } from "@/store/PreviewStore1";
 import { usePhotoStore } from "@/store/PhotoStore";
 import { PhotoItem } from "./types";
 import PreviewItem from "./PreviewItem";
