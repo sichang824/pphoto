@@ -20,17 +20,9 @@ const POSTCARD_STYLES: { [key: string]: React.ComponentType } = {
 };
 
 export const StyledPreviewItem: FC<StyledPreviewItemProps> = ({ item }) => {
-  const { ratioToSizeMap, printStyleId, enableRatioMap, customSizes, presetSizes } =
-    usePreviewStore();
+  const { printStyleId, customSizes, presetSizes } = usePreviewStore();
 
-  // 如果启用了比例映射，使用映射的尺寸，否则直接使用照片本身的尺寸
-  const size = getItemSize(
-    item,
-    ratioToSizeMap,
-    enableRatioMap,
-    customSizes,
-    presetSizes
-  );
+  const size = getItemSize(item, customSizes, presetSizes);
 
   return (
     <div

@@ -12,7 +12,6 @@ export type ExportableSettings = {
   doubleSided: boolean;
   backsideFlip: boolean;
   printStyleId: string;
-  enableRatioMap: boolean;
   themeColor: string;
   showGuides: boolean;
   showPaperBorder: boolean;
@@ -43,7 +42,6 @@ export const PREVIEW_EXPORT_KEYS: ReadonlyArray<keyof ExportableSettings> = [
   "doubleSided",
   "backsideFlip",
   "printStyleId",
-  "enableRatioMap",
   "themeColor",
   "showGuides",
   "showPaperBorder",

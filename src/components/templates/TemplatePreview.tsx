@@ -64,7 +64,6 @@ export const TemplatePreview: FC<TemplatePreviewProps> = ({
                         printStyleId: cfg.printStyleId,
                         pixelRatio: cfg.pixelRatio,
                         imageQuality: cfg.imageQuality,
-                        enableRatioMap: cfg.enableRatioMap,
                       }
                     : {});
 

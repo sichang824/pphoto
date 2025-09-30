@@ -10,7 +10,6 @@ export const SETTINGS_LABELS: Partial<Record<keyof ExportableSettings, string>> 
   printStyleId: "打印样式",
   pixelRatio: "像素比",
   imageQuality: "图片质量",
-  enableRatioMap: "启用比例映射",
   themeColor: "主题色",
   showGuides: "辅助线",
   showPaperBorder: "纸张边框",

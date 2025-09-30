@@ -14,29 +14,14 @@ interface PreviewItemProps {
 }
 
 const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
-  const {
-    removeItem,
-    toggleOrientation,
-    updateItem,
-    ratioToSizeMap,
-    enableRatioMap,
-    customSizes,
-    presetSizes,
-    isPrinting,
-    setItemImage,
-  } = usePreviewStore();
+  const { removeItem, toggleOrientation, updateItem, customSizes, presetSizes, isPrinting, setItemImage } =
+    usePreviewStore();
   const { showPhotoBackground, photoBackgroundColor } = usePhotoStore();
   const [position, setPosition] = useState({ x: item.x, y: item.y });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const anchorRef = useRef<HTMLDivElement>(null);
 
-  const size = getItemSize(
-    item,
-    ratioToSizeMap,
-    enableRatioMap,
-    customSizes,
-    presetSizes
-  );
+  const size = getItemSize(item, customSizes, presetSizes);
 
   const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -177,16 +162,12 @@ const PreviewItem: FC<PreviewItemProps> = ({ item }) => {
           style={{
             width: `${size.width}mm`,
             height: `${size.height}mm`,
-            transform: `rotate(${item.isVertical ? -90 : 0}deg) scaleX(${ 
-              item.isVertical ? -1 : 1
-            }) `,
+            transform: `rotate(${item.isVertical ? -90 : 0}deg) scaleX(${item.isVertical ? -1 : 1}) `,
             transformOrigin: "0 0",
             position: "absolute",
             top: "0",
             left: "0",
-            background: showPhotoBackground
-              ? photoBackgroundColor
-              : "transparent",
+            background: showPhotoBackground ? photoBackgroundColor : "transparent",
           }}
           data-pphoto-container="true"
         >

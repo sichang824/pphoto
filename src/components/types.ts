@@ -3,13 +3,12 @@ export interface SizeItem {
   name: string;
   width: number;
   height: number;
-  imageRatio: string;
 }
 
 export interface PhotoItem {
   id: string;
   name: string;
-  imageRatio: string;
+  sizeId?: string;
   isVertical: boolean;
   imageUrl?: string;
   x: number;
@@ -22,7 +21,6 @@ export interface PhotoItem {
 export const defaultPhotoItem: PhotoItem = {
   id: "",
   name: "",
-  imageRatio: "",
   isVertical: false,
   x: 0,
   y: 0,

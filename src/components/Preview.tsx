@@ -149,20 +149,8 @@ const handleBatchSelect = async () => {
 const Preview: FC<PreviewProps> = ({ id }) => {
   const { setPdfProgress } = useDownloadStore();
 
-  const {
-    paperLandscape,
-    previewItems,
-    paperSize,
-    pageMargin,
-    autoLayout,
-    ratioToSizeMap,
-    enableRatioMap,
-    customSizes,
-    doubleSided,
-    paperScale,
-    paperSizes,
-    presetSizes,
-  } = usePreviewStore();
+  const { paperLandscape, previewItems, paperSize, pageMargin, autoLayout, customSizes, doubleSided, paperScale, paperSizes, presetSizes } =
+    usePreviewStore();
 
   const pages = useMemo(() => {
     const calculator = new PageCalculator(
@@ -170,8 +158,6 @@ const Preview: FC<PreviewProps> = ({ id }) => {
       paperSize,
       autoLayout,
       pageMargin,
-      ratioToSizeMap,
-      enableRatioMap,
       customSizes,
       paperSizes,
       presetSizes
@@ -183,8 +169,6 @@ const Preview: FC<PreviewProps> = ({ id }) => {
     paperSize,
     autoLayout,
     pageMargin,
-    ratioToSizeMap,
-    enableRatioMap,
     customSizes,
     paperSizes,
     presetSizes,
@@ -215,9 +199,7 @@ const Preview: FC<PreviewProps> = ({ id }) => {
               打印
             </Button>
             <Button
-              onClick={() =>
-                handlePrintPdf((progress = 0) => setPdfProgress(progress))
-              }
+              onClick={() => handlePrintPdf((progress = 0) => setPdfProgress(progress))}
               variant="secondary"
               className="bg-red-500 text-white hover:bg-red-600"
             >

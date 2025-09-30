@@ -3,14 +3,12 @@ import { Card } from "@/components/ui/card";
 import { usePreviewStore } from "@/store/PreviewStore";
 
 const StatsPanel: FC = () => {
-  const { paperLandscape, ratioToSizeMap, paperSize, previewItems } =
-    usePreviewStore();
+  const { paperLandscape, paperSize, previewItems } = usePreviewStore();
 
   const { paperSizes } = usePreviewStore.getState();
   const stats = {
     currentPaper: `${paperSize} (${paperSizes[paperSize].width}×${paperSizes[paperSize].height}mm)`,
     orientation: paperLandscape ? "横向" : "纵向",
-    ratioTypes: Object.keys(ratioToSizeMap).length,
     photoCount: previewItems.length,
   };
 
@@ -26,10 +24,6 @@ const StatsPanel: FC = () => {
           <div>
             <span className="text-gray-500">打印方向：</span>
             <span className="font-medium">{stats.orientation}</span>
-          </div>
-          <div>
-            <span className="text-gray-500">比例类型：</span>
-            <span className="font-medium">{stats.ratioTypes}</span>
           </div>
           <div>
             <span className="text-gray-500">照片数量：</span>

@@ -1,21 +1,22 @@
 import { Page, PhotoItem, SizeItem } from "@/components/types";
 
-// 获取尺寸信息
+// 获取尺寸信息（去除比例映射）
 export const getItemSize = (
   item: PhotoItem,
-  ratioToSizeMap: Record<string, { width: number; height: number }>,
-  enableRatioMap: boolean,
   customSizes: SizeItem[],
   presetSizes: SizeItem[]
 ) => {
-  if (enableRatioMap && ratioToSizeMap[item.imageRatio]) {
-    return ratioToSizeMap[item.imageRatio];
+  if (item.sizeId) {
+    const byId =
+      customSizes.find((s) => s.id === item.sizeId) ||
+      presetSizes.find((s) => s.id === item.sizeId);
+    if (byId) return byId;
   }
-  return (
+  const byName =
     customSizes.find((s) => s.name === item.name) ||
-    presetSizes.find((s) => s.name === item.name) ||
-    presetSizes[0]
-  );
+    presetSizes.find((s) => s.name === item.name);
+  if (byName) return byName;
+  return presetSizes[0];
 };
 
 export class PageCalculator {
@@ -33,10 +34,8 @@ export class PageCalculator {
     private paperSize: string,
     private autoLayout: boolean,
     private pageMargin: number,
-    private ratioToSizeMap: Record<string, { width: number; height: number }>,
-    private enableRatioMap: boolean,
     private customSizes: SizeItem[],
-    private paperSizes: Record<string, { width: number; height: number; imageRatio: string }>,
+    private paperSizes: Record<string, { width: number; height: number }>,
     private presetSizes: SizeItem[]
   ) {
     const ps = this.paperSizes[paperSize];
@@ -48,25 +47,10 @@ export class PageCalculator {
     this.availableHeight = paperHeight - padding;
   }
 
-  private handleFullPageItem(item: PhotoItem): void {
-    const ps = this.paperSizes[this.paperSize];
-    if (ps.imageRatio === item.imageRatio && this.currentPage.length === 0) {
-      this.pages.push({
-        id: `page-${this.currentPageId}`,
-        items: [item],
-      });
-      this.currentPageId++;
-    }
-  }
+  // full-page logic based on ratio removed
 
   private handleAutoLayoutItem(item: PhotoItem): void {
-    const size = getItemSize(
-      item,
-      this.ratioToSizeMap,
-      this.enableRatioMap,
-      this.customSizes,
-      this.presetSizes
-    );
+    const size = getItemSize(item, this.customSizes, this.presetSizes);
     const itemWidth = item.isVertical ? size.height : size.width;
     const itemHeight = item.isVertical ? size.width : size.height;
 

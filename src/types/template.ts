@@ -27,5 +27,4 @@ export interface LegacyTemplateConfigs {
   printStyleId?: string;
   pixelRatio?: number;
   imageQuality?: number;
-  enableRatioMap?: boolean;
 }

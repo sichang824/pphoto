@@ -10,7 +10,7 @@ const PhotoSizeList: FC = () => {
   const { addItem, customSizes, presetSizes } = usePreviewStore();
 
   const handleAdd = (item: SizeItem) => {
-    addItem({ id: generateId(), name: item.name, imageRatio: item.imageRatio });
+    addItem({ id: generateId(), name: item.name, sizeId: item.id });
   };
 
   return (
